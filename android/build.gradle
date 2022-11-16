@@ -1,4 +1,4 @@
-group 'com.example.daily_client'
+group 'com.teamflowhq.daily_client'
 version '1.0-SNAPSHOT'
 
 buildscript {

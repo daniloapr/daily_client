@@ -1,14 +1,22 @@
 import Flutter
 import UIKit
 
-public class SwiftDailyClientPlugin: NSObject, FlutterPlugin {
-  public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "daily_client", binaryMessenger: registrar.messenger())
-    let instance = SwiftDailyClientPlugin()
-    registrar.addMethodCallDelegate(instance, channel: channel)
-  }
-
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result("iOS " + UIDevice.current.systemVersion)
-  }
+public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyClientMessenger {
+    func join(args: JoinArgs, completion: @escaping (VoidResult) -> Void) {
+        print("Joining: \(args.url)")
+        completion(VoidResult(error: PlatformError(message: args.url, code: -1)))
+    }
+    
+    func leave() -> VoidResult {
+        print("Leaving")
+        return VoidResult(error: nil)
+    }
+    
+    
+    public static func register(with registrar: FlutterPluginRegistrar) {
+        DailyClientMessengerSetup.setUp(
+            binaryMessenger: registrar.messenger(),
+            api: SwiftDailyClientPlugin()
+        )
+    }
 }

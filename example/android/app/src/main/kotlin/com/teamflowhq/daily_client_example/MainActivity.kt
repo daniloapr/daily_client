@@ -1,4 +1,4 @@
-package com.example.daily_client_example
+package com.teamflowhq.daily_client_example
 
 import io.flutter.embedding.android.FlutterActivity
 
