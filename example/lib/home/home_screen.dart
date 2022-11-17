@@ -1,4 +1,5 @@
 import 'package:daily_client/daily_client.dart';
+import 'package:daily_client_example/dependencies.dart';
 import 'package:daily_client_example/room/room_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -12,11 +13,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _urlController = TextEditingController();
   final _tokenController = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
-
   bool _isLoading = false;
-  final _dailyClient = DailyClient();
+  
+  final _dailyClient = getIt<DailyClient>();
 
   void _join(BuildContext context) async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
