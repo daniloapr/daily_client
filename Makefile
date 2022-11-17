@@ -8,8 +8,3 @@ pigeon:
 	--experimental_swift_out ios/Classes/Pigeon.swift \
 	--java_out ./android/src/main/java/com/teamflowhq/daily_client/Pigeon.java \
 	--java_package "com.teamflowhq.daily_client"
-
-.PHONY: pod_install
-pod_install:
-	cd example/ios
-	arch -x86_64 pod install --repo-update
