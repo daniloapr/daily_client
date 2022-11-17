@@ -1,4 +1,5 @@
 import 'package:daily_client/daily_client.dart';
+import 'package:daily_client_example/room/room_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -30,7 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
           enableMicrophone: false,
         ),
       );
-      //TODO: Navigate to RoomScreen
+      if (!mounted) return;
+      _navigateToRoomScreen(context);
     } catch (e) {
       if (!mounted) return;
       final errorMessage =
@@ -41,6 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  void _navigateToRoomScreen(context) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => const RoomScreen(),
+    ));
   }
 
   @override
