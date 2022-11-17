@@ -7,6 +7,11 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+enum ErrorCode {
+  invalidUrl,
+  join,
+}
+
 class VoidResult {
   VoidResult({
     this.error,
@@ -37,12 +42,12 @@ class PlatformError {
   });
 
   String message;
-  int code;
+  ErrorCode code;
 
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
     pigeonMap['message'] = message;
-    pigeonMap['code'] = code;
+    pigeonMap['code'] = code.index;
     return pigeonMap;
   }
 
@@ -50,7 +55,8 @@ class PlatformError {
     final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
     return PlatformError(
       message: pigeonMap['message']! as String,
-      code: pigeonMap['code']! as int,
+      code: ErrorCode.values[pigeonMap['code']! as int]
+,
     );
   }
 }
@@ -59,21 +65,21 @@ class JoinArgs {
   JoinArgs({
     required this.url,
     required this.token,
-    required this.isMicEnabled,
-    required this.isCameraEnabled,
+    required this.enableMicrophone,
+    required this.enableCamera,
   });
 
   String url;
   String token;
-  bool isMicEnabled;
-  bool isCameraEnabled;
+  bool enableMicrophone;
+  bool enableCamera;
 
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
     pigeonMap['url'] = url;
     pigeonMap['token'] = token;
-    pigeonMap['isMicEnabled'] = isMicEnabled;
-    pigeonMap['isCameraEnabled'] = isCameraEnabled;
+    pigeonMap['enableMicrophone'] = enableMicrophone;
+    pigeonMap['enableCamera'] = enableCamera;
     return pigeonMap;
   }
 
@@ -82,8 +88,8 @@ class JoinArgs {
     return JoinArgs(
       url: pigeonMap['url']! as String,
       token: pigeonMap['token']! as String,
-      isMicEnabled: pigeonMap['isMicEnabled']! as bool,
-      isCameraEnabled: pigeonMap['isCameraEnabled']! as bool,
+      enableMicrophone: pigeonMap['enableMicrophone']! as bool,
+      enableCamera: pigeonMap['enableCamera']! as bool,
     );
   }
 }
@@ -127,6 +133,7 @@ class _DailyClientMessengerCodec extends StandardMessageCodec{
   }
 }
 
+/// This is the base class used for generating the pigeon code
 class DailyClientMessenger {
   /// Constructor for [DailyClientMessenger].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default

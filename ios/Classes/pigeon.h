@@ -8,6 +8,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSUInteger, ErrorCode) {
+  ErrorCodeInvalidUrl = 0,
+  ErrorCodeJoin = 1,
+};
+
 @class VoidResult;
 @class PlatformError;
 @class JoinArgs;
@@ -21,9 +26,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithMessage:(NSString *)message
-    code:(NSNumber *)code;
+    code:(ErrorCode)code;
 @property(nonatomic, copy) NSString * message;
-@property(nonatomic, strong) NSNumber * code;
+@property(nonatomic, assign) ErrorCode code;
 @end
 
 @interface JoinArgs : NSObject
@@ -31,17 +36,18 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithUrl:(NSString *)url
     token:(NSString *)token
-    isMicEnabled:(NSNumber *)isMicEnabled
-    isCameraEnabled:(NSNumber *)isCameraEnabled;
+    enableMicrophone:(NSNumber *)enableMicrophone
+    enableCamera:(NSNumber *)enableCamera;
 @property(nonatomic, copy) NSString * url;
 @property(nonatomic, copy) NSString * token;
-@property(nonatomic, strong) NSNumber * isMicEnabled;
-@property(nonatomic, strong) NSNumber * isCameraEnabled;
+@property(nonatomic, strong) NSNumber * enableMicrophone;
+@property(nonatomic, strong) NSNumber * enableCamera;
 @end
 
 /// The codec used by DailyClientMessenger.
 NSObject<FlutterMessageCodec> *DailyClientMessengerGetCodec(void);
 
+/// This is the base class used for generating the pigeon code
 @protocol DailyClientMessenger
 - (void)joinArgs:(JoinArgs *)args completion:(void(^)(VoidResult *_Nullable, FlutterError *_Nullable))completion;
 /// @return `nil` only when `error != nil`.

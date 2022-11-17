@@ -23,6 +23,16 @@ import java.util.HashMap;
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})
 public class Pigeon {
 
+  public enum ErrorCode {
+    INVALID_URL(0),
+    JOIN(1);
+
+    private int index;
+    private ErrorCode(final int index) {
+      this.index = index;
+    }
+  }
+
   /** Generated class from Pigeon that represents data sent in messages. */
   public static class VoidResult {
     private @Nullable PlatformError error;
@@ -67,9 +77,9 @@ public class Pigeon {
       this.message = setterArg;
     }
 
-    private @NonNull Long code;
-    public @NonNull Long getCode() { return code; }
-    public void setCode(@NonNull Long setterArg) {
+    private @NonNull ErrorCode code;
+    public @NonNull ErrorCode getCode() { return code; }
+    public void setCode(@NonNull ErrorCode setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"code\" is null.");
       }
@@ -84,8 +94,8 @@ public class Pigeon {
         this.message = setterArg;
         return this;
       }
-      private @Nullable Long code;
-      public @NonNull Builder setCode(@NonNull Long setterArg) {
+      private @Nullable ErrorCode code;
+      public @NonNull Builder setCode(@NonNull ErrorCode setterArg) {
         this.code = setterArg;
         return this;
       }
@@ -99,7 +109,7 @@ public class Pigeon {
     @NonNull Map<String, Object> toMap() {
       Map<String, Object> toMapResult = new HashMap<>();
       toMapResult.put("message", message);
-      toMapResult.put("code", code);
+      toMapResult.put("code", code == null ? null : code.index);
       return toMapResult;
     }
     static @NonNull PlatformError fromMap(@NonNull Map<String, Object> map) {
@@ -107,7 +117,7 @@ public class Pigeon {
       Object message = map.get("message");
       pigeonResult.setMessage((String)message);
       Object code = map.get("code");
-      pigeonResult.setCode((code == null) ? null : ((code instanceof Integer) ? (Integer)code : (Long)code));
+      pigeonResult.setCode(code == null ? null : ErrorCode.values()[(int)code]);
       return pigeonResult;
     }
   }
@@ -132,22 +142,22 @@ public class Pigeon {
       this.token = setterArg;
     }
 
-    private @NonNull Boolean isMicEnabled;
-    public @NonNull Boolean getIsMicEnabled() { return isMicEnabled; }
-    public void setIsMicEnabled(@NonNull Boolean setterArg) {
+    private @NonNull Boolean enableMicrophone;
+    public @NonNull Boolean getEnableMicrophone() { return enableMicrophone; }
+    public void setEnableMicrophone(@NonNull Boolean setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"isMicEnabled\" is null.");
+        throw new IllegalStateException("Nonnull field \"enableMicrophone\" is null.");
       }
-      this.isMicEnabled = setterArg;
+      this.enableMicrophone = setterArg;
     }
 
-    private @NonNull Boolean isCameraEnabled;
-    public @NonNull Boolean getIsCameraEnabled() { return isCameraEnabled; }
-    public void setIsCameraEnabled(@NonNull Boolean setterArg) {
+    private @NonNull Boolean enableCamera;
+    public @NonNull Boolean getEnableCamera() { return enableCamera; }
+    public void setEnableCamera(@NonNull Boolean setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"isCameraEnabled\" is null.");
+        throw new IllegalStateException("Nonnull field \"enableCamera\" is null.");
       }
-      this.isCameraEnabled = setterArg;
+      this.enableCamera = setterArg;
     }
 
     /**Constructor is private to enforce null safety; use Builder. */
@@ -163,22 +173,22 @@ public class Pigeon {
         this.token = setterArg;
         return this;
       }
-      private @Nullable Boolean isMicEnabled;
-      public @NonNull Builder setIsMicEnabled(@NonNull Boolean setterArg) {
-        this.isMicEnabled = setterArg;
+      private @Nullable Boolean enableMicrophone;
+      public @NonNull Builder setEnableMicrophone(@NonNull Boolean setterArg) {
+        this.enableMicrophone = setterArg;
         return this;
       }
-      private @Nullable Boolean isCameraEnabled;
-      public @NonNull Builder setIsCameraEnabled(@NonNull Boolean setterArg) {
-        this.isCameraEnabled = setterArg;
+      private @Nullable Boolean enableCamera;
+      public @NonNull Builder setEnableCamera(@NonNull Boolean setterArg) {
+        this.enableCamera = setterArg;
         return this;
       }
       public @NonNull JoinArgs build() {
         JoinArgs pigeonReturn = new JoinArgs();
         pigeonReturn.setUrl(url);
         pigeonReturn.setToken(token);
-        pigeonReturn.setIsMicEnabled(isMicEnabled);
-        pigeonReturn.setIsCameraEnabled(isCameraEnabled);
+        pigeonReturn.setEnableMicrophone(enableMicrophone);
+        pigeonReturn.setEnableCamera(enableCamera);
         return pigeonReturn;
       }
     }
@@ -186,8 +196,8 @@ public class Pigeon {
       Map<String, Object> toMapResult = new HashMap<>();
       toMapResult.put("url", url);
       toMapResult.put("token", token);
-      toMapResult.put("isMicEnabled", isMicEnabled);
-      toMapResult.put("isCameraEnabled", isCameraEnabled);
+      toMapResult.put("enableMicrophone", enableMicrophone);
+      toMapResult.put("enableCamera", enableCamera);
       return toMapResult;
     }
     static @NonNull JoinArgs fromMap(@NonNull Map<String, Object> map) {
@@ -196,10 +206,10 @@ public class Pigeon {
       pigeonResult.setUrl((String)url);
       Object token = map.get("token");
       pigeonResult.setToken((String)token);
-      Object isMicEnabled = map.get("isMicEnabled");
-      pigeonResult.setIsMicEnabled((Boolean)isMicEnabled);
-      Object isCameraEnabled = map.get("isCameraEnabled");
-      pigeonResult.setIsCameraEnabled((Boolean)isCameraEnabled);
+      Object enableMicrophone = map.get("enableMicrophone");
+      pigeonResult.setEnableMicrophone((Boolean)enableMicrophone);
+      Object enableCamera = map.get("enableCamera");
+      pigeonResult.setEnableCamera((Boolean)enableCamera);
       return pigeonResult;
     }
   }
@@ -248,7 +258,11 @@ public class Pigeon {
     }
   }
 
-  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  /**
+   * This is the base class used for generating the pigeon code
+   *
+   * Generated interface from Pigeon that represents a handler of messages from Flutter.
+   */
   public interface DailyClientMessenger {
     void join(@NonNull JoinArgs args, Result<VoidResult> result);
     @NonNull VoidResult leave();

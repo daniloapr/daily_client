@@ -13,6 +13,11 @@ import FlutterMacOS
 
 /// Generated class from Pigeon.
 
+enum ErrorCode: Int {
+  case invalidUrl = 0
+  case join = 1
+}
+
 ///Generated class from Pigeon that represents data sent in messages.
 struct VoidResult {
   var error: PlatformError? = nil
@@ -37,11 +42,11 @@ struct VoidResult {
 ///Generated class from Pigeon that represents data sent in messages.
 struct PlatformError {
   var message: String
-  var code: Int32
+  var code: ErrorCode
 
   static func fromMap(_ map: [String: Any?]) -> PlatformError? {
     let message = map["message"] as! String
-    let code = map["code"] as! Int32
+    let code = ErrorCode(rawValue: map["code"] as! Int)!
 
     return PlatformError(
       message: message,
@@ -51,7 +56,7 @@ struct PlatformError {
   func toMap() -> [String: Any?] {
     return [
       "message": message,
-      "code": code
+      "code": code.rawValue
     ]
   }
 }
@@ -60,28 +65,28 @@ struct PlatformError {
 struct JoinArgs {
   var url: String
   var token: String
-  var isMicEnabled: Bool
-  var isCameraEnabled: Bool
+  var enableMicrophone: Bool
+  var enableCamera: Bool
 
   static func fromMap(_ map: [String: Any?]) -> JoinArgs? {
     let url = map["url"] as! String
     let token = map["token"] as! String
-    let isMicEnabled = map["isMicEnabled"] as! Bool
-    let isCameraEnabled = map["isCameraEnabled"] as! Bool
+    let enableMicrophone = map["enableMicrophone"] as! Bool
+    let enableCamera = map["enableCamera"] as! Bool
 
     return JoinArgs(
       url: url,
       token: token,
-      isMicEnabled: isMicEnabled,
-      isCameraEnabled: isCameraEnabled
+      enableMicrophone: enableMicrophone,
+      enableCamera: enableCamera
     )
   }
   func toMap() -> [String: Any?] {
     return [
       "url": url,
       "token": token,
-      "isMicEnabled": isMicEnabled,
-      "isCameraEnabled": isCameraEnabled
+      "enableMicrophone": enableMicrophone,
+      "enableCamera": enableCamera
     ]
   }
 }
@@ -132,6 +137,8 @@ class DailyClientMessengerCodec: FlutterStandardMessageCodec {
   static let shared = DailyClientMessengerCodec(readerWriter: DailyClientMessengerCodecReaderWriter())
 }
 
+/// This is the base class used for generating the pigeon code
+///
 ///Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol DailyClientMessenger {
   func join(args: JoinArgs, completion: @escaping (VoidResult) -> Void)

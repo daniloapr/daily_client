@@ -68,7 +68,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 
 @implementation PlatformError
 + (instancetype)makeWithMessage:(NSString *)message
-    code:(NSNumber *)code {
+    code:(ErrorCode)code {
   PlatformError* pigeonResult = [[PlatformError alloc] init];
   pigeonResult.message = message;
   pigeonResult.code = code;
@@ -78,15 +78,14 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   PlatformError *pigeonResult = [[PlatformError alloc] init];
   pigeonResult.message = GetNullableObject(dict, @"message");
   NSAssert(pigeonResult.message != nil, @"");
-  pigeonResult.code = GetNullableObject(dict, @"code");
-  NSAssert(pigeonResult.code != nil, @"");
+  pigeonResult.code = [GetNullableObject(dict, @"code") integerValue];
   return pigeonResult;
 }
 + (nullable PlatformError *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [PlatformError fromMap:dict] : nil; }
 - (NSDictionary *)toMap {
   return @{
     @"message" : (self.message ?: [NSNull null]),
-    @"code" : (self.code ?: [NSNull null]),
+    @"code" : @(self.code),
   };
 }
 @end
@@ -94,13 +93,13 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 @implementation JoinArgs
 + (instancetype)makeWithUrl:(NSString *)url
     token:(NSString *)token
-    isMicEnabled:(NSNumber *)isMicEnabled
-    isCameraEnabled:(NSNumber *)isCameraEnabled {
+    enableMicrophone:(NSNumber *)enableMicrophone
+    enableCamera:(NSNumber *)enableCamera {
   JoinArgs* pigeonResult = [[JoinArgs alloc] init];
   pigeonResult.url = url;
   pigeonResult.token = token;
-  pigeonResult.isMicEnabled = isMicEnabled;
-  pigeonResult.isCameraEnabled = isCameraEnabled;
+  pigeonResult.enableMicrophone = enableMicrophone;
+  pigeonResult.enableCamera = enableCamera;
   return pigeonResult;
 }
 + (JoinArgs *)fromMap:(NSDictionary *)dict {
@@ -109,10 +108,10 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   NSAssert(pigeonResult.url != nil, @"");
   pigeonResult.token = GetNullableObject(dict, @"token");
   NSAssert(pigeonResult.token != nil, @"");
-  pigeonResult.isMicEnabled = GetNullableObject(dict, @"isMicEnabled");
-  NSAssert(pigeonResult.isMicEnabled != nil, @"");
-  pigeonResult.isCameraEnabled = GetNullableObject(dict, @"isCameraEnabled");
-  NSAssert(pigeonResult.isCameraEnabled != nil, @"");
+  pigeonResult.enableMicrophone = GetNullableObject(dict, @"enableMicrophone");
+  NSAssert(pigeonResult.enableMicrophone != nil, @"");
+  pigeonResult.enableCamera = GetNullableObject(dict, @"enableCamera");
+  NSAssert(pigeonResult.enableCamera != nil, @"");
   return pigeonResult;
 }
 + (nullable JoinArgs *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [JoinArgs fromMap:dict] : nil; }
@@ -120,8 +119,8 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   return @{
     @"url" : (self.url ?: [NSNull null]),
     @"token" : (self.token ?: [NSNull null]),
-    @"isMicEnabled" : (self.isMicEnabled ?: [NSNull null]),
-    @"isCameraEnabled" : (self.isCameraEnabled ?: [NSNull null]),
+    @"enableMicrophone" : (self.enableMicrophone ?: [NSNull null]),
+    @"enableCamera" : (self.enableCamera ?: [NSNull null]),
   };
 }
 @end

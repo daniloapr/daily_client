@@ -1,19 +1,5 @@
-import 'package:daily_client/pigeon.g.dart';
+export './src/daily_client_impl.dart';
 
-class DailyClient {
-  final _messenger = DailyClientMessenger();
-
-  Future<void> join(String url) async {
-    final result = await _messenger.join(JoinArgs(
-      url: url,
-      token: 'token',
-      isMicEnabled: false,
-      isCameraEnabled: false,
-    ));
-    print(result.error?.message);
-  }
-
-  Future<void> leave() async {
-    await _messenger.leave();
-  }
-}
+// Models
+export './src/models/join_options.dart';
+export './src/models/daily_client_exception.dart';
