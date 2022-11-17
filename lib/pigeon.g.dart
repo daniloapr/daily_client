@@ -377,3 +377,77 @@ class DailyMessenger {
     }
   }
 }
+
+class _DailyCallbackCodec extends StandardMessageCodec{
+  const _DailyCallbackCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is LocalParticipantMessage) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else 
+    if (value is RemoteParticipantMessage) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
+    } else 
+{
+      super.writeValue(buffer, value);
+    }
+  }
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:       
+        return LocalParticipantMessage.decode(readValue(buffer)!);
+      
+      case 129:       
+        return RemoteParticipantMessage.decode(readValue(buffer)!);
+      
+      default:      
+        return super.readValueOfType(type, buffer);
+      
+    }
+  }
+}
+abstract class DailyCallback {
+  static const MessageCodec<Object?> codec = _DailyCallbackCodec();
+
+  void onParticipantsUpdated(LocalParticipantMessage localParticipantMessage, List<RemoteParticipantMessage?> remoteParticipantsMessage);
+  void onCallStateUpdated(int stateCode);
+  static void setup(DailyCallback? api, {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.DailyCallback.onParticipantsUpdated', codec, binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantsUpdated was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final LocalParticipantMessage? arg_localParticipantMessage = (args[0] as LocalParticipantMessage?);
+          assert(arg_localParticipantMessage != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantsUpdated was null, expected non-null LocalParticipantMessage.');
+          final List<RemoteParticipantMessage?>? arg_remoteParticipantsMessage = (args[1] as List<Object?>?)?.cast<RemoteParticipantMessage?>();
+          assert(arg_remoteParticipantsMessage != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantsUpdated was null, expected non-null List<RemoteParticipantMessage?>.');
+          api.onParticipantsUpdated(arg_localParticipantMessage!, arg_remoteParticipantsMessage!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.DailyCallback.onCallStateUpdated', codec, binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null, 'Argument for dev.flutter.pigeon.DailyCallback.onCallStateUpdated was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_stateCode = (args[0] as int?);
+          assert(arg_stateCode != null, 'Argument for dev.flutter.pigeon.DailyCallback.onCallStateUpdated was null, expected non-null int.');
+          api.onCallStateUpdated(arg_stateCode!);
+          return;
+        });
+      }
+    }
+  }
+}

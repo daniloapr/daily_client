@@ -105,4 +105,12 @@ NSObject<FlutterMessageCodec> *DailyMessengerGetCodec(void);
 
 extern void DailyMessengerSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DailyMessenger> *_Nullable api);
 
+/// The codec used by DailyCallback.
+NSObject<FlutterMessageCodec> *DailyCallbackGetCodec(void);
+
+@interface DailyCallback : NSObject
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (void)onParticipantsUpdatedLocalParticipantMessage:(LocalParticipantMessage *)localParticipantMessage remoteParticipantsMessage:(NSArray<RemoteParticipantMessage *> *)remoteParticipantsMessage completion:(void(^)(NSError *_Nullable))completion;
+- (void)onCallStateUpdatedStateCode:(NSNumber *)stateCode completion:(void(^)(NSError *_Nullable))completion;
+@end
 NS_ASSUME_NONNULL_END

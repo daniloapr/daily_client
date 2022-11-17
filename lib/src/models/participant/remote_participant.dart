@@ -17,4 +17,13 @@ class RemoteParticipant extends Participant {
       isMicrophoneEnabled: message.isMicrophoneEnabled,
     );
   }
+
+  static List<RemoteParticipant> listFromMessage(
+    List<RemoteParticipantMessage?> list,
+  ) {
+    return list
+        .where((message) => message != null)
+        .map((message) => RemoteParticipant.fromMessage(message!))
+        .toList();
+  }
 }
