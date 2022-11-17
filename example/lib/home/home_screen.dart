@@ -15,7 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _tokenController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  
+
   final _dailyClient = getIt<DailyClient>();
 
   void _join(BuildContext context) async {
