@@ -2,15 +2,13 @@ import Flutter
 import UIKit
 import Daily
 
-public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyClientMessenger {
+public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
     private let call = CallClient()
     
-    func join(args: JoinArgs, completion: @escaping (VoidResult) -> Void) {
-        let url = URL(string: args.url)
-        
-        if(args.url.isEmpty || url == nil) {
+    func join(args: JoinArgs, completion: @escaping (JoinMessage) -> Void) {
+        guard let url = URL(string: args.url) else {
             completion(
-                VoidResult(
+                JoinMessage(
                     error: PlatformError(
                         message: "Invalid url",
                         code: ErrorCode.invalidUrl
@@ -22,7 +20,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyClientMesseng
         
         do {
             try call.join(
-                url: url!,
+                url: url,
                 token: args.token.isEmpty ? nil : MeetingToken(stringValue: args.token),
                 settings: .init(
                     inputs: .set(.init(
@@ -31,10 +29,24 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyClientMesseng
                     ))
                 )
             )
-            completion(VoidResult(error: nil))
+            
+            let local = call.participants.local
+            let remote = call.participants.remote
+            
+            let localParticipantMessage = LocalParticipantMessage(
+                id: local.id.uuid.uuidString,
+                isCameraEnabled: local.media?.camera.state == .playable,
+                isMicrophoneEnabled: local.media?.microphone.state == .playable,
+                userId: local.info.userId?.uuid.uuidString ?? ""
+            )
+            
+            completion(JoinMessage(
+                localParticipant: localParticipantMessage,
+                remoteParticipants: <#T##[RemoteParticipantMessage?]?#>
+            ))
         } catch {
             completion(
-                VoidResult(
+                JoinMessage(
                     error: PlatformError(
                         message: "\(error)",
                         code: ErrorCode.join
@@ -49,9 +61,43 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyClientMesseng
         return VoidResult(error: nil)
     }
     
+    func setMicrophoneEnabled(enableMic: Bool) -> VoidResult {
+        do {
+            _ = try call.updateInputs {inputs in
+                inputs(\.microphone, .enabled(enableMic))
+            }
+            
+            return VoidResult()
+        } catch {
+            return VoidResult(
+                error: PlatformError(
+                    message: "\(error)",
+                    code: ErrorCode.updateMicrophone
+                )
+            )
+        }
+        
+    }
+    
+    func setCameraEnabled(enableCam: Bool) -> VoidResult {
+        do {
+            _ = try call.updateInputs {inputs in
+                inputs(\.camera, .enabled(enableCam))
+            }
+            return VoidResult()
+        } catch {
+            return VoidResult(
+                error: PlatformError(
+                    message: "\(error)",
+                    code: ErrorCode.updateCamera
+                )
+            )
+        }
+    }
+    
     
     public static func register(with registrar: FlutterPluginRegistrar) {
-        DailyClientMessengerSetup.setUp(
+        DailyMessengerSetup.setUp(
             binaryMessenger: registrar.messenger(),
             api: SwiftDailyClientPlugin()
         )

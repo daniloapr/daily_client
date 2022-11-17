@@ -1,7 +1,7 @@
 .PHONY: pigeon
 pigeon:
 	flutter pub run pigeon \
-	--input pigeons/daily_client_messenger.dart \
+	--input pigeons/daily_messenger.dart \
 	--dart_out lib/pigeon.g.dart \
 	--objc_header_out ios/Classes/pigeon.h \
 	--objc_source_out ios/Classes/pigeon.m \
