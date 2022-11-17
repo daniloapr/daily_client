@@ -11,11 +11,16 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSUInteger, ErrorCode) {
   ErrorCodeInvalidUrl = 0,
   ErrorCodeJoin = 1,
+  ErrorCodeUpdateCamera = 2,
+  ErrorCodeUpdateMicrophone = 3,
 };
 
 @class VoidResult;
 @class PlatformError;
 @class JoinArgs;
+@class JoinMessage;
+@class LocalParticipantMessage;
+@class RemoteParticipantMessage;
 
 @interface VoidResult : NSObject
 + (instancetype)makeWithError:(nullable PlatformError *)error;
@@ -44,16 +49,60 @@ typedef NS_ENUM(NSUInteger, ErrorCode) {
 @property(nonatomic, strong) NSNumber * enableCamera;
 @end
 
-/// The codec used by DailyClientMessenger.
-NSObject<FlutterMessageCodec> *DailyClientMessengerGetCodec(void);
-
-/// This is the base class used for generating the pigeon code
-@protocol DailyClientMessenger
-- (void)joinArgs:(JoinArgs *)args completion:(void(^)(VoidResult *_Nullable, FlutterError *_Nullable))completion;
-/// @return `nil` only when `error != nil`.
-- (nullable VoidResult *)leaveWithError:(FlutterError *_Nullable *_Nonnull)error;
+/// Returning class from join() function
+@interface JoinMessage : NSObject
++ (instancetype)makeWithLocalParticipant:(nullable LocalParticipantMessage *)localParticipant
+    remoteParticipants:(nullable NSArray<RemoteParticipantMessage *> *)remoteParticipants
+    error:(nullable PlatformError *)error;
+@property(nonatomic, strong, nullable) LocalParticipantMessage * localParticipant;
+@property(nonatomic, strong, nullable) NSArray<RemoteParticipantMessage *> * remoteParticipants;
+@property(nonatomic, strong, nullable) PlatformError * error;
 @end
 
-extern void DailyClientMessengerSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DailyClientMessenger> *_Nullable api);
+@interface LocalParticipantMessage : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithId:(NSString *)id
+    isCameraEnabled:(NSNumber *)isCameraEnabled
+    isMicrophoneEnabled:(NSNumber *)isMicrophoneEnabled
+    userId:(NSString *)userId;
+@property(nonatomic, copy) NSString * id;
+@property(nonatomic, strong) NSNumber * isCameraEnabled;
+@property(nonatomic, strong) NSNumber * isMicrophoneEnabled;
+@property(nonatomic, copy) NSString * userId;
+@end
+
+@interface RemoteParticipantMessage : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithId:(NSString *)id
+    isCameraEnabled:(NSNumber *)isCameraEnabled
+    isMicrophoneEnabled:(NSNumber *)isMicrophoneEnabled
+    userId:(NSString *)userId;
+@property(nonatomic, copy) NSString * id;
+@property(nonatomic, strong) NSNumber * isCameraEnabled;
+@property(nonatomic, strong) NSNumber * isMicrophoneEnabled;
+@property(nonatomic, copy) NSString * userId;
+@end
+
+/// The codec used by DailyMessenger.
+NSObject<FlutterMessageCodec> *DailyMessengerGetCodec(void);
+
+/// This is the base class of communication with native code.
+/// It's used for generating the Pigeon files
+@protocol DailyMessenger
+/// Join Daily call.
+- (void)joinArgs:(JoinArgs *)args completion:(void(^)(JoinMessage *_Nullable, FlutterError *_Nullable))completion;
+/// Leave Daily call.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable VoidResult *)leaveWithError:(FlutterError *_Nullable *_Nonnull)error;
+/// @return `nil` only when `error != nil`.
+- (nullable VoidResult *)setMicrophoneEnabledEnableMic:(NSNumber *)enableMic error:(FlutterError *_Nullable *_Nonnull)error;
+/// @return `nil` only when `error != nil`.
+- (nullable VoidResult *)setCameraEnabledEnableCam:(NSNumber *)enableCam error:(FlutterError *_Nullable *_Nonnull)error;
+@end
+
+extern void DailyMessengerSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DailyMessenger> *_Nullable api);
 
 NS_ASSUME_NONNULL_END

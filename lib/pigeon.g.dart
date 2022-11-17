@@ -10,6 +10,8 @@ import 'package:flutter/services.dart';
 enum ErrorCode {
   invalidUrl,
   join,
+  updateCamera,
+  updateMicrophone,
 }
 
 class VoidResult {
@@ -94,20 +96,132 @@ class JoinArgs {
   }
 }
 
-class _DailyClientMessengerCodec extends StandardMessageCodec{
-  const _DailyClientMessengerCodec();
+/// Returning class from join() function
+class JoinMessage {
+  JoinMessage({
+    this.localParticipant,
+    this.remoteParticipants,
+    this.error,
+  });
+
+  LocalParticipantMessage? localParticipant;
+  List<RemoteParticipantMessage?>? remoteParticipants;
+  PlatformError? error;
+
+  Object encode() {
+    final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
+    pigeonMap['localParticipant'] = localParticipant?.encode();
+    pigeonMap['remoteParticipants'] = remoteParticipants;
+    pigeonMap['error'] = error?.encode();
+    return pigeonMap;
+  }
+
+  static JoinMessage decode(Object message) {
+    final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
+    return JoinMessage(
+      localParticipant: pigeonMap['localParticipant'] != null
+          ? LocalParticipantMessage.decode(pigeonMap['localParticipant']!)
+          : null,
+      remoteParticipants: (pigeonMap['remoteParticipants'] as List<Object?>?)?.cast<RemoteParticipantMessage?>(),
+      error: pigeonMap['error'] != null
+          ? PlatformError.decode(pigeonMap['error']!)
+          : null,
+    );
+  }
+}
+
+class LocalParticipantMessage {
+  LocalParticipantMessage({
+    required this.id,
+    required this.isCameraEnabled,
+    required this.isMicrophoneEnabled,
+    required this.userId,
+  });
+
+  String id;
+  bool isCameraEnabled;
+  bool isMicrophoneEnabled;
+  String userId;
+
+  Object encode() {
+    final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
+    pigeonMap['id'] = id;
+    pigeonMap['isCameraEnabled'] = isCameraEnabled;
+    pigeonMap['isMicrophoneEnabled'] = isMicrophoneEnabled;
+    pigeonMap['userId'] = userId;
+    return pigeonMap;
+  }
+
+  static LocalParticipantMessage decode(Object message) {
+    final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
+    return LocalParticipantMessage(
+      id: pigeonMap['id']! as String,
+      isCameraEnabled: pigeonMap['isCameraEnabled']! as bool,
+      isMicrophoneEnabled: pigeonMap['isMicrophoneEnabled']! as bool,
+      userId: pigeonMap['userId']! as String,
+    );
+  }
+}
+
+class RemoteParticipantMessage {
+  RemoteParticipantMessage({
+    required this.id,
+    required this.isCameraEnabled,
+    required this.isMicrophoneEnabled,
+    required this.userId,
+  });
+
+  String id;
+  bool isCameraEnabled;
+  bool isMicrophoneEnabled;
+  String userId;
+
+  Object encode() {
+    final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
+    pigeonMap['id'] = id;
+    pigeonMap['isCameraEnabled'] = isCameraEnabled;
+    pigeonMap['isMicrophoneEnabled'] = isMicrophoneEnabled;
+    pigeonMap['userId'] = userId;
+    return pigeonMap;
+  }
+
+  static RemoteParticipantMessage decode(Object message) {
+    final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
+    return RemoteParticipantMessage(
+      id: pigeonMap['id']! as String,
+      isCameraEnabled: pigeonMap['isCameraEnabled']! as bool,
+      isMicrophoneEnabled: pigeonMap['isMicrophoneEnabled']! as bool,
+      userId: pigeonMap['userId']! as String,
+    );
+  }
+}
+
+class _DailyMessengerCodec extends StandardMessageCodec{
+  const _DailyMessengerCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is JoinArgs) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
     } else 
-    if (value is PlatformError) {
+    if (value is JoinMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else 
-    if (value is VoidResult) {
+    if (value is LocalParticipantMessage) {
       buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else 
+    if (value is PlatformError) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else 
+    if (value is RemoteParticipantMessage) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else 
+    if (value is VoidResult) {
+      buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else 
 {
@@ -121,9 +235,18 @@ class _DailyClientMessengerCodec extends StandardMessageCodec{
         return JoinArgs.decode(readValue(buffer)!);
       
       case 129:       
-        return PlatformError.decode(readValue(buffer)!);
+        return JoinMessage.decode(readValue(buffer)!);
       
       case 130:       
+        return LocalParticipantMessage.decode(readValue(buffer)!);
+      
+      case 131:       
+        return PlatformError.decode(readValue(buffer)!);
+      
+      case 132:       
+        return RemoteParticipantMessage.decode(readValue(buffer)!);
+      
+      case 133:       
         return VoidResult.decode(readValue(buffer)!);
       
       default:      
@@ -133,21 +256,51 @@ class _DailyClientMessengerCodec extends StandardMessageCodec{
   }
 }
 
-/// This is the base class used for generating the pigeon code
-class DailyClientMessenger {
-  /// Constructor for [DailyClientMessenger].  The [binaryMessenger] named argument is
+/// This is the base class of communication with native code.
+/// It's used for generating the Pigeon files
+class DailyMessenger {
+  /// Constructor for [DailyMessenger].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  DailyClientMessenger({BinaryMessenger? binaryMessenger}) : _binaryMessenger = binaryMessenger;
+  DailyMessenger({BinaryMessenger? binaryMessenger}) : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
-  static const MessageCodec<Object?> codec = _DailyClientMessengerCodec();
+  static const MessageCodec<Object?> codec = _DailyMessengerCodec();
 
-  Future<VoidResult> join(JoinArgs arg_args) async {
+  /// Join Daily call.
+  Future<JoinMessage> join(JoinArgs arg_args) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.DailyClientMessenger.join', codec, binaryMessenger: _binaryMessenger);
+        'dev.flutter.pigeon.DailyMessenger.join', codec, binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
         await channel.send(<Object?>[arg_args]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error = (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else if (replyMap['result'] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyMap['result'] as JoinMessage?)!;
+    }
+  }
+
+  /// Leave Daily call.
+  Future<VoidResult> leave() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.DailyMessenger.leave', codec, binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(null) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -170,11 +323,38 @@ class DailyClientMessenger {
     }
   }
 
-  Future<VoidResult> leave() async {
+  Future<VoidResult> setMicrophoneEnabled(bool arg_enableMic) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.DailyClientMessenger.leave', codec, binaryMessenger: _binaryMessenger);
+        'dev.flutter.pigeon.DailyMessenger.setMicrophoneEnabled', codec, binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
-        await channel.send(null) as Map<Object?, Object?>?;
+        await channel.send(<Object?>[arg_enableMic]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error = (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else if (replyMap['result'] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyMap['result'] as VoidResult?)!;
+    }
+  }
+
+  Future<VoidResult> setCameraEnabled(bool arg_enableCam) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.DailyMessenger.setCameraEnabled', codec, binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(<Object?>[arg_enableCam]) as Map<Object?, Object?>?;
     if (replyMap == null) {
       throw PlatformException(
         code: 'channel-error',

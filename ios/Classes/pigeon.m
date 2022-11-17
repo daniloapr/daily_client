@@ -46,6 +46,21 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 + (nullable JoinArgs *)nullableFromMap:(NSDictionary *)dict;
 - (NSDictionary *)toMap;
 @end
+@interface JoinMessage ()
++ (JoinMessage *)fromMap:(NSDictionary *)dict;
++ (nullable JoinMessage *)nullableFromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
+@end
+@interface LocalParticipantMessage ()
++ (LocalParticipantMessage *)fromMap:(NSDictionary *)dict;
++ (nullable LocalParticipantMessage *)nullableFromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
+@end
+@interface RemoteParticipantMessage ()
++ (RemoteParticipantMessage *)fromMap:(NSDictionary *)dict;
++ (nullable RemoteParticipantMessage *)nullableFromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
+@end
 
 @implementation VoidResult
 + (instancetype)makeWithError:(nullable PlatformError *)error {
@@ -125,9 +140,106 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 }
 @end
 
-@interface DailyClientMessengerCodecReader : FlutterStandardReader
+@implementation JoinMessage
++ (instancetype)makeWithLocalParticipant:(nullable LocalParticipantMessage *)localParticipant
+    remoteParticipants:(nullable NSArray<RemoteParticipantMessage *> *)remoteParticipants
+    error:(nullable PlatformError *)error {
+  JoinMessage* pigeonResult = [[JoinMessage alloc] init];
+  pigeonResult.localParticipant = localParticipant;
+  pigeonResult.remoteParticipants = remoteParticipants;
+  pigeonResult.error = error;
+  return pigeonResult;
+}
++ (JoinMessage *)fromMap:(NSDictionary *)dict {
+  JoinMessage *pigeonResult = [[JoinMessage alloc] init];
+  pigeonResult.localParticipant = [LocalParticipantMessage nullableFromMap:GetNullableObject(dict, @"localParticipant")];
+  pigeonResult.remoteParticipants = GetNullableObject(dict, @"remoteParticipants");
+  pigeonResult.error = [PlatformError nullableFromMap:GetNullableObject(dict, @"error")];
+  return pigeonResult;
+}
++ (nullable JoinMessage *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [JoinMessage fromMap:dict] : nil; }
+- (NSDictionary *)toMap {
+  return @{
+    @"localParticipant" : (self.localParticipant ? [self.localParticipant toMap] : [NSNull null]),
+    @"remoteParticipants" : (self.remoteParticipants ?: [NSNull null]),
+    @"error" : (self.error ? [self.error toMap] : [NSNull null]),
+  };
+}
 @end
-@implementation DailyClientMessengerCodecReader
+
+@implementation LocalParticipantMessage
++ (instancetype)makeWithId:(NSString *)id
+    isCameraEnabled:(NSNumber *)isCameraEnabled
+    isMicrophoneEnabled:(NSNumber *)isMicrophoneEnabled
+    userId:(NSString *)userId {
+  LocalParticipantMessage* pigeonResult = [[LocalParticipantMessage alloc] init];
+  pigeonResult.id = id;
+  pigeonResult.isCameraEnabled = isCameraEnabled;
+  pigeonResult.isMicrophoneEnabled = isMicrophoneEnabled;
+  pigeonResult.userId = userId;
+  return pigeonResult;
+}
++ (LocalParticipantMessage *)fromMap:(NSDictionary *)dict {
+  LocalParticipantMessage *pigeonResult = [[LocalParticipantMessage alloc] init];
+  pigeonResult.id = GetNullableObject(dict, @"id");
+  NSAssert(pigeonResult.id != nil, @"");
+  pigeonResult.isCameraEnabled = GetNullableObject(dict, @"isCameraEnabled");
+  NSAssert(pigeonResult.isCameraEnabled != nil, @"");
+  pigeonResult.isMicrophoneEnabled = GetNullableObject(dict, @"isMicrophoneEnabled");
+  NSAssert(pigeonResult.isMicrophoneEnabled != nil, @"");
+  pigeonResult.userId = GetNullableObject(dict, @"userId");
+  NSAssert(pigeonResult.userId != nil, @"");
+  return pigeonResult;
+}
++ (nullable LocalParticipantMessage *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [LocalParticipantMessage fromMap:dict] : nil; }
+- (NSDictionary *)toMap {
+  return @{
+    @"id" : (self.id ?: [NSNull null]),
+    @"isCameraEnabled" : (self.isCameraEnabled ?: [NSNull null]),
+    @"isMicrophoneEnabled" : (self.isMicrophoneEnabled ?: [NSNull null]),
+    @"userId" : (self.userId ?: [NSNull null]),
+  };
+}
+@end
+
+@implementation RemoteParticipantMessage
++ (instancetype)makeWithId:(NSString *)id
+    isCameraEnabled:(NSNumber *)isCameraEnabled
+    isMicrophoneEnabled:(NSNumber *)isMicrophoneEnabled
+    userId:(NSString *)userId {
+  RemoteParticipantMessage* pigeonResult = [[RemoteParticipantMessage alloc] init];
+  pigeonResult.id = id;
+  pigeonResult.isCameraEnabled = isCameraEnabled;
+  pigeonResult.isMicrophoneEnabled = isMicrophoneEnabled;
+  pigeonResult.userId = userId;
+  return pigeonResult;
+}
++ (RemoteParticipantMessage *)fromMap:(NSDictionary *)dict {
+  RemoteParticipantMessage *pigeonResult = [[RemoteParticipantMessage alloc] init];
+  pigeonResult.id = GetNullableObject(dict, @"id");
+  NSAssert(pigeonResult.id != nil, @"");
+  pigeonResult.isCameraEnabled = GetNullableObject(dict, @"isCameraEnabled");
+  NSAssert(pigeonResult.isCameraEnabled != nil, @"");
+  pigeonResult.isMicrophoneEnabled = GetNullableObject(dict, @"isMicrophoneEnabled");
+  NSAssert(pigeonResult.isMicrophoneEnabled != nil, @"");
+  pigeonResult.userId = GetNullableObject(dict, @"userId");
+  NSAssert(pigeonResult.userId != nil, @"");
+  return pigeonResult;
+}
++ (nullable RemoteParticipantMessage *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [RemoteParticipantMessage fromMap:dict] : nil; }
+- (NSDictionary *)toMap {
+  return @{
+    @"id" : (self.id ?: [NSNull null]),
+    @"isCameraEnabled" : (self.isCameraEnabled ?: [NSNull null]),
+    @"isMicrophoneEnabled" : (self.isMicrophoneEnabled ?: [NSNull null]),
+    @"userId" : (self.userId ?: [NSNull null]),
+  };
+}
+@end
+
+@interface DailyMessengerCodecReader : FlutterStandardReader
+@end
+@implementation DailyMessengerCodecReader
 - (nullable id)readValueOfType:(UInt8)type 
 {
   switch (type) {
@@ -135,9 +247,18 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
       return [JoinArgs fromMap:[self readValue]];
     
     case 129:     
-      return [PlatformError fromMap:[self readValue]];
+      return [JoinMessage fromMap:[self readValue]];
     
     case 130:     
+      return [LocalParticipantMessage fromMap:[self readValue]];
+    
+    case 131:     
+      return [PlatformError fromMap:[self readValue]];
+    
+    case 132:     
+      return [RemoteParticipantMessage fromMap:[self readValue]];
+    
+    case 133:     
       return [VoidResult fromMap:[self readValue]];
     
     default:    
@@ -147,21 +268,33 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 }
 @end
 
-@interface DailyClientMessengerCodecWriter : FlutterStandardWriter
+@interface DailyMessengerCodecWriter : FlutterStandardWriter
 @end
-@implementation DailyClientMessengerCodecWriter
+@implementation DailyMessengerCodecWriter
 - (void)writeValue:(id)value 
 {
   if ([value isKindOfClass:[JoinArgs class]]) {
     [self writeByte:128];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[PlatformError class]]) {
+  if ([value isKindOfClass:[JoinMessage class]]) {
     [self writeByte:129];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[VoidResult class]]) {
+  if ([value isKindOfClass:[LocalParticipantMessage class]]) {
     [self writeByte:130];
+    [self writeValue:[value toMap]];
+  } else 
+  if ([value isKindOfClass:[PlatformError class]]) {
+    [self writeByte:131];
+    [self writeValue:[value toMap]];
+  } else 
+  if ([value isKindOfClass:[RemoteParticipantMessage class]]) {
+    [self writeByte:132];
+    [self writeValue:[value toMap]];
+  } else 
+  if ([value isKindOfClass:[VoidResult class]]) {
+    [self writeByte:133];
     [self writeValue:[value toMap]];
   } else 
 {
@@ -170,43 +303,63 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 }
 @end
 
-@interface DailyClientMessengerCodecReaderWriter : FlutterStandardReaderWriter
+@interface DailyMessengerCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation DailyClientMessengerCodecReaderWriter
+@implementation DailyMessengerCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[DailyClientMessengerCodecWriter alloc] initWithData:data];
+  return [[DailyMessengerCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[DailyClientMessengerCodecReader alloc] initWithData:data];
+  return [[DailyMessengerCodecReader alloc] initWithData:data];
 }
 @end
 
 
-NSObject<FlutterMessageCodec> *DailyClientMessengerGetCodec() {
+NSObject<FlutterMessageCodec> *DailyMessengerGetCodec() {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    DailyClientMessengerCodecReaderWriter *readerWriter = [[DailyClientMessengerCodecReaderWriter alloc] init];
+    DailyMessengerCodecReaderWriter *readerWriter = [[DailyMessengerCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void DailyClientMessengerSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DailyClientMessenger> *api) {
-  {
+void DailyMessengerSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DailyMessenger> *api) {
+    /// Join Daily call.
+{
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.DailyClientMessenger.join"
+        initWithName:@"dev.flutter.pigeon.DailyMessenger.join"
         binaryMessenger:binaryMessenger
-        codec:DailyClientMessengerGetCodec()];
+        codec:DailyMessengerGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(joinArgs:completion:)], @"DailyClientMessenger api (%@) doesn't respond to @selector(joinArgs:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(joinArgs:completion:)], @"DailyMessenger api (%@) doesn't respond to @selector(joinArgs:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         JoinArgs *arg_args = GetNullableObjectAtIndex(args, 0);
-        [api joinArgs:arg_args completion:^(VoidResult *_Nullable output, FlutterError *_Nullable error) {
+        [api joinArgs:arg_args completion:^(JoinMessage *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
+      }];
+    }
+    else {
+      [channel setMessageHandler:nil];
+    }
+  }
+    /// Leave Daily call.
+{
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.DailyMessenger.leave"
+        binaryMessenger:binaryMessenger
+        codec:DailyMessengerGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(leaveWithError:)], @"DailyMessenger api (%@) doesn't respond to @selector(leaveWithError:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        FlutterError *error;
+        VoidResult *output = [api leaveWithError:&error];
+        callback(wrapResult(output, error));
       }];
     }
     else {
@@ -216,14 +369,36 @@ void DailyClientMessengerSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObj
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.DailyClientMessenger.leave"
+        initWithName:@"dev.flutter.pigeon.DailyMessenger.setMicrophoneEnabled"
         binaryMessenger:binaryMessenger
-        codec:DailyClientMessengerGetCodec()];
+        codec:DailyMessengerGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(leaveWithError:)], @"DailyClientMessenger api (%@) doesn't respond to @selector(leaveWithError:)", api);
+      NSCAssert([api respondsToSelector:@selector(setMicrophoneEnabledEnableMic:error:)], @"DailyMessenger api (%@) doesn't respond to @selector(setMicrophoneEnabledEnableMic:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_enableMic = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        VoidResult *output = [api leaveWithError:&error];
+        VoidResult *output = [api setMicrophoneEnabledEnableMic:arg_enableMic error:&error];
+        callback(wrapResult(output, error));
+      }];
+    }
+    else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.DailyMessenger.setCameraEnabled"
+        binaryMessenger:binaryMessenger
+        codec:DailyMessengerGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(setCameraEnabledEnableCam:error:)], @"DailyMessenger api (%@) doesn't respond to @selector(setCameraEnabledEnableCam:error:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_enableCam = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        VoidResult *output = [api setCameraEnabledEnableCam:arg_enableCam error:&error];
         callback(wrapResult(output, error));
       }];
     }

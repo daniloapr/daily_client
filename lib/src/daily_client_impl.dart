@@ -1,10 +1,12 @@
+import 'package:daily_client/src/models/join/join_result.dart';
+
 import '../daily_client.dart';
 import '../pigeon.g.dart';
 
 class DailyClient {
-  final _messenger = DailyClientMessenger();
+  final _messenger = DailyMessenger();
 
-  Future<void> join(JoinOptions options) async {
+  Future<JoinResult> join(JoinOptions options) async {
     final result = await _messenger.join(
       JoinArgs(
         url: options.url,
@@ -14,6 +16,23 @@ class DailyClient {
       ),
     );
     _handleError(result.error);
+
+    if (result.localParticipant == null || result.remoteParticipants == null) {
+      throw DailyNullParticipantsException();
+    }
+
+    final localParticipant =
+        LocalParticipant.fromMessage(result.localParticipant!);
+
+    final remoteParticipants = result.remoteParticipants!
+        .where((message) => message != null)
+        .map((message) => RemoteParticipant.fromMessage(message!))
+        .toList();
+
+    return JoinResult(
+      localParticipant: localParticipant,
+      remoteParticipants: remoteParticipants,
+    );
   }
 
   Future<void> leave() async {
@@ -27,8 +46,20 @@ class DailyClient {
         case ErrorCode.invalidUrl:
           throw DailyInvalidUrlException();
         case ErrorCode.join:
-          DailyJoinException();
+          throw DailyJoinException();
+        case ErrorCode.updateCamera:
+          throw DailyUpdateCameraException();
+        case ErrorCode.updateMicrophone:
+          throw DailyUpdateCameraException();
       }
     }
+  }
+
+  void setMicrophoneEnabled(bool enableMic) {
+    _messenger.setMicrophoneEnabled(enableMic);
+  }
+
+  void setCameraEnabled(bool enableCamera) {
+    _messenger.setCameraEnabled(enableCamera);
   }
 }

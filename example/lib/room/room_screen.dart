@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 
+import 'package:daily_client_example/room/widgets/dock.dart';
+import 'package:daily_client_example/room/widgets/participants_grid.dart';
+
 class RoomScreen extends StatelessWidget {
   const RoomScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: Text('Room'),
+        child: Column(
+          children: const [
+            ParticipantsGrid(),
+            Dock(),
+          ],
+        ),
       ),
     );
   }

@@ -16,6 +16,8 @@ import FlutterMacOS
 enum ErrorCode: Int {
   case invalidUrl = 0
   case join = 1
+  case updateCamera = 2
+  case updateMicrophone = 3
 }
 
 ///Generated class from Pigeon that represents data sent in messages.
@@ -91,14 +93,114 @@ struct JoinArgs {
   }
 }
 
-private class DailyClientMessengerCodecReader: FlutterStandardReader {
+/// Returning class from join() function
+///
+///Generated class from Pigeon that represents data sent in messages.
+struct JoinMessage {
+  var localParticipant: LocalParticipantMessage? = nil
+  var remoteParticipants: [RemoteParticipantMessage?]? = nil
+  var error: PlatformError? = nil
+
+  static func fromMap(_ map: [String: Any?]) -> JoinMessage? {
+    var localParticipant: LocalParticipantMessage? = nil
+    if let localParticipantMap = map["localParticipant"] as? [String: Any?] {
+      localParticipant = LocalParticipantMessage.fromMap(localParticipantMap)
+    }
+    let remoteParticipants = map["remoteParticipants"] as? [RemoteParticipantMessage?] 
+    var error: PlatformError? = nil
+    if let errorMap = map["error"] as? [String: Any?] {
+      error = PlatformError.fromMap(errorMap)
+    }
+
+    return JoinMessage(
+      localParticipant: localParticipant,
+      remoteParticipants: remoteParticipants,
+      error: error
+    )
+  }
+  func toMap() -> [String: Any?] {
+    return [
+      "localParticipant": localParticipant?.toMap(),
+      "remoteParticipants": remoteParticipants,
+      "error": error?.toMap()
+    ]
+  }
+}
+
+///Generated class from Pigeon that represents data sent in messages.
+struct LocalParticipantMessage {
+  var id: String
+  var isCameraEnabled: Bool
+  var isMicrophoneEnabled: Bool
+  var userId: String
+
+  static func fromMap(_ map: [String: Any?]) -> LocalParticipantMessage? {
+    let id = map["id"] as! String
+    let isCameraEnabled = map["isCameraEnabled"] as! Bool
+    let isMicrophoneEnabled = map["isMicrophoneEnabled"] as! Bool
+    let userId = map["userId"] as! String
+
+    return LocalParticipantMessage(
+      id: id,
+      isCameraEnabled: isCameraEnabled,
+      isMicrophoneEnabled: isMicrophoneEnabled,
+      userId: userId
+    )
+  }
+  func toMap() -> [String: Any?] {
+    return [
+      "id": id,
+      "isCameraEnabled": isCameraEnabled,
+      "isMicrophoneEnabled": isMicrophoneEnabled,
+      "userId": userId
+    ]
+  }
+}
+
+///Generated class from Pigeon that represents data sent in messages.
+struct RemoteParticipantMessage {
+  var id: String
+  var isCameraEnabled: Bool
+  var isMicrophoneEnabled: Bool
+  var userId: String
+
+  static func fromMap(_ map: [String: Any?]) -> RemoteParticipantMessage? {
+    let id = map["id"] as! String
+    let isCameraEnabled = map["isCameraEnabled"] as! Bool
+    let isMicrophoneEnabled = map["isMicrophoneEnabled"] as! Bool
+    let userId = map["userId"] as! String
+
+    return RemoteParticipantMessage(
+      id: id,
+      isCameraEnabled: isCameraEnabled,
+      isMicrophoneEnabled: isMicrophoneEnabled,
+      userId: userId
+    )
+  }
+  func toMap() -> [String: Any?] {
+    return [
+      "id": id,
+      "isCameraEnabled": isCameraEnabled,
+      "isMicrophoneEnabled": isMicrophoneEnabled,
+      "userId": userId
+    ]
+  }
+}
+
+private class DailyMessengerCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
       case 128:
         return JoinArgs.fromMap(self.readValue() as! [String: Any])      
       case 129:
-        return PlatformError.fromMap(self.readValue() as! [String: Any])      
+        return JoinMessage.fromMap(self.readValue() as! [String: Any])      
       case 130:
+        return LocalParticipantMessage.fromMap(self.readValue() as! [String: Any])      
+      case 131:
+        return PlatformError.fromMap(self.readValue() as! [String: Any])      
+      case 132:
+        return RemoteParticipantMessage.fromMap(self.readValue() as! [String: Any])      
+      case 133:
         return VoidResult.fromMap(self.readValue() as! [String: Any])      
       default:
         return super.readValue(ofType: type)
@@ -106,16 +208,25 @@ private class DailyClientMessengerCodecReader: FlutterStandardReader {
     }
   }
 }
-private class DailyClientMessengerCodecWriter: FlutterStandardWriter {
+private class DailyMessengerCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
     if let value = value as? JoinArgs {
       super.writeByte(128)
       super.writeValue(value.toMap())
-    } else if let value = value as? PlatformError {
+    } else if let value = value as? JoinMessage {
       super.writeByte(129)
       super.writeValue(value.toMap())
-    } else if let value = value as? VoidResult {
+    } else if let value = value as? LocalParticipantMessage {
       super.writeByte(130)
+      super.writeValue(value.toMap())
+    } else if let value = value as? PlatformError {
+      super.writeByte(131)
+      super.writeValue(value.toMap())
+    } else if let value = value as? RemoteParticipantMessage {
+      super.writeByte(132)
+      super.writeValue(value.toMap())
+    } else if let value = value as? VoidResult {
+      super.writeByte(133)
       super.writeValue(value.toMap())
     } else {
       super.writeValue(value)
@@ -123,35 +234,41 @@ private class DailyClientMessengerCodecWriter: FlutterStandardWriter {
   }
 }
 
-private class DailyClientMessengerCodecReaderWriter: FlutterStandardReaderWriter {
+private class DailyMessengerCodecReaderWriter: FlutterStandardReaderWriter {
   override func reader(with data: Data) -> FlutterStandardReader {
-    return DailyClientMessengerCodecReader(data: data)
+    return DailyMessengerCodecReader(data: data)
   }
 
   override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return DailyClientMessengerCodecWriter(data: data)
+    return DailyMessengerCodecWriter(data: data)
   }
 }
 
-class DailyClientMessengerCodec: FlutterStandardMessageCodec {
-  static let shared = DailyClientMessengerCodec(readerWriter: DailyClientMessengerCodecReaderWriter())
+class DailyMessengerCodec: FlutterStandardMessageCodec {
+  static let shared = DailyMessengerCodec(readerWriter: DailyMessengerCodecReaderWriter())
 }
 
-/// This is the base class used for generating the pigeon code
+/// This is the base class of communication with native code.
+/// It's used for generating the Pigeon files
 ///
 ///Generated protocol from Pigeon that represents a handler of messages from Flutter.
-protocol DailyClientMessenger {
-  func join(args: JoinArgs, completion: @escaping (VoidResult) -> Void)
+protocol DailyMessenger {
+  /// Join Daily call.
+  func join(args: JoinArgs, completion: @escaping (JoinMessage) -> Void)
+  /// Leave Daily call.
   func leave() -> VoidResult
+  func setMicrophoneEnabled(enableMic: Bool) -> VoidResult
+  func setCameraEnabled(enableCam: Bool) -> VoidResult
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
-class DailyClientMessengerSetup {
-  /// The codec used by DailyClientMessenger.
-  static var codec: FlutterStandardMessageCodec { DailyClientMessengerCodec.shared }
-  /// Sets up an instance of `DailyClientMessenger` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: DailyClientMessenger?) {
-    let joinChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyClientMessenger.join", binaryMessenger: binaryMessenger, codec: codec)
+class DailyMessengerSetup {
+  /// The codec used by DailyMessenger.
+  static var codec: FlutterStandardMessageCodec { DailyMessengerCodec.shared }
+  /// Sets up an instance of `DailyMessenger` to handle messages through the `binaryMessenger`.
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: DailyMessenger?) {
+    /// Join Daily call.
+    let joinChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyMessenger.join", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       joinChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -163,7 +280,8 @@ class DailyClientMessengerSetup {
     } else {
       joinChannel.setMessageHandler(nil)
     }
-    let leaveChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyClientMessenger.leave", binaryMessenger: binaryMessenger, codec: codec)
+    /// Leave Daily call.
+    let leaveChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyMessenger.leave", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       leaveChannel.setMessageHandler { _, reply in
         let result = api.leave()
@@ -171,6 +289,28 @@ class DailyClientMessengerSetup {
       }
     } else {
       leaveChannel.setMessageHandler(nil)
+    }
+    let setMicrophoneEnabledChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyMessenger.setMicrophoneEnabled", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setMicrophoneEnabledChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enableMicArg = args[0] as! Bool
+        let result = api.setMicrophoneEnabled(enableMic: enableMicArg)
+        reply(wrapResult(result))
+      }
+    } else {
+      setMicrophoneEnabledChannel.setMessageHandler(nil)
+    }
+    let setCameraEnabledChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyMessenger.setCameraEnabled", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setCameraEnabledChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enableCamArg = args[0] as! Bool
+        let result = api.setCameraEnabled(enableCam: enableCamArg)
+        reply(wrapResult(result))
+      }
+    } else {
+      setCameraEnabledChannel.setMessageHandler(nil)
     }
   }
 }
