@@ -8,7 +8,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyClientMesseng
     func join(args: JoinArgs, completion: @escaping (VoidResult) -> Void) {
         let url = URL(string: args.url)
         
-        if(!(url?.isFileURL ?? false)) {
+        if(args.url.isEmpty || url == nil) {
             completion(
                 VoidResult(
                     error: PlatformError(
@@ -31,6 +31,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyClientMesseng
                     ))
                 )
             )
+            completion(VoidResult(error: nil))
         } catch {
             completion(
                 VoidResult(
