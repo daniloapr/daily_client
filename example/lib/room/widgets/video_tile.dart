@@ -25,7 +25,6 @@ class VideoTile extends StatelessWidget {
             child: Builder(builder: (context) {
               final isCameraEnabled = participant.isCameraEnabled;
               if (isCameraEnabled) {
-                //TODO: implement daily.VideoRenderer
                 return daily.VideoRenderer(
                   participant: participant,
                   videoScaleMode: daily.VideoScaleMode.fill,
