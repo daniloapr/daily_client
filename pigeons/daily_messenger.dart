@@ -14,6 +14,16 @@ abstract class DailyMessenger {
   VoidResult setCameraEnabled(bool enableCam);
 }
 
+@FlutterApi()
+abstract class DailyCallback {
+  void onParticipantsUpdated(
+    LocalParticipantMessage localParticipantMessage,
+    List<RemoteParticipantMessage?> remoteParticipantsMessage,
+  );
+
+  void onCallStateUpdated(int stateCode);
+}
+
 class VoidResult extends Message {
   VoidResult(this.error);
 

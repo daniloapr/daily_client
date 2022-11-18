@@ -407,3 +407,95 @@ void DailyMessengerSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Da
     }
   }
 }
+@interface DailyCallbackCodecReader : FlutterStandardReader
+@end
+@implementation DailyCallbackCodecReader
+- (nullable id)readValueOfType:(UInt8)type 
+{
+  switch (type) {
+    case 128:     
+      return [LocalParticipantMessage fromMap:[self readValue]];
+    
+    case 129:     
+      return [RemoteParticipantMessage fromMap:[self readValue]];
+    
+    default:    
+      return [super readValueOfType:type];
+    
+  }
+}
+@end
+
+@interface DailyCallbackCodecWriter : FlutterStandardWriter
+@end
+@implementation DailyCallbackCodecWriter
+- (void)writeValue:(id)value 
+{
+  if ([value isKindOfClass:[LocalParticipantMessage class]]) {
+    [self writeByte:128];
+    [self writeValue:[value toMap]];
+  } else 
+  if ([value isKindOfClass:[RemoteParticipantMessage class]]) {
+    [self writeByte:129];
+    [self writeValue:[value toMap]];
+  } else 
+{
+    [super writeValue:value];
+  }
+}
+@end
+
+@interface DailyCallbackCodecReaderWriter : FlutterStandardReaderWriter
+@end
+@implementation DailyCallbackCodecReaderWriter
+- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
+  return [[DailyCallbackCodecWriter alloc] initWithData:data];
+}
+- (FlutterStandardReader *)readerWithData:(NSData *)data {
+  return [[DailyCallbackCodecReader alloc] initWithData:data];
+}
+@end
+
+
+NSObject<FlutterMessageCodec> *DailyCallbackGetCodec() {
+  static FlutterStandardMessageCodec *sSharedObject = nil;
+  static dispatch_once_t sPred = 0;
+  dispatch_once(&sPred, ^{
+    DailyCallbackCodecReaderWriter *readerWriter = [[DailyCallbackCodecReaderWriter alloc] init];
+    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
+  });
+  return sSharedObject;
+}
+
+@interface DailyCallback ()
+@property (nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
+@end
+
+@implementation DailyCallback
+
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
+  self = [super init];
+  if (self) {
+    _binaryMessenger = binaryMessenger;
+  }
+  return self;
+}
+- (void)onParticipantsUpdatedLocalParticipantMessage:(LocalParticipantMessage *)arg_localParticipantMessage remoteParticipantsMessage:(NSArray<RemoteParticipantMessage *> *)arg_remoteParticipantsMessage completion:(void(^)(NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.DailyCallback.onParticipantsUpdated"
+      binaryMessenger:self.binaryMessenger
+      codec:DailyCallbackGetCodec()      ];  [channel sendMessage:@[arg_localParticipantMessage ?: [NSNull null], arg_remoteParticipantsMessage ?: [NSNull null]] reply:^(id reply) {
+    completion(nil);
+  }];
+}
+- (void)onCallStateUpdatedStateCode:(NSNumber *)arg_stateCode completion:(void(^)(NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.DailyCallback.onCallStateUpdated"
+      binaryMessenger:self.binaryMessenger
+      codec:DailyCallbackGetCodec()      ];  [channel sendMessage:@[arg_stateCode ?: [NSNull null]] reply:^(id reply) {
+    completion(nil);
+  }];
+}
+@end

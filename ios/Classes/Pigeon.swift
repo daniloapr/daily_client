@@ -314,6 +314,69 @@ class DailyMessengerSetup {
     }
   }
 }
+private class DailyCallbackCodecReader: FlutterStandardReader {
+  override func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+      case 128:
+        return LocalParticipantMessage.fromMap(self.readValue() as! [String: Any])      
+      case 129:
+        return RemoteParticipantMessage.fromMap(self.readValue() as! [String: Any])      
+      default:
+        return super.readValue(ofType: type)
+      
+    }
+  }
+}
+private class DailyCallbackCodecWriter: FlutterStandardWriter {
+  override func writeValue(_ value: Any) {
+    if let value = value as? LocalParticipantMessage {
+      super.writeByte(128)
+      super.writeValue(value.toMap())
+    } else if let value = value as? RemoteParticipantMessage {
+      super.writeByte(129)
+      super.writeValue(value.toMap())
+    } else {
+      super.writeValue(value)
+    }
+  }
+}
+
+private class DailyCallbackCodecReaderWriter: FlutterStandardReaderWriter {
+  override func reader(with data: Data) -> FlutterStandardReader {
+    return DailyCallbackCodecReader(data: data)
+  }
+
+  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
+    return DailyCallbackCodecWriter(data: data)
+  }
+}
+
+class DailyCallbackCodec: FlutterStandardMessageCodec {
+  static let shared = DailyCallbackCodec(readerWriter: DailyCallbackCodecReaderWriter())
+}
+
+///Generated class from Pigeon that represents Flutter messages that can be called from Swift.
+class DailyCallback {
+  private let binaryMessenger: FlutterBinaryMessenger
+  init(binaryMessenger: FlutterBinaryMessenger){
+    self.binaryMessenger = binaryMessenger
+  }
+  var codec: FlutterStandardMessageCodec {
+    return DailyCallbackCodec.shared
+  }
+  func onParticipantsUpdated(localParticipantMessage localParticipantMessageArg: LocalParticipantMessage, remoteParticipantsMessage remoteParticipantsMessageArg: [RemoteParticipantMessage?], completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyCallback.onParticipantsUpdated", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([localParticipantMessageArg, remoteParticipantsMessageArg]) { _ in
+      completion()
+    }
+  }
+  func onCallStateUpdated(stateCode stateCodeArg: Int32, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyCallback.onCallStateUpdated", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([stateCodeArg]) { _ in
+      completion()
+    }
+  }
+}
 
 private func wrapResult(_ result: Any?) -> [String: Any?] {
   return ["result": result]

@@ -657,6 +657,67 @@ public class Pigeon {
       }
     }
   }
+  private static class DailyCallbackCodec extends StandardMessageCodec {
+    public static final DailyCallbackCodec INSTANCE = new DailyCallbackCodec();
+    private DailyCallbackCodec() {}
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte)128:         
+          return LocalParticipantMessage.fromMap((Map<String, Object>) readValue(buffer));
+        
+        case (byte)129:         
+          return RemoteParticipantMessage.fromMap((Map<String, Object>) readValue(buffer));
+        
+        default:        
+          return super.readValueOfType(type, buffer);
+        
+      }
+    }
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value)     {
+      if (value instanceof LocalParticipantMessage) {
+        stream.write(128);
+        writeValue(stream, ((LocalParticipantMessage) value).toMap());
+      } else 
+      if (value instanceof RemoteParticipantMessage) {
+        stream.write(129);
+        writeValue(stream, ((RemoteParticipantMessage) value).toMap());
+      } else 
+{
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
+  /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
+  public static class DailyCallback {
+    private final BinaryMessenger binaryMessenger;
+    public DailyCallback(BinaryMessenger argBinaryMessenger){
+      this.binaryMessenger = argBinaryMessenger;
+    }
+    public interface Reply<T> {
+      void reply(T reply);
+    }
+    /** The codec used by DailyCallback. */
+    static MessageCodec<Object> getCodec() {
+      return       DailyCallbackCodec.INSTANCE;
+    }
+    public void onParticipantsUpdated(@NonNull LocalParticipantMessage localParticipantMessageArg, @NonNull List<RemoteParticipantMessage> remoteParticipantsMessageArg, Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.DailyCallback.onParticipantsUpdated", getCodec());
+      channel.send(new ArrayList<Object>(Arrays.asList(localParticipantMessageArg, remoteParticipantsMessageArg)), channelReply -> {
+        callback.reply(null);
+      });
+    }
+    public void onCallStateUpdated(@NonNull Long stateCodeArg, Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.DailyCallback.onCallStateUpdated", getCodec());
+      channel.send(new ArrayList<Object>(Collections.singletonList(stateCodeArg)), channelReply -> {
+        callback.reply(null);
+      });
+    }
+  }
   @NonNull private static Map<String, Object> wrapError(@NonNull Throwable exception) {
     Map<String, Object> errorMap = new HashMap<>();
     errorMap.put("message", exception.toString());

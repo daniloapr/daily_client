@@ -40,9 +40,11 @@ class Dock extends StatelessWidget {
               key: const Key('Toggle camera button'),
               builder: (context) {
                 final isCameraEnabled = context.select(
-                  (AvCubit cubit) => (cubit.state as AvConnectedState)
-                      .localParticipant
-                      .isCameraEnabled,
+                  (AvCubit cubit) {
+                    final state = cubit.state;
+                    if (state is! AvConnectedState) return false;
+                    return state.localParticipant.isMicrophoneEnabled;
+                  },
                 );
 
                 return TextButton(
@@ -61,9 +63,11 @@ class Dock extends StatelessWidget {
               key: const Key('Toggle mic button'),
               builder: (context) {
                 final isMicEnabled = context.select(
-                  (AvCubit cubit) => (cubit.state as AvConnectedState)
-                      .localParticipant
-                      .isMicrophoneEnabled,
+                  (AvCubit cubit) {
+                    final state = cubit.state;
+                    if (state is! AvConnectedState) return false;
+                    return state.localParticipant.isMicrophoneEnabled;
+                  },
                 );
 
                 return TextButton(
