@@ -1,4 +1,5 @@
 import 'package:daily_client_example/audio_video/av_cubit.dart';
+import 'package:daily_client_example/core/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,12 +19,19 @@ class RoomScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
-        body: Center(
-          child: Column(
-            children: const [
-              Expanded(child: ParticipantsGrid()),
-              Dock(),
-            ],
+        backgroundColor: AppColors.darkBackground,
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              children: const [
+                SizedBox(height: 16),
+                Expanded(child: ParticipantsGrid()),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  child: Dock(),
+                ),
+              ],
+            ),
           ),
         ),
       ),

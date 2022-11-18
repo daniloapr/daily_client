@@ -14,7 +14,7 @@ class DailyClient extends DailyCallback {
   DailyClient() {
     DailyCallback.setup(this);
   }
-  
+
   final _messenger = DailyMessenger();
 
   final _participantsController = StreamController<Participants>.broadcast();
