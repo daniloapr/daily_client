@@ -43,7 +43,7 @@ class Dock extends StatelessWidget {
                   (AvCubit cubit) {
                     final state = cubit.state;
                     if (state is! AvConnectedState) return false;
-                    return state.localParticipant.isMicrophoneEnabled;
+                    return state.localParticipant.isCameraEnabled;
                   },
                 );
 

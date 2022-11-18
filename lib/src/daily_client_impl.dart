@@ -11,6 +11,10 @@ import 'models/participant/remote_participant.dart';
 import 'models/state/call_state.dart';
 
 class DailyClient extends DailyCallback {
+  DailyClient() {
+    DailyCallback.setup(this);
+  }
+  
   final _messenger = DailyMessenger();
 
   final _participantsController = StreamController<Participants>.broadcast();
