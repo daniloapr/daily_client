@@ -28,6 +28,10 @@ class DailyVideoRendererFactory: NSObject, FlutterPlatformViewFactory {
             call: call
         )
     }
+    
+    public func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
+          return FlutterStandardMessageCodec.sharedInstance()
+    }
 }
 
 class DailyVideoRenderer: NSObject, FlutterPlatformView {
