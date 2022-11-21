@@ -84,12 +84,14 @@ class LocalParticipantMessage {
     required this.userId,
     required this.isCameraEnabled,
     required this.isMicrophoneEnabled,
+    required this.media,
   });
 
   final String id;
   final bool isCameraEnabled;
   final bool isMicrophoneEnabled;
   final String userId;
+  final MediaMessage? media;
 }
 
 class RemoteParticipantMessage {
@@ -98,10 +100,76 @@ class RemoteParticipantMessage {
     required this.userId,
     required this.isCameraEnabled,
     required this.isMicrophoneEnabled,
+    required this.media,
   });
 
   final String id;
   final bool isCameraEnabled;
   final bool isMicrophoneEnabled;
   final String userId;
+  final MediaMessage? media;
+}
+
+class MediaMessage {
+  MediaMessage({
+    required this.camera,
+    required this.microphone,
+    required this.screenVideo,
+    required this.screenAudio,
+  });
+  final MediaInfoMessage camera;
+  final MediaInfoMessage microphone;
+  final MediaInfoMessage screenVideo;
+  final MediaInfoMessage screenAudio;
+}
+
+class MediaInfoMessage {
+  /// Used for both Video and Audio
+  MediaInfoMessage({
+    required this.state,
+    required this.subscribed,
+    required this.track,
+  });
+
+  final MediaStateMessage state;
+  final TrackSubscriptionStateMessage subscribed;
+  final TrackMessage? track;
+}
+
+enum TrackSubscriptionStateMessage {
+  subscribed,
+  staged,
+  unsubscribed,
+  unknown,
+}
+
+class TrackMessage {
+  final String id;
+  final bool isEnabled;
+
+  TrackMessage(this.id, this.isEnabled);
+}
+
+enum MediaStateMessage {
+  /// The track is blocked, i.e. does not have permission.
+  blocked,
+
+  /// The track is off, but not blocked.
+  ///
+  /// This occurs when the corresponding remote media has either `isEnabled` or `isPublishing`
+  /// set to `false`, or the local media has `isEnabled` set to `false`.
+  off,
+
+  /// The track has been published and is available to be received, but hasn't been subscribed to.
+  receivable,
+
+  /// The track is loading. It has been subscribed to.
+  loading,
+
+  /// The track is ready to be played. It has been subscribed to and has finished loading.
+  playable,
+
+  /// The track is currently unexpectedly (and hopefully only temporarily) unplayable.
+  interrupted,
+  unknown,
 }

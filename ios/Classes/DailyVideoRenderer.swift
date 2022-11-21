@@ -55,6 +55,7 @@ class DailyVideoRenderer: NSObject, FlutterPlatformView {
         )
         
         let videoView = Daily.VideoView(frame: frame)
+
         if let track = participant?.media?.camera.track {
             videoView.track = track
         }

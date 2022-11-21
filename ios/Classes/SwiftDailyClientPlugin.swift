@@ -158,12 +158,14 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         )
         
         let remoteParticipantsMessage = participants.remote.map{
-            let participant = $0.value
+            let participant: Daily.Participant = $0.value
+
             return RemoteParticipantMessage(
                 id: participant.id.uuid.uuidString,
                 isCameraEnabled: participant.media?.camera.state == .playable,
                 isMicrophoneEnabled: participant.media?.microphone.state == .playable,
-                userId: participant.info.userId?.uuid.uuidString ?? ""
+                userId: participant.info.userId?.uuid.uuidString ?? "",
+                media: getMediaMessage(fromMedia: participant.media)
             )
             
         }
@@ -186,6 +188,74 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
             return 4
         @unknown default:
             return -1
+        }
+    }
+    
+    private func getMediaMessage(fromMedia media: Daily.ParticipantMedia?) -> MediaMessage? {
+        
+        if let media {
+            return MediaMessage(
+                camera: getMediaInfoMessage(fromVideoInfo: media.camera),
+                microphone: getMediaInfoMessage(fromAudioInfo: media.microphone),
+                screenVideo: getMediaInfoMessage(fromVideoInfo: media.screenVideo),
+                screenAudio: getMediaInfoMessage(fromAudioInfo: media.screenAudio)
+            )
+        } else {
+            return nil
+        }
+        
+    }
+    
+    
+    
+    private func getMediaInfoMessage(fromVideoInfo info: Daily.ParticipantVideoInfo) -> MediaInfoMessage {
+        return MediaInfoMessage(
+            state: mapMediaStateToMessage(mediaState: info.state),
+            subscribed: mapTrackSubscriptionStateToMessage(subscriptionState: info.subscribed),
+            track: TrackMessage(id: info.track?.id ?? "", isEnabled: info.track?.isEnabled ?? false)
+        )
+    }
+    
+    
+    private func getMediaInfoMessage(fromAudioInfo info: Daily.ParticipantAudioInfo) -> MediaInfoMessage {
+        return MediaInfoMessage(
+            state: mapMediaStateToMessage(mediaState: info.state),
+            subscribed: mapTrackSubscriptionStateToMessage(subscriptionState: info.subscribed),
+            track: TrackMessage(id: info.track?.id ?? "", isEnabled: info.track?.isEnabled ?? false)
+        )
+    }
+    
+    private func mapMediaStateToMessage(mediaState: Daily.MediaState) -> MediaStateMessage {
+        switch mediaState {
+            
+        case .blocked:
+            return .blocked
+        case .off:
+            return .off
+        case .receivable:
+            return .receivable
+        case .loading:
+            return .loading
+        case .playable:
+            return .playable
+        case .interrupted:
+            return .interrupted
+        @unknown default:
+            return .unknown
+        }
+    }
+    
+    private func mapTrackSubscriptionStateToMessage(subscriptionState: Daily.TrackSubscriptionState) -> TrackSubscriptionStateMessage{
+        switch subscriptionState {
+            
+        case .subscribed:
+            return .subscribed
+        case .staged:
+            return .staged
+        case .unsubscribed:
+            return .unsubscribed
+        @unknown default:
+            return .unknown
         }
     }
 }

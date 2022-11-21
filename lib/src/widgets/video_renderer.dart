@@ -10,10 +10,14 @@ class VideoRenderer extends StatelessWidget {
     super.key,
     required this.participant,
     required this.videoScaleMode,
+    this.isScreenShare = false,
   });
 
   final Participant participant;
   final VideoScaleMode videoScaleMode;
+
+  /// Shows a screen share instead of the camera when available
+  final bool isScreenShare;
   // This is used in the platform side to register the view.
   static const String viewType = 'DailyVideoRenderer';
 
@@ -23,6 +27,7 @@ class VideoRenderer extends StatelessWidget {
       "participantId": participant.id,
       "isLocal": participant is LocalParticipant,
       "videoScaleMode": videoScaleMode.index,
+      "isScreenShare": isScreenShare,
     };
 
     return SizedBox.expand(

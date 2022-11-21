@@ -1,4 +1,3 @@
-import 'package:daily_client/daily_client.dart' as daily;
 import 'package:daily_client_example/audio_video/av_cubit.dart';
 import 'package:daily_client_example/audio_video/av_state.dart';
 import 'package:daily_client_example/room/widgets/empty_room.dart';
@@ -54,7 +53,10 @@ class ParticipantsGrid extends StatelessWidget {
             childAspectRatio: aspectRatio,
             children: remoteParticipants
                 .map(
-                  (participant) => VideoTile(participant: participant),
+                  (participant) => VideoTile(
+                    participant: participant,
+                    isScreenShare: false,
+                  ),
                 )
                 .toList(),
           );

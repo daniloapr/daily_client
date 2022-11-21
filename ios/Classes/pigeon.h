@@ -15,12 +15,32 @@ typedef NS_ENUM(NSUInteger, ErrorCode) {
   ErrorCodeUpdateMicrophone = 3,
 };
 
+typedef NS_ENUM(NSUInteger, TrackSubscriptionStateMessage) {
+  TrackSubscriptionStateMessageSubscribed = 0,
+  TrackSubscriptionStateMessageStaged = 1,
+  TrackSubscriptionStateMessageUnsubscribed = 2,
+  TrackSubscriptionStateMessageUnknown = 3,
+};
+
+typedef NS_ENUM(NSUInteger, MediaStateMessage) {
+  MediaStateMessageBlocked = 0,
+  MediaStateMessageOff = 1,
+  MediaStateMessageReceivable = 2,
+  MediaStateMessageLoading = 3,
+  MediaStateMessagePlayable = 4,
+  MediaStateMessageInterrupted = 5,
+  MediaStateMessageUnknown = 6,
+};
+
 @class VoidResult;
 @class PlatformError;
 @class JoinArgs;
 @class JoinMessage;
 @class LocalParticipantMessage;
 @class RemoteParticipantMessage;
+@class MediaMessage;
+@class MediaInfoMessage;
+@class TrackMessage;
 
 @interface VoidResult : NSObject
 + (instancetype)makeWithError:(nullable PlatformError *)error;
@@ -65,11 +85,13 @@ typedef NS_ENUM(NSUInteger, ErrorCode) {
 + (instancetype)makeWithId:(NSString *)id
     isCameraEnabled:(NSNumber *)isCameraEnabled
     isMicrophoneEnabled:(NSNumber *)isMicrophoneEnabled
-    userId:(NSString *)userId;
+    userId:(NSString *)userId
+    media:(nullable MediaMessage *)media;
 @property(nonatomic, copy) NSString * id;
 @property(nonatomic, strong) NSNumber * isCameraEnabled;
 @property(nonatomic, strong) NSNumber * isMicrophoneEnabled;
 @property(nonatomic, copy) NSString * userId;
+@property(nonatomic, strong, nullable) MediaMessage * media;
 @end
 
 @interface RemoteParticipantMessage : NSObject
@@ -78,11 +100,46 @@ typedef NS_ENUM(NSUInteger, ErrorCode) {
 + (instancetype)makeWithId:(NSString *)id
     isCameraEnabled:(NSNumber *)isCameraEnabled
     isMicrophoneEnabled:(NSNumber *)isMicrophoneEnabled
-    userId:(NSString *)userId;
+    userId:(NSString *)userId
+    media:(nullable MediaMessage *)media;
 @property(nonatomic, copy) NSString * id;
 @property(nonatomic, strong) NSNumber * isCameraEnabled;
 @property(nonatomic, strong) NSNumber * isMicrophoneEnabled;
 @property(nonatomic, copy) NSString * userId;
+@property(nonatomic, strong, nullable) MediaMessage * media;
+@end
+
+@interface MediaMessage : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithCamera:(MediaInfoMessage *)camera
+    microphone:(MediaInfoMessage *)microphone
+    screenVideo:(MediaInfoMessage *)screenVideo
+    screenAudio:(MediaInfoMessage *)screenAudio;
+@property(nonatomic, strong) MediaInfoMessage * camera;
+@property(nonatomic, strong) MediaInfoMessage * microphone;
+@property(nonatomic, strong) MediaInfoMessage * screenVideo;
+@property(nonatomic, strong) MediaInfoMessage * screenAudio;
+@end
+
+@interface MediaInfoMessage : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithState:(MediaStateMessage)state
+    subscribed:(TrackSubscriptionStateMessage)subscribed
+    track:(nullable TrackMessage *)track;
+@property(nonatomic, assign) MediaStateMessage state;
+@property(nonatomic, assign) TrackSubscriptionStateMessage subscribed;
+@property(nonatomic, strong, nullable) TrackMessage * track;
+@end
+
+@interface TrackMessage : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithId:(NSString *)id
+    isEnabled:(NSNumber *)isEnabled;
+@property(nonatomic, copy) NSString * id;
+@property(nonatomic, strong) NSNumber * isEnabled;
 @end
 
 /// The codec used by DailyMessenger.
