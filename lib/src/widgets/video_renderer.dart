@@ -25,17 +25,23 @@ class VideoRenderer extends StatelessWidget {
       "videoScaleMode": videoScaleMode.index,
     };
 
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.iOS:
-        return UiKitView(
-          viewType: viewType,
-          layoutDirection: TextDirection.ltr,
-          creationParams: creationParams,
-          creationParamsCodec: const StandardMessageCodec(),
-        );
-      default:
-        throw UnsupportedError('Unsupported platform view');
-    }
+    return SizedBox.expand(
+      child: Builder(
+        builder: (context) {
+          switch (defaultTargetPlatform) {
+            case TargetPlatform.iOS:
+              return UiKitView(
+                viewType: viewType,
+                layoutDirection: TextDirection.ltr,
+                creationParams: creationParams,
+                creationParamsCodec: const StandardMessageCodec(),
+              );
+            default:
+              throw UnsupportedError('Unsupported platform view');
+          }
+        },
+      ),
+    );
   }
 }
 
