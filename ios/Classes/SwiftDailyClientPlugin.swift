@@ -5,14 +5,33 @@ import Combine
 
 public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
     /// Client from Daily SDK
-    private let call = CallClient()
+    private let call: Daily.CallClient
     /// Sends data back to the Flutter layer
     let callback: DailyCallback
     /// Stores the individual event observers
     var cancellables: Set<AnyCancellable> = []
     
-    init(callback: DailyCallback) {
+    init(
+        call: Daily.CallClient,
+        callback: DailyCallback
+    ) {
+        self.call = call
         self.callback = callback
+    }
+    
+    /// Register flutter plugin
+    public static func register(with registrar: FlutterPluginRegistrar) {
+        let call = Daily.CallClient()
+        let callback = DailyCallback(binaryMessenger: registrar.messenger())
+        let plugin = SwiftDailyClientPlugin(call: call, callback: callback)
+        
+        DailyMessengerSetup.setUp(
+            binaryMessenger: registrar.messenger(),
+            api: plugin
+        )
+        
+        let factory = DailyVideoRendererFactory(messenger: registrar.messenger(), call: call)
+        registrar.register(factory, withId: "DailyVideoRenderer")
     }
     
     private func startListeners() {
@@ -123,17 +142,6 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
                 )
             )
         }
-    }
-    
-    /// Register flutter plugin
-    public static func register(with registrar: FlutterPluginRegistrar) {
-        let callback = DailyCallback(binaryMessenger: registrar.messenger())
-        let plugin = SwiftDailyClientPlugin(callback: callback)
-        
-        DailyMessengerSetup.setUp(
-            binaryMessenger: registrar.messenger(),
-            api: plugin
-        )
     }
     
     private func getParticipantsMessage(

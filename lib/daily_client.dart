@@ -7,3 +7,6 @@ export './src/models/participant/participant.dart';
 export './src/models/participant/participants.dart';
 export './src/models/participant/local_participant.dart';
 export './src/models/participant/remote_participant.dart';
+
+// View
+export './src/widgets/video_renderer.dart';
