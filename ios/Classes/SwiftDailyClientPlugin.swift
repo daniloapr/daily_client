@@ -166,38 +166,29 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         return VoidResult()
     }
     
-    
-    /// This method uses Teamflow logic.
-    private func setSubscriptionProfiles(autoSubscribe: Bool) throws {
-        //TODO: export updateSubscriptionProfiles interface to be set by the Flutter Client.
-        
-        if (autoSubscribe) {
-            let _ = try call.updateSubscriptionProfiles { profiles in
-                profiles(.base) { base in
-                    base(\.camera, .subscribed(true))
-                    base(\.microphone, .subscribed(true))
-                }
+    func updateSubscriptions(args: [UpdateSubscriptionArgs]) -> VoidResult {
+        do {
+            let participants: SubscriptionSettingsUpdatesById = args.reduce(into: [:]) { dictionary, arg in
+                let participantId = ParticipantId(uuid: UUID(uuidString: arg.participantId)!)
+                let subscription: Update<SubscriptionSettingsUpdate> = .set(.init(
+                    profile: .set(.init(stringLiteral: arg.profileName))
+                ))
+                
+                dictionary[participantId] = subscription
             }
-            return
+            
+            let _ = try call.updateSubscriptions(forParticipants: participants)
+            
+        } catch {
+            return VoidResult(
+                error: PlatformError(
+                    message: "\(error)",
+                    code: ErrorCode.updateSubscriptions
+                )
+            )
         }
         
-        let _ = try call.updateSubscriptionProfiles { profiles in
-            /// Participants visible on the screen
-            profiles("visible") { visible in
-                visible(\.camera, .subscribed(false))
-                visible(\.microphone, .subscribed(true))
-            }
-            /// Participants not visible on the screen
-            profiles("invisible") { invisible in
-                invisible(\.camera, .subscribed(true))
-                invisible(\.microphone, .subscribed(true))
-            }
-            /// Don't subscribe new participants automatically. They can be in other rooms or audio zones
-            profiles(.base) { base in
-                base(\.camera, .subscribed(false))
-                base(\.microphone, .subscribed(false))
-            }
-        }
+        return VoidResult()
     }
     
     private func getParticipantsMessage(
@@ -223,7 +214,6 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
                 userId: participant.info.userId?.uuid.uuidString ?? "",
                 media: getMediaMessage(fromMedia: participant.media)
             )
-            
         }
         
         return (localParticipantMessage, remoteParticipantsMessage)

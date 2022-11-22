@@ -22,4 +22,9 @@ class LocalParticipant extends Participant {
       media: mediaMessage != null ? Media.fromMessage(mediaMessage) : null,
     );
   }
+
+  @override
+  String toString() {
+    return 'LocalParticipant(id: $id)';
+  }
 }

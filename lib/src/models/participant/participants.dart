@@ -9,4 +9,9 @@ class Participants {
 
   final LocalParticipant local;
   final List<RemoteParticipant> remote;
+
+  @override
+  String toString() {
+    return 'Participants(local: $local, remote: $remote)';
+  }
 }

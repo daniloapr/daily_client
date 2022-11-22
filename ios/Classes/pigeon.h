@@ -13,7 +13,8 @@ typedef NS_ENUM(NSUInteger, ErrorCode) {
   ErrorCodeJoin = 1,
   ErrorCodeUpdateCamera = 2,
   ErrorCodeUpdateMicrophone = 3,
-  ErrorCodeUpdateSubscriptionProfiles = 4,
+  ErrorCodeUpdateSubscriptions = 4,
+  ErrorCodeUpdateSubscriptionProfiles = 5,
 };
 
 typedef NS_ENUM(NSUInteger, TrackSubscriptionStateMessage) {
@@ -33,6 +34,7 @@ typedef NS_ENUM(NSUInteger, MediaStateMessage) {
   MediaStateMessageUnknown = 6,
 };
 
+@class UpdateSubscriptionArgs;
 @class VoidResult;
 @class PlatformError;
 @class JoinArgs;
@@ -43,6 +45,15 @@ typedef NS_ENUM(NSUInteger, MediaStateMessage) {
 @class MediaMessage;
 @class MediaInfoMessage;
 @class TrackMessage;
+
+@interface UpdateSubscriptionArgs : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithParticipantId:(NSString *)participantId
+    profileName:(NSString *)profileName;
+@property(nonatomic, copy) NSString * participantId;
+@property(nonatomic, copy) NSString * profileName;
+@end
 
 @interface VoidResult : NSObject
 + (instancetype)makeWithError:(nullable PlatformError *)error;
@@ -175,6 +186,8 @@ NSObject<FlutterMessageCodec> *DailyMessengerGetCodec(void);
 - (nullable VoidResult *)setCameraEnabledEnableCam:(NSNumber *)enableCam error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable VoidResult *)updateSubscriptionProfilesArgs:(NSArray<UpdateSubscriptionProfileArgs *> *)args error:(FlutterError *_Nullable *_Nonnull)error;
+/// @return `nil` only when `error != nil`.
+- (nullable VoidResult *)updateSubscriptionsArgs:(NSArray<UpdateSubscriptionArgs *> *)args error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void DailyMessengerSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DailyMessenger> *_Nullable api);

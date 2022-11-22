@@ -18,7 +18,8 @@ enum ErrorCode: Int {
   case join = 1
   case updateCamera = 2
   case updateMicrophone = 3
-  case updateSubscriptionProfiles = 4
+  case updateSubscriptions = 4
+  case updateSubscriptionProfiles = 5
 }
 
 enum TrackSubscriptionStateMessage: Int {
@@ -36,6 +37,28 @@ enum MediaStateMessage: Int {
   case playable = 4
   case interrupted = 5
   case unknown = 6
+}
+
+///Generated class from Pigeon that represents data sent in messages.
+struct UpdateSubscriptionArgs {
+  var participantId: String
+  var profileName: String
+
+  static func fromMap(_ map: [String: Any?]) -> UpdateSubscriptionArgs? {
+    let participantId = map["participantId"] as! String
+    let profileName = map["profileName"] as! String
+
+    return UpdateSubscriptionArgs(
+      participantId: participantId,
+      profileName: profileName
+    )
+  }
+  func toMap() -> [String: Any?] {
+    return [
+      "participantId": participantId,
+      "profileName": profileName
+    ]
+  }
 }
 
 ///Generated class from Pigeon that represents data sent in messages.
@@ -350,8 +373,10 @@ private class DailyMessengerCodecReader: FlutterStandardReader {
       case 135:
         return TrackMessage.fromMap(self.readValue() as! [String: Any])      
       case 136:
-        return UpdateSubscriptionProfileArgs.fromMap(self.readValue() as! [String: Any])      
+        return UpdateSubscriptionArgs.fromMap(self.readValue() as! [String: Any])      
       case 137:
+        return UpdateSubscriptionProfileArgs.fromMap(self.readValue() as! [String: Any])      
+      case 138:
         return VoidResult.fromMap(self.readValue() as! [String: Any])      
       default:
         return super.readValue(ofType: type)
@@ -385,11 +410,14 @@ private class DailyMessengerCodecWriter: FlutterStandardWriter {
     } else if let value = value as? TrackMessage {
       super.writeByte(135)
       super.writeValue(value.toMap())
-    } else if let value = value as? UpdateSubscriptionProfileArgs {
+    } else if let value = value as? UpdateSubscriptionArgs {
       super.writeByte(136)
       super.writeValue(value.toMap())
-    } else if let value = value as? VoidResult {
+    } else if let value = value as? UpdateSubscriptionProfileArgs {
       super.writeByte(137)
+      super.writeValue(value.toMap())
+    } else if let value = value as? VoidResult {
+      super.writeByte(138)
       super.writeValue(value.toMap())
     } else {
       super.writeValue(value)
@@ -423,6 +451,7 @@ protocol DailyMessenger {
   func setMicrophoneEnabled(enableMic: Bool) -> VoidResult
   func setCameraEnabled(enableCam: Bool) -> VoidResult
   func updateSubscriptionProfiles(args: [UpdateSubscriptionProfileArgs]) -> VoidResult
+  func updateSubscriptions(args: [UpdateSubscriptionArgs]) -> VoidResult
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -486,6 +515,17 @@ class DailyMessengerSetup {
       }
     } else {
       updateSubscriptionProfilesChannel.setMessageHandler(nil)
+    }
+    let updateSubscriptionsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyMessenger.updateSubscriptions", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      updateSubscriptionsChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let argsArg = args[0] as! [UpdateSubscriptionArgs]
+        let result = api.updateSubscriptions(args: argsArg)
+        reply(wrapResult(result))
+      }
+    } else {
+      updateSubscriptionsChannel.setMessageHandler(nil)
     }
   }
 }

@@ -32,3 +32,8 @@ class DailyUpdateSubscriptionProfiles implements DailyClientException {
   @override
   String get message => 'Unable to update subscription profiles';
 }
+
+class DailyUpdateSubscriptions implements DailyClientException {
+  @override
+  String get message => 'Unable to update participants subscriptions';
+}

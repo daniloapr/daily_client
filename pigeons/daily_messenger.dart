@@ -15,6 +15,7 @@ abstract class DailyMessenger {
   VoidResult updateSubscriptionProfiles(
     List<UpdateSubscriptionProfileArgs> args,
   );
+  VoidResult updateSubscriptions(List<UpdateSubscriptionArgs> args);
 }
 
 @FlutterApi()
@@ -25,6 +26,13 @@ abstract class DailyCallback {
   );
 
   void onCallStateUpdated(int stateCode);
+}
+
+class UpdateSubscriptionArgs {
+  UpdateSubscriptionArgs(this.participantId, this.profileName);
+
+  final String participantId;
+  final String profileName;
 }
 
 class VoidResult extends Message {
@@ -46,6 +54,7 @@ enum ErrorCode {
   join,
   updateCamera,
   updateMicrophone,
+  updateSubscriptions,
   updateSubscriptionProfiles,
 }
 

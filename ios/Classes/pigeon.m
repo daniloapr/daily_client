@@ -31,6 +31,11 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 }
 
 
+@interface UpdateSubscriptionArgs ()
++ (UpdateSubscriptionArgs *)fromMap:(NSDictionary *)dict;
++ (nullable UpdateSubscriptionArgs *)nullableFromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
+@end
 @interface VoidResult ()
 + (VoidResult *)fromMap:(NSDictionary *)dict;
 + (nullable VoidResult *)nullableFromMap:(NSDictionary *)dict;
@@ -80,6 +85,31 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 + (TrackMessage *)fromMap:(NSDictionary *)dict;
 + (nullable TrackMessage *)nullableFromMap:(NSDictionary *)dict;
 - (NSDictionary *)toMap;
+@end
+
+@implementation UpdateSubscriptionArgs
++ (instancetype)makeWithParticipantId:(NSString *)participantId
+    profileName:(NSString *)profileName {
+  UpdateSubscriptionArgs* pigeonResult = [[UpdateSubscriptionArgs alloc] init];
+  pigeonResult.participantId = participantId;
+  pigeonResult.profileName = profileName;
+  return pigeonResult;
+}
++ (UpdateSubscriptionArgs *)fromMap:(NSDictionary *)dict {
+  UpdateSubscriptionArgs *pigeonResult = [[UpdateSubscriptionArgs alloc] init];
+  pigeonResult.participantId = GetNullableObject(dict, @"participantId");
+  NSAssert(pigeonResult.participantId != nil, @"");
+  pigeonResult.profileName = GetNullableObject(dict, @"profileName");
+  NSAssert(pigeonResult.profileName != nil, @"");
+  return pigeonResult;
+}
++ (nullable UpdateSubscriptionArgs *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [UpdateSubscriptionArgs fromMap:dict] : nil; }
+- (NSDictionary *)toMap {
+  return @{
+    @"participantId" : (self.participantId ?: [NSNull null]),
+    @"profileName" : (self.profileName ?: [NSNull null]),
+  };
+}
 @end
 
 @implementation VoidResult
@@ -418,9 +448,12 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
       return [TrackMessage fromMap:[self readValue]];
     
     case 136:     
-      return [UpdateSubscriptionProfileArgs fromMap:[self readValue]];
+      return [UpdateSubscriptionArgs fromMap:[self readValue]];
     
     case 137:     
+      return [UpdateSubscriptionProfileArgs fromMap:[self readValue]];
+    
+    case 138:     
       return [VoidResult fromMap:[self readValue]];
     
     default:    
@@ -467,12 +500,16 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     [self writeByte:135];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[UpdateSubscriptionProfileArgs class]]) {
+  if ([value isKindOfClass:[UpdateSubscriptionArgs class]]) {
     [self writeByte:136];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[VoidResult class]]) {
+  if ([value isKindOfClass:[UpdateSubscriptionProfileArgs class]]) {
     [self writeByte:137];
+    [self writeValue:[value toMap]];
+  } else 
+  if ([value isKindOfClass:[VoidResult class]]) {
+    [self writeByte:138];
     [self writeValue:[value toMap]];
   } else 
 {
@@ -597,6 +634,26 @@ void DailyMessengerSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Da
         NSArray<UpdateSubscriptionProfileArgs *> *arg_args = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         VoidResult *output = [api updateSubscriptionProfilesArgs:arg_args error:&error];
+        callback(wrapResult(output, error));
+      }];
+    }
+    else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.DailyMessenger.updateSubscriptions"
+        binaryMessenger:binaryMessenger
+        codec:DailyMessengerGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(updateSubscriptionsArgs:error:)], @"DailyMessenger api (%@) doesn't respond to @selector(updateSubscriptionsArgs:error:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSArray<UpdateSubscriptionArgs *> *arg_args = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        VoidResult *output = [api updateSubscriptionsArgs:arg_args error:&error];
         callback(wrapResult(output, error));
       }];
     }

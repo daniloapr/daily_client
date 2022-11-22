@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:daily_client/src/models/profiles/subscription_profile_settings_update.dart';
+
 import '../pigeon.g.dart';
 import 'models/exception/daily_client_exception.dart';
 import 'models/join/join_options.dart';
@@ -7,6 +9,7 @@ import 'models/join/join_result.dart';
 import 'models/participant/local_participant.dart';
 import 'models/participant/participants.dart';
 import 'models/participant/remote_participant.dart';
+import 'models/profiles/update_subscriptions.dart';
 import 'models/state/call_state.dart';
 
 class DailyClient extends DailyCallback {
@@ -50,6 +53,35 @@ class DailyClient extends DailyCallback {
     );
   }
 
+  Future<void> updateSubscriptionProfiles(
+    List<SubscriptionProfileSettingsUpdate> settings,
+  ) async {
+    final args = settings
+        .map(
+          (e) => UpdateSubscriptionProfileArgs(
+            name: e.name,
+            subscribeCamera: e.subscribeCamera,
+            subscribeMicrophone: e.subscribeMicrophone,
+          ),
+        )
+        .toList();
+    await _messenger.updateSubscriptionProfiles(args);
+  }
+
+  /// Update Participants with id [option.participantId] to profile subscription
+  /// with name [options.profileName].
+  Future<void> updateSubscriptions(
+    List<UpdateSubscriptionOptions> options,
+  ) async {
+    final args = options
+        .map((e) => UpdateSubscriptionArgs(
+              participantId: e.participantId,
+              profileName: e.profileName,
+            ))
+        .toList();
+    await _messenger.updateSubscriptions(args);
+  }
+
   Future<void> leave() async {
     final result = await _messenger.leave();
     _handleError(result.error);
@@ -68,6 +100,8 @@ class DailyClient extends DailyCallback {
           throw DailyUpdateCameraException();
         case ErrorCode.updateSubscriptionProfiles:
           throw DailyUpdateSubscriptionProfiles();
+        case ErrorCode.updateSubscriptions:
+          throw DailyUpdateSubscriptions();
       }
     }
   }

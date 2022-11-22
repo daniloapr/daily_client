@@ -12,6 +12,7 @@ enum ErrorCode {
   join,
   updateCamera,
   updateMicrophone,
+  updateSubscriptions,
   updateSubscriptionProfiles,
 }
 
@@ -30,6 +31,31 @@ enum MediaStateMessage {
   playable,
   interrupted,
   unknown,
+}
+
+class UpdateSubscriptionArgs {
+  UpdateSubscriptionArgs({
+    required this.participantId,
+    required this.profileName,
+  });
+
+  String participantId;
+  String profileName;
+
+  Object encode() {
+    final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
+    pigeonMap['participantId'] = participantId;
+    pigeonMap['profileName'] = profileName;
+    return pigeonMap;
+  }
+
+  static UpdateSubscriptionArgs decode(Object message) {
+    final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
+    return UpdateSubscriptionArgs(
+      participantId: pigeonMap['participantId']! as String,
+      profileName: pigeonMap['profileName']! as String,
+    );
+  }
 }
 
 class VoidResult {
@@ -390,12 +416,16 @@ class _DailyMessengerCodec extends StandardMessageCodec{
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
     } else 
-    if (value is UpdateSubscriptionProfileArgs) {
+    if (value is UpdateSubscriptionArgs) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
     } else 
-    if (value is VoidResult) {
+    if (value is UpdateSubscriptionProfileArgs) {
       buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    } else 
+    if (value is VoidResult) {
+      buffer.putUint8(138);
       writeValue(buffer, value.encode());
     } else 
 {
@@ -430,9 +460,12 @@ class _DailyMessengerCodec extends StandardMessageCodec{
         return TrackMessage.decode(readValue(buffer)!);
       
       case 136:       
-        return UpdateSubscriptionProfileArgs.decode(readValue(buffer)!);
+        return UpdateSubscriptionArgs.decode(readValue(buffer)!);
       
       case 137:       
+        return UpdateSubscriptionProfileArgs.decode(readValue(buffer)!);
+      
+      case 138:       
         return VoidResult.decode(readValue(buffer)!);
       
       default:      
@@ -566,6 +599,33 @@ class DailyMessenger {
   Future<VoidResult> updateSubscriptionProfiles(List<UpdateSubscriptionProfileArgs?> arg_args) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.DailyMessenger.updateSubscriptionProfiles', codec, binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(<Object?>[arg_args]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error = (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else if (replyMap['result'] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyMap['result'] as VoidResult?)!;
+    }
+  }
+
+  Future<VoidResult> updateSubscriptions(List<UpdateSubscriptionArgs?> arg_args) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.DailyMessenger.updateSubscriptions', codec, binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
         await channel.send(<Object?>[arg_args]) as Map<Object?, Object?>?;
     if (replyMap == null) {

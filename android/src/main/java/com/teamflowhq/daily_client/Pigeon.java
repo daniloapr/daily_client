@@ -28,7 +28,8 @@ public class Pigeon {
     JOIN(1),
     UPDATE_CAMERA(2),
     UPDATE_MICROPHONE(3),
-    UPDATE_SUBSCRIPTION_PROFILES(4);
+    UPDATE_SUBSCRIPTIONS(4),
+    UPDATE_SUBSCRIPTION_PROFILES(5);
 
     private int index;
     private ErrorCode(final int index) {
@@ -60,6 +61,62 @@ public class Pigeon {
     private int index;
     private MediaStateMessage(final int index) {
       this.index = index;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static class UpdateSubscriptionArgs {
+    private @NonNull String participantId;
+    public @NonNull String getParticipantId() { return participantId; }
+    public void setParticipantId(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"participantId\" is null.");
+      }
+      this.participantId = setterArg;
+    }
+
+    private @NonNull String profileName;
+    public @NonNull String getProfileName() { return profileName; }
+    public void setProfileName(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"profileName\" is null.");
+      }
+      this.profileName = setterArg;
+    }
+
+    /**Constructor is private to enforce null safety; use Builder. */
+    private UpdateSubscriptionArgs() {}
+    public static final class Builder {
+      private @Nullable String participantId;
+      public @NonNull Builder setParticipantId(@NonNull String setterArg) {
+        this.participantId = setterArg;
+        return this;
+      }
+      private @Nullable String profileName;
+      public @NonNull Builder setProfileName(@NonNull String setterArg) {
+        this.profileName = setterArg;
+        return this;
+      }
+      public @NonNull UpdateSubscriptionArgs build() {
+        UpdateSubscriptionArgs pigeonReturn = new UpdateSubscriptionArgs();
+        pigeonReturn.setParticipantId(participantId);
+        pigeonReturn.setProfileName(profileName);
+        return pigeonReturn;
+      }
+    }
+    @NonNull Map<String, Object> toMap() {
+      Map<String, Object> toMapResult = new HashMap<>();
+      toMapResult.put("participantId", participantId);
+      toMapResult.put("profileName", profileName);
+      return toMapResult;
+    }
+    static @NonNull UpdateSubscriptionArgs fromMap(@NonNull Map<String, Object> map) {
+      UpdateSubscriptionArgs pigeonResult = new UpdateSubscriptionArgs();
+      Object participantId = map.get("participantId");
+      pigeonResult.setParticipantId((String)participantId);
+      Object profileName = map.get("profileName");
+      pigeonResult.setProfileName((String)profileName);
+      return pigeonResult;
     }
   }
 
@@ -871,9 +928,12 @@ public class Pigeon {
           return TrackMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)136:         
-          return UpdateSubscriptionProfileArgs.fromMap((Map<String, Object>) readValue(buffer));
+          return UpdateSubscriptionArgs.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)137:         
+          return UpdateSubscriptionProfileArgs.fromMap((Map<String, Object>) readValue(buffer));
+        
+        case (byte)138:         
           return VoidResult.fromMap((Map<String, Object>) readValue(buffer));
         
         default:        
@@ -915,12 +975,16 @@ public class Pigeon {
         stream.write(135);
         writeValue(stream, ((TrackMessage) value).toMap());
       } else 
-      if (value instanceof UpdateSubscriptionProfileArgs) {
+      if (value instanceof UpdateSubscriptionArgs) {
         stream.write(136);
+        writeValue(stream, ((UpdateSubscriptionArgs) value).toMap());
+      } else 
+      if (value instanceof UpdateSubscriptionProfileArgs) {
+        stream.write(137);
         writeValue(stream, ((UpdateSubscriptionProfileArgs) value).toMap());
       } else 
       if (value instanceof VoidResult) {
-        stream.write(137);
+        stream.write(138);
         writeValue(stream, ((VoidResult) value).toMap());
       } else 
 {
@@ -943,6 +1007,7 @@ public class Pigeon {
     @NonNull VoidResult setMicrophoneEnabled(@NonNull Boolean enableMic);
     @NonNull VoidResult setCameraEnabled(@NonNull Boolean enableCam);
     @NonNull VoidResult updateSubscriptionProfiles(@NonNull List<UpdateSubscriptionProfileArgs> args);
+    @NonNull VoidResult updateSubscriptions(@NonNull List<UpdateSubscriptionArgs> args);
 
     /** The codec used by DailyMessenger. */
     static MessageCodec<Object> getCodec() {
@@ -1067,6 +1132,31 @@ public class Pigeon {
                 throw new NullPointerException("argsArg unexpectedly null.");
               }
               VoidResult output = api.updateSubscriptionProfiles(argsArg);
+              wrapped.put("result", output);
+            }
+            catch (Error | RuntimeException exception) {
+              wrapped.put("error", wrapError(exception));
+            }
+            reply.reply(wrapped);
+          });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.DailyMessenger.updateSubscriptions", getCodec());
+        if (api != null) {
+          channel.setMessageHandler((message, reply) -> {
+            Map<String, Object> wrapped = new HashMap<>();
+            try {
+              ArrayList<Object> args = (ArrayList<Object>)message;
+              assert args != null;
+              List<UpdateSubscriptionArgs> argsArg = (List<UpdateSubscriptionArgs>)args.get(0);
+              if (argsArg == null) {
+                throw new NullPointerException("argsArg unexpectedly null.");
+              }
+              VoidResult output = api.updateSubscriptions(argsArg);
               wrapped.put("result", output);
             }
             catch (Error | RuntimeException exception) {
