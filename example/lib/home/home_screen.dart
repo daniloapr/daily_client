@@ -34,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
           token: _tokenController.text,
           enableCamera: _enableCamera,
           enableMicrophone: _enabledMicrophone,
+          autoSubscribe: false,
         ),
       );
       if (!mounted) return;

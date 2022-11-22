@@ -29,6 +29,7 @@ class DailyClient extends DailyCallback {
         token: options.token,
         enableMicrophone: options.enableMicrophone,
         enableCamera: options.enableCamera,
+        autoSubscribe: options.autoSubscribe,
       ),
     );
     _handleError(result.error);
@@ -65,6 +66,8 @@ class DailyClient extends DailyCallback {
           throw DailyUpdateCameraException();
         case ErrorCode.updateMicrophone:
           throw DailyUpdateCameraException();
+        case ErrorCode.updateSubscriptionProfiles:
+          throw DailyUpdateSubscriptionProfiles();
       }
     }
   }

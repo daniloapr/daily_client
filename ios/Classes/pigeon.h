@@ -13,6 +13,7 @@ typedef NS_ENUM(NSUInteger, ErrorCode) {
   ErrorCodeJoin = 1,
   ErrorCodeUpdateCamera = 2,
   ErrorCodeUpdateMicrophone = 3,
+  ErrorCodeUpdateSubscriptionProfiles = 4,
 };
 
 typedef NS_ENUM(NSUInteger, TrackSubscriptionStateMessage) {
@@ -35,6 +36,7 @@ typedef NS_ENUM(NSUInteger, MediaStateMessage) {
 @class VoidResult;
 @class PlatformError;
 @class JoinArgs;
+@class UpdateSubscriptionProfileArgs;
 @class JoinMessage;
 @class LocalParticipantMessage;
 @class RemoteParticipantMessage;
@@ -62,11 +64,24 @@ typedef NS_ENUM(NSUInteger, MediaStateMessage) {
 + (instancetype)makeWithUrl:(NSString *)url
     token:(NSString *)token
     enableMicrophone:(NSNumber *)enableMicrophone
-    enableCamera:(NSNumber *)enableCamera;
+    enableCamera:(NSNumber *)enableCamera
+    autoSubscribe:(NSNumber *)autoSubscribe;
 @property(nonatomic, copy) NSString * url;
 @property(nonatomic, copy) NSString * token;
 @property(nonatomic, strong) NSNumber * enableMicrophone;
 @property(nonatomic, strong) NSNumber * enableCamera;
+@property(nonatomic, strong) NSNumber * autoSubscribe;
+@end
+
+@interface UpdateSubscriptionProfileArgs : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithName:(NSString *)name
+    subscribeCamera:(NSNumber *)subscribeCamera
+    subscribeMicrophone:(NSNumber *)subscribeMicrophone;
+@property(nonatomic, copy) NSString * name;
+@property(nonatomic, strong) NSNumber * subscribeCamera;
+@property(nonatomic, strong) NSNumber * subscribeMicrophone;
 @end
 
 /// Returning class from join() function
@@ -158,6 +173,8 @@ NSObject<FlutterMessageCodec> *DailyMessengerGetCodec(void);
 - (nullable VoidResult *)setMicrophoneEnabledEnableMic:(NSNumber *)enableMic error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable VoidResult *)setCameraEnabledEnableCam:(NSNumber *)enableCam error:(FlutterError *_Nullable *_Nonnull)error;
+/// @return `nil` only when `error != nil`.
+- (nullable VoidResult *)updateSubscriptionProfilesArgs:(NSArray<UpdateSubscriptionProfileArgs *> *)args error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void DailyMessengerSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DailyMessenger> *_Nullable api);
