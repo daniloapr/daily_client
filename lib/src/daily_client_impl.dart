@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:daily_client/src/models/profiles/subscription_profile_settings_update.dart';
-
 import '../pigeon.g.dart';
 import 'models/exception/daily_client_exception.dart';
 import 'models/join/join_options.dart';
@@ -9,6 +7,7 @@ import 'models/join/join_result.dart';
 import 'models/participant/local_participant.dart';
 import 'models/participant/participants.dart';
 import 'models/participant/remote_participant.dart';
+import 'models/profiles/subscription_profile_settings_update.dart';
 import 'models/profiles/update_subscriptions.dart';
 import 'models/state/call_state.dart';
 

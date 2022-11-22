@@ -246,10 +246,9 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
                 screenVideo: getMediaInfoMessage(fromVideoInfo: media.screenVideo),
                 screenAudio: getMediaInfoMessage(fromAudioInfo: media.screenAudio)
             )
-        } else {
-            return nil
         }
         
+        return nil
     }
     
     private func getMediaInfoMessage(fromVideoInfo info: Daily.ParticipantVideoInfo) -> MediaInfoMessage {
