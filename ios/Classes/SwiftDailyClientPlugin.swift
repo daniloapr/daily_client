@@ -146,13 +146,12 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
     
     func updateSubscriptionProfiles(args: [UpdateSubscriptionProfileArgs]) -> VoidResult {
         do {
-            try args.forEach{ update in
+            try args.forEach{ arg in
                 let _ = try call.updateSubscriptionProfiles{ profiles in
-                    profiles(SubscriptionProfile(stringLiteral: update.name)) { profile in
-                        profile(\.camera, .subscribed(update.subscribeCamera))
-                        profile(\.microphone, .subscribed(update.subscribeMicrophone))
+                    profiles(SubscriptionProfile(stringLiteral: arg.name)) { profile in
+                        profile(\.camera, .subscribed(arg.subscribeCamera))
+                        profile(\.microphone, .subscribed(arg.subscribeMicrophone))
                     }
-                    
                 }
             }
         } catch {
