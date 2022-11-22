@@ -36,6 +36,7 @@ class VideoRenderer extends StatelessWidget {
           switch (defaultTargetPlatform) {
             case TargetPlatform.iOS:
               return UiKitView(
+                key: Key(creationParams.toString()),
                 viewType: viewType,
                 layoutDirection: TextDirection.ltr,
                 creationParams: creationParams,

@@ -1,3 +1,5 @@
+import 'package:daily_client/src/models/participant/media_state.dart';
+
 import 'media.dart';
 
 abstract class Participant {
@@ -17,4 +19,6 @@ abstract class Participant {
   final bool isCameraEnabled;
   final bool isMicrophoneEnabled;
   final Media? media;
+
+  bool get isSharingScreen => media?.screenVideo.state == MediaState.playable;
 }
