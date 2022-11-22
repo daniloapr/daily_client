@@ -159,7 +159,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         
         let remoteParticipantsMessage = participants.remote.map{
             let participant: Daily.Participant = $0.value
-
+            
             return RemoteParticipantMessage(
                 id: participant.id.uuid.uuidString,
                 isCameraEnabled: participant.media?.camera.state == .playable,
@@ -205,8 +205,6 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         }
         
     }
-    
-    
     
     private func getMediaInfoMessage(fromVideoInfo info: Daily.ParticipantVideoInfo) -> MediaInfoMessage {
         return MediaInfoMessage(
