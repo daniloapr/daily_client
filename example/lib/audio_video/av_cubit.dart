@@ -71,7 +71,7 @@ class AvCubit extends Cubit<AvState> {
         .map(
           (e) => daily.UpdateSubscriptionOptions(
             participantId: e.id,
-            profileName: SubscriptionProfiles.base.name,
+            profileName: SubscriptionProfiles.visible.name,
           ),
         )
         .toList();
