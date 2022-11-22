@@ -1,13 +1,11 @@
 import 'dart:async';
 
-import 'models/daily_client_exception.dart';
+import '../pigeon.g.dart';
+import 'models/exception/daily_client_exception.dart';
+import 'models/join/join_options.dart';
 import 'models/join/join_result.dart';
 import 'models/participant/local_participant.dart';
-import 'models/participant/media.dart';
 import 'models/participant/participants.dart';
-
-import '../pigeon.g.dart';
-import 'models/join/join_options.dart';
 import 'models/participant/remote_participant.dart';
 import 'models/state/call_state.dart';
 
