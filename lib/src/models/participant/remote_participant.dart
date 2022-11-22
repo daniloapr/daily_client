@@ -1,4 +1,5 @@
 import '../../../pigeon.g.dart';
+import 'media.dart';
 import 'participant.dart';
 
 class RemoteParticipant extends Participant {
@@ -7,6 +8,7 @@ class RemoteParticipant extends Participant {
     required super.userId,
     required super.isCameraEnabled,
     required super.isMicrophoneEnabled,
+    required super.media,
   });
 
   factory RemoteParticipant.fromMessage(RemoteParticipantMessage message) {
@@ -15,6 +17,7 @@ class RemoteParticipant extends Participant {
       userId: message.userId,
       isCameraEnabled: message.isCameraEnabled,
       isMicrophoneEnabled: message.isMicrophoneEnabled,
+      media:message.media != null ?  Media.fromMessage(message.media!) : null,
     );
   }
 

@@ -18,6 +18,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final _tokenController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool _enableCamera = false;
+  bool _enabledMicrophone = false;
 
   final _dailyClient = getIt<daily.DailyClient>();
 
@@ -30,8 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
         daily.JoinOptions(
           url: _urlController.text,
           token: _tokenController.text,
-          enableCamera: false,
-          enableMicrophone: false,
+          enableCamera: _enableCamera,
+          enableMicrophone: _enabledMicrophone,
         ),
       );
       if (!mounted) return;
@@ -108,6 +110,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 border: OutlineInputBorder(),
               ),
               autocorrect: false,
+            ),
+            const SizedBox(height: 16),
+            SwitchListTile(
+              value: _enableCamera,
+              title: const Text('Enable microphone'),
+              onChanged: ((value) {
+                setState(() => _enableCamera = value);
+              }),
+            ),
+            const SizedBox(height: 16),
+            SwitchListTile(
+              value: _enabledMicrophone,
+              title: const Text('Enable microphone'),
+              onChanged: ((value) {
+                setState(() => _enabledMicrophone = value);
+              }),
             ),
             const SizedBox(height: 16),
             ElevatedButton(

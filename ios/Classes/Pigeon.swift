@@ -20,6 +20,23 @@ enum ErrorCode: Int {
   case updateMicrophone = 3
 }
 
+enum TrackSubscriptionStateMessage: Int {
+  case subscribed = 0
+  case staged = 1
+  case unsubscribed = 2
+  case unknown = 3
+}
+
+enum MediaStateMessage: Int {
+  case blocked = 0
+  case off = 1
+  case receivable = 2
+  case loading = 3
+  case playable = 4
+  case interrupted = 5
+  case unknown = 6
+}
+
 ///Generated class from Pigeon that represents data sent in messages.
 struct VoidResult {
   var error: PlatformError? = nil
@@ -133,18 +150,24 @@ struct LocalParticipantMessage {
   var isCameraEnabled: Bool
   var isMicrophoneEnabled: Bool
   var userId: String
+  var media: MediaMessage? = nil
 
   static func fromMap(_ map: [String: Any?]) -> LocalParticipantMessage? {
     let id = map["id"] as! String
     let isCameraEnabled = map["isCameraEnabled"] as! Bool
     let isMicrophoneEnabled = map["isMicrophoneEnabled"] as! Bool
     let userId = map["userId"] as! String
+    var media: MediaMessage? = nil
+    if let mediaMap = map["media"] as? [String: Any?] {
+      media = MediaMessage.fromMap(mediaMap)
+    }
 
     return LocalParticipantMessage(
       id: id,
       isCameraEnabled: isCameraEnabled,
       isMicrophoneEnabled: isMicrophoneEnabled,
-      userId: userId
+      userId: userId,
+      media: media
     )
   }
   func toMap() -> [String: Any?] {
@@ -152,7 +175,8 @@ struct LocalParticipantMessage {
       "id": id,
       "isCameraEnabled": isCameraEnabled,
       "isMicrophoneEnabled": isMicrophoneEnabled,
-      "userId": userId
+      "userId": userId,
+      "media": media?.toMap()
     ]
   }
 }
@@ -163,18 +187,24 @@ struct RemoteParticipantMessage {
   var isCameraEnabled: Bool
   var isMicrophoneEnabled: Bool
   var userId: String
+  var media: MediaMessage? = nil
 
   static func fromMap(_ map: [String: Any?]) -> RemoteParticipantMessage? {
     let id = map["id"] as! String
     let isCameraEnabled = map["isCameraEnabled"] as! Bool
     let isMicrophoneEnabled = map["isMicrophoneEnabled"] as! Bool
     let userId = map["userId"] as! String
+    var media: MediaMessage? = nil
+    if let mediaMap = map["media"] as? [String: Any?] {
+      media = MediaMessage.fromMap(mediaMap)
+    }
 
     return RemoteParticipantMessage(
       id: id,
       isCameraEnabled: isCameraEnabled,
       isMicrophoneEnabled: isMicrophoneEnabled,
-      userId: userId
+      userId: userId,
+      media: media
     )
   }
   func toMap() -> [String: Any?] {
@@ -182,7 +212,89 @@ struct RemoteParticipantMessage {
       "id": id,
       "isCameraEnabled": isCameraEnabled,
       "isMicrophoneEnabled": isMicrophoneEnabled,
-      "userId": userId
+      "userId": userId,
+      "media": media?.toMap()
+    ]
+  }
+}
+
+///Generated class from Pigeon that represents data sent in messages.
+struct MediaMessage {
+  var camera: MediaInfoMessage
+  var microphone: MediaInfoMessage
+  var screenVideo: MediaInfoMessage
+  var screenAudio: MediaInfoMessage
+
+  static func fromMap(_ map: [String: Any?]) -> MediaMessage? {
+    let camera = MediaInfoMessage.fromMap(map["camera"] as! [String: Any?])!
+    let microphone = MediaInfoMessage.fromMap(map["microphone"] as! [String: Any?])!
+    let screenVideo = MediaInfoMessage.fromMap(map["screenVideo"] as! [String: Any?])!
+    let screenAudio = MediaInfoMessage.fromMap(map["screenAudio"] as! [String: Any?])!
+
+    return MediaMessage(
+      camera: camera,
+      microphone: microphone,
+      screenVideo: screenVideo,
+      screenAudio: screenAudio
+    )
+  }
+  func toMap() -> [String: Any?] {
+    return [
+      "camera": camera.toMap(),
+      "microphone": microphone.toMap(),
+      "screenVideo": screenVideo.toMap(),
+      "screenAudio": screenAudio.toMap()
+    ]
+  }
+}
+
+///Generated class from Pigeon that represents data sent in messages.
+struct MediaInfoMessage {
+  var state: MediaStateMessage
+  var subscribed: TrackSubscriptionStateMessage
+  var track: TrackMessage? = nil
+
+  static func fromMap(_ map: [String: Any?]) -> MediaInfoMessage? {
+    let state = MediaStateMessage(rawValue: map["state"] as! Int)!
+    let subscribed = TrackSubscriptionStateMessage(rawValue: map["subscribed"] as! Int)!
+    var track: TrackMessage? = nil
+    if let trackMap = map["track"] as? [String: Any?] {
+      track = TrackMessage.fromMap(trackMap)
+    }
+
+    return MediaInfoMessage(
+      state: state,
+      subscribed: subscribed,
+      track: track
+    )
+  }
+  func toMap() -> [String: Any?] {
+    return [
+      "state": state.rawValue,
+      "subscribed": subscribed.rawValue,
+      "track": track?.toMap()
+    ]
+  }
+}
+
+///Generated class from Pigeon that represents data sent in messages.
+struct TrackMessage {
+  var id: String
+  var isEnabled: Bool
+
+  static func fromMap(_ map: [String: Any?]) -> TrackMessage? {
+    let id = map["id"] as! String
+    let isEnabled = map["isEnabled"] as! Bool
+
+    return TrackMessage(
+      id: id,
+      isEnabled: isEnabled
+    )
+  }
+  func toMap() -> [String: Any?] {
+    return [
+      "id": id,
+      "isEnabled": isEnabled
     ]
   }
 }
@@ -197,10 +309,16 @@ private class DailyMessengerCodecReader: FlutterStandardReader {
       case 130:
         return LocalParticipantMessage.fromMap(self.readValue() as! [String: Any])      
       case 131:
-        return PlatformError.fromMap(self.readValue() as! [String: Any])      
+        return MediaInfoMessage.fromMap(self.readValue() as! [String: Any])      
       case 132:
-        return RemoteParticipantMessage.fromMap(self.readValue() as! [String: Any])      
+        return MediaMessage.fromMap(self.readValue() as! [String: Any])      
       case 133:
+        return PlatformError.fromMap(self.readValue() as! [String: Any])      
+      case 134:
+        return RemoteParticipantMessage.fromMap(self.readValue() as! [String: Any])      
+      case 135:
+        return TrackMessage.fromMap(self.readValue() as! [String: Any])      
+      case 136:
         return VoidResult.fromMap(self.readValue() as! [String: Any])      
       default:
         return super.readValue(ofType: type)
@@ -219,14 +337,23 @@ private class DailyMessengerCodecWriter: FlutterStandardWriter {
     } else if let value = value as? LocalParticipantMessage {
       super.writeByte(130)
       super.writeValue(value.toMap())
-    } else if let value = value as? PlatformError {
+    } else if let value = value as? MediaInfoMessage {
       super.writeByte(131)
       super.writeValue(value.toMap())
-    } else if let value = value as? RemoteParticipantMessage {
+    } else if let value = value as? MediaMessage {
       super.writeByte(132)
       super.writeValue(value.toMap())
-    } else if let value = value as? VoidResult {
+    } else if let value = value as? PlatformError {
       super.writeByte(133)
+      super.writeValue(value.toMap())
+    } else if let value = value as? RemoteParticipantMessage {
+      super.writeByte(134)
+      super.writeValue(value.toMap())
+    } else if let value = value as? TrackMessage {
+      super.writeByte(135)
+      super.writeValue(value.toMap())
+    } else if let value = value as? VoidResult {
+      super.writeByte(136)
       super.writeValue(value.toMap())
     } else {
       super.writeValue(value)
@@ -320,7 +447,13 @@ private class DailyCallbackCodecReader: FlutterStandardReader {
       case 128:
         return LocalParticipantMessage.fromMap(self.readValue() as! [String: Any])      
       case 129:
+        return MediaInfoMessage.fromMap(self.readValue() as! [String: Any])      
+      case 130:
+        return MediaMessage.fromMap(self.readValue() as! [String: Any])      
+      case 131:
         return RemoteParticipantMessage.fromMap(self.readValue() as! [String: Any])      
+      case 132:
+        return TrackMessage.fromMap(self.readValue() as! [String: Any])      
       default:
         return super.readValue(ofType: type)
       
@@ -332,8 +465,17 @@ private class DailyCallbackCodecWriter: FlutterStandardWriter {
     if let value = value as? LocalParticipantMessage {
       super.writeByte(128)
       super.writeValue(value.toMap())
-    } else if let value = value as? RemoteParticipantMessage {
+    } else if let value = value as? MediaInfoMessage {
       super.writeByte(129)
+      super.writeValue(value.toMap())
+    } else if let value = value as? MediaMessage {
+      super.writeByte(130)
+      super.writeValue(value.toMap())
+    } else if let value = value as? RemoteParticipantMessage {
+      super.writeByte(131)
+      super.writeValue(value.toMap())
+    } else if let value = value as? TrackMessage {
+      super.writeByte(132)
       super.writeValue(value.toMap())
     } else {
       super.writeValue(value)

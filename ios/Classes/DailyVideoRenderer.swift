@@ -5,7 +5,7 @@ import Daily
 class DailyVideoRendererFactory: NSObject, FlutterPlatformViewFactory {
     private var messenger: FlutterBinaryMessenger
     private var call: Daily.CallClient
-
+    
     init(
         messenger: FlutterBinaryMessenger,
         call: Daily.CallClient
@@ -14,7 +14,7 @@ class DailyVideoRendererFactory: NSObject, FlutterPlatformViewFactory {
         self.call = call
         super.init()
     }
-
+    
     func create(
         withFrame frame: CGRect,
         viewIdentifier viewId: Int64,
@@ -30,13 +30,13 @@ class DailyVideoRendererFactory: NSObject, FlutterPlatformViewFactory {
     }
     
     public func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
-          return FlutterStandardMessageCodec.sharedInstance()
+        return FlutterStandardMessageCodec.sharedInstance()
     }
 }
 
 class DailyVideoRenderer: NSObject, FlutterPlatformView {
     private var _view: UIView
-
+    
     init(
         frame: CGRect,
         viewIdentifier viewId: Int64,
@@ -47,6 +47,7 @@ class DailyVideoRenderer: NSObject, FlutterPlatformView {
         let map = args as! [String: Any]
         let id = map["participantId"] as! String
         let isLocal = map["isLocal"] as! Bool
+        let isScreenShare = map["isScreenShare"] as! Bool
         let videoScaleModeCode = map["videoScaleMode"] as! Int32
         let participant = getParticipant(
             participants: call.participants,
@@ -55,16 +56,24 @@ class DailyVideoRenderer: NSObject, FlutterPlatformView {
         )
         
         let videoView = Daily.VideoView(frame: frame)
-        if let track = participant?.media?.camera.track {
-            videoView.track = track
+        
+        if (isScreenShare) {
+            if let track = participant?.media?.screenVideo.track {
+                videoView.track = track
+            }
+        } else {
+            if let track = participant?.media?.camera.track {
+                videoView.track = track
+            }
         }
-      
+        
+        
         videoView.videoScaleMode = mapCodeToVideoScale(code: videoScaleModeCode)
         _view = videoView
         
         super.init()
     }
-
+    
     func view() -> UIView {
         return _view
     }

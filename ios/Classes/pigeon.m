@@ -61,6 +61,21 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 + (nullable RemoteParticipantMessage *)nullableFromMap:(NSDictionary *)dict;
 - (NSDictionary *)toMap;
 @end
+@interface MediaMessage ()
++ (MediaMessage *)fromMap:(NSDictionary *)dict;
++ (nullable MediaMessage *)nullableFromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
+@end
+@interface MediaInfoMessage ()
++ (MediaInfoMessage *)fromMap:(NSDictionary *)dict;
++ (nullable MediaInfoMessage *)nullableFromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
+@end
+@interface TrackMessage ()
++ (TrackMessage *)fromMap:(NSDictionary *)dict;
++ (nullable TrackMessage *)nullableFromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
+@end
 
 @implementation VoidResult
 + (instancetype)makeWithError:(nullable PlatformError *)error {
@@ -171,12 +186,14 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 + (instancetype)makeWithId:(NSString *)id
     isCameraEnabled:(NSNumber *)isCameraEnabled
     isMicrophoneEnabled:(NSNumber *)isMicrophoneEnabled
-    userId:(NSString *)userId {
+    userId:(NSString *)userId
+    media:(nullable MediaMessage *)media {
   LocalParticipantMessage* pigeonResult = [[LocalParticipantMessage alloc] init];
   pigeonResult.id = id;
   pigeonResult.isCameraEnabled = isCameraEnabled;
   pigeonResult.isMicrophoneEnabled = isMicrophoneEnabled;
   pigeonResult.userId = userId;
+  pigeonResult.media = media;
   return pigeonResult;
 }
 + (LocalParticipantMessage *)fromMap:(NSDictionary *)dict {
@@ -189,6 +206,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   NSAssert(pigeonResult.isMicrophoneEnabled != nil, @"");
   pigeonResult.userId = GetNullableObject(dict, @"userId");
   NSAssert(pigeonResult.userId != nil, @"");
+  pigeonResult.media = [MediaMessage nullableFromMap:GetNullableObject(dict, @"media")];
   return pigeonResult;
 }
 + (nullable LocalParticipantMessage *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [LocalParticipantMessage fromMap:dict] : nil; }
@@ -198,6 +216,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     @"isCameraEnabled" : (self.isCameraEnabled ?: [NSNull null]),
     @"isMicrophoneEnabled" : (self.isMicrophoneEnabled ?: [NSNull null]),
     @"userId" : (self.userId ?: [NSNull null]),
+    @"media" : (self.media ? [self.media toMap] : [NSNull null]),
   };
 }
 @end
@@ -206,12 +225,14 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 + (instancetype)makeWithId:(NSString *)id
     isCameraEnabled:(NSNumber *)isCameraEnabled
     isMicrophoneEnabled:(NSNumber *)isMicrophoneEnabled
-    userId:(NSString *)userId {
+    userId:(NSString *)userId
+    media:(nullable MediaMessage *)media {
   RemoteParticipantMessage* pigeonResult = [[RemoteParticipantMessage alloc] init];
   pigeonResult.id = id;
   pigeonResult.isCameraEnabled = isCameraEnabled;
   pigeonResult.isMicrophoneEnabled = isMicrophoneEnabled;
   pigeonResult.userId = userId;
+  pigeonResult.media = media;
   return pigeonResult;
 }
 + (RemoteParticipantMessage *)fromMap:(NSDictionary *)dict {
@@ -224,6 +245,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   NSAssert(pigeonResult.isMicrophoneEnabled != nil, @"");
   pigeonResult.userId = GetNullableObject(dict, @"userId");
   NSAssert(pigeonResult.userId != nil, @"");
+  pigeonResult.media = [MediaMessage nullableFromMap:GetNullableObject(dict, @"media")];
   return pigeonResult;
 }
 + (nullable RemoteParticipantMessage *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [RemoteParticipantMessage fromMap:dict] : nil; }
@@ -233,6 +255,94 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     @"isCameraEnabled" : (self.isCameraEnabled ?: [NSNull null]),
     @"isMicrophoneEnabled" : (self.isMicrophoneEnabled ?: [NSNull null]),
     @"userId" : (self.userId ?: [NSNull null]),
+    @"media" : (self.media ? [self.media toMap] : [NSNull null]),
+  };
+}
+@end
+
+@implementation MediaMessage
++ (instancetype)makeWithCamera:(MediaInfoMessage *)camera
+    microphone:(MediaInfoMessage *)microphone
+    screenVideo:(MediaInfoMessage *)screenVideo
+    screenAudio:(MediaInfoMessage *)screenAudio {
+  MediaMessage* pigeonResult = [[MediaMessage alloc] init];
+  pigeonResult.camera = camera;
+  pigeonResult.microphone = microphone;
+  pigeonResult.screenVideo = screenVideo;
+  pigeonResult.screenAudio = screenAudio;
+  return pigeonResult;
+}
++ (MediaMessage *)fromMap:(NSDictionary *)dict {
+  MediaMessage *pigeonResult = [[MediaMessage alloc] init];
+  pigeonResult.camera = [MediaInfoMessage nullableFromMap:GetNullableObject(dict, @"camera")];
+  NSAssert(pigeonResult.camera != nil, @"");
+  pigeonResult.microphone = [MediaInfoMessage nullableFromMap:GetNullableObject(dict, @"microphone")];
+  NSAssert(pigeonResult.microphone != nil, @"");
+  pigeonResult.screenVideo = [MediaInfoMessage nullableFromMap:GetNullableObject(dict, @"screenVideo")];
+  NSAssert(pigeonResult.screenVideo != nil, @"");
+  pigeonResult.screenAudio = [MediaInfoMessage nullableFromMap:GetNullableObject(dict, @"screenAudio")];
+  NSAssert(pigeonResult.screenAudio != nil, @"");
+  return pigeonResult;
+}
++ (nullable MediaMessage *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [MediaMessage fromMap:dict] : nil; }
+- (NSDictionary *)toMap {
+  return @{
+    @"camera" : (self.camera ? [self.camera toMap] : [NSNull null]),
+    @"microphone" : (self.microphone ? [self.microphone toMap] : [NSNull null]),
+    @"screenVideo" : (self.screenVideo ? [self.screenVideo toMap] : [NSNull null]),
+    @"screenAudio" : (self.screenAudio ? [self.screenAudio toMap] : [NSNull null]),
+  };
+}
+@end
+
+@implementation MediaInfoMessage
++ (instancetype)makeWithState:(MediaStateMessage)state
+    subscribed:(TrackSubscriptionStateMessage)subscribed
+    track:(nullable TrackMessage *)track {
+  MediaInfoMessage* pigeonResult = [[MediaInfoMessage alloc] init];
+  pigeonResult.state = state;
+  pigeonResult.subscribed = subscribed;
+  pigeonResult.track = track;
+  return pigeonResult;
+}
++ (MediaInfoMessage *)fromMap:(NSDictionary *)dict {
+  MediaInfoMessage *pigeonResult = [[MediaInfoMessage alloc] init];
+  pigeonResult.state = [GetNullableObject(dict, @"state") integerValue];
+  pigeonResult.subscribed = [GetNullableObject(dict, @"subscribed") integerValue];
+  pigeonResult.track = [TrackMessage nullableFromMap:GetNullableObject(dict, @"track")];
+  return pigeonResult;
+}
++ (nullable MediaInfoMessage *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [MediaInfoMessage fromMap:dict] : nil; }
+- (NSDictionary *)toMap {
+  return @{
+    @"state" : @(self.state),
+    @"subscribed" : @(self.subscribed),
+    @"track" : (self.track ? [self.track toMap] : [NSNull null]),
+  };
+}
+@end
+
+@implementation TrackMessage
++ (instancetype)makeWithId:(NSString *)id
+    isEnabled:(NSNumber *)isEnabled {
+  TrackMessage* pigeonResult = [[TrackMessage alloc] init];
+  pigeonResult.id = id;
+  pigeonResult.isEnabled = isEnabled;
+  return pigeonResult;
+}
++ (TrackMessage *)fromMap:(NSDictionary *)dict {
+  TrackMessage *pigeonResult = [[TrackMessage alloc] init];
+  pigeonResult.id = GetNullableObject(dict, @"id");
+  NSAssert(pigeonResult.id != nil, @"");
+  pigeonResult.isEnabled = GetNullableObject(dict, @"isEnabled");
+  NSAssert(pigeonResult.isEnabled != nil, @"");
+  return pigeonResult;
+}
++ (nullable TrackMessage *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [TrackMessage fromMap:dict] : nil; }
+- (NSDictionary *)toMap {
+  return @{
+    @"id" : (self.id ?: [NSNull null]),
+    @"isEnabled" : (self.isEnabled ?: [NSNull null]),
   };
 }
 @end
@@ -253,12 +363,21 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
       return [LocalParticipantMessage fromMap:[self readValue]];
     
     case 131:     
-      return [PlatformError fromMap:[self readValue]];
+      return [MediaInfoMessage fromMap:[self readValue]];
     
     case 132:     
-      return [RemoteParticipantMessage fromMap:[self readValue]];
+      return [MediaMessage fromMap:[self readValue]];
     
     case 133:     
+      return [PlatformError fromMap:[self readValue]];
+    
+    case 134:     
+      return [RemoteParticipantMessage fromMap:[self readValue]];
+    
+    case 135:     
+      return [TrackMessage fromMap:[self readValue]];
+    
+    case 136:     
       return [VoidResult fromMap:[self readValue]];
     
     default:    
@@ -285,16 +404,28 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     [self writeByte:130];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[PlatformError class]]) {
+  if ([value isKindOfClass:[MediaInfoMessage class]]) {
     [self writeByte:131];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[RemoteParticipantMessage class]]) {
+  if ([value isKindOfClass:[MediaMessage class]]) {
     [self writeByte:132];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[VoidResult class]]) {
+  if ([value isKindOfClass:[PlatformError class]]) {
     [self writeByte:133];
+    [self writeValue:[value toMap]];
+  } else 
+  if ([value isKindOfClass:[RemoteParticipantMessage class]]) {
+    [self writeByte:134];
+    [self writeValue:[value toMap]];
+  } else 
+  if ([value isKindOfClass:[TrackMessage class]]) {
+    [self writeByte:135];
+    [self writeValue:[value toMap]];
+  } else 
+  if ([value isKindOfClass:[VoidResult class]]) {
+    [self writeByte:136];
     [self writeValue:[value toMap]];
   } else 
 {
@@ -417,7 +548,16 @@ void DailyMessengerSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Da
       return [LocalParticipantMessage fromMap:[self readValue]];
     
     case 129:     
+      return [MediaInfoMessage fromMap:[self readValue]];
+    
+    case 130:     
+      return [MediaMessage fromMap:[self readValue]];
+    
+    case 131:     
       return [RemoteParticipantMessage fromMap:[self readValue]];
+    
+    case 132:     
+      return [TrackMessage fromMap:[self readValue]];
     
     default:    
       return [super readValueOfType:type];
@@ -435,8 +575,20 @@ void DailyMessengerSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Da
     [self writeByte:128];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[RemoteParticipantMessage class]]) {
+  if ([value isKindOfClass:[MediaInfoMessage class]]) {
     [self writeByte:129];
+    [self writeValue:[value toMap]];
+  } else 
+  if ([value isKindOfClass:[MediaMessage class]]) {
+    [self writeByte:130];
+    [self writeValue:[value toMap]];
+  } else 
+  if ([value isKindOfClass:[RemoteParticipantMessage class]]) {
+    [self writeByte:131];
+    [self writeValue:[value toMap]];
+  } else 
+  if ([value isKindOfClass:[TrackMessage class]]) {
+    [self writeByte:132];
     [self writeValue:[value toMap]];
   } else 
 {

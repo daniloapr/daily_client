@@ -1,4 +1,4 @@
-import 'package:daily_client/daily_client.dart' as daily;
+import 'package:daily_client/daily_client.dart';
 import 'package:daily_client_example/audio_video/av_cubit.dart';
 import 'package:daily_client_example/audio_video/av_state.dart';
 import 'package:daily_client_example/room/widgets/empty_room.dart';
@@ -17,7 +17,7 @@ class ParticipantsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final remoteParticipants = context.select((AvCubit cubit) {
       final state = cubit.state;
-      if (state is! AvConnectedState) return [];
+      if (state is! AvConnectedState) return <RemoteParticipant>[];
       return state.remoteParticipants;
     });
 
@@ -25,19 +25,23 @@ class ParticipantsGrid extends StatelessWidget {
       return const EmptyRoom();
     }
 
+    final participantsSharingScreen =
+        remoteParticipants.where((e) => e.isSharingScreen);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: spacing),
       child: LayoutBuilder(
         builder: (context, constraints) {
+          final length =
+              participantsSharingScreen.length + remoteParticipants.length;
           final height = constraints.maxHeight;
           final width = constraints.maxWidth;
           final isLandscape = width > height;
-          final aspectRatio =
-              remoteParticipants.length <= 1 ? width / height : 1.0;
+          final aspectRatio = length <= 1 ? width / height : 1.0;
 
           final int? crossAxisCount;
           final int? mainAxisCount;
-          final axisCount = remoteParticipants.length <= 3 ? 1 : 2;
+          final axisCount = length <= 3 ? 1 : 2;
 
           if (isLandscape) {
             crossAxisCount = null;
@@ -48,16 +52,28 @@ class ParticipantsGrid extends StatelessWidget {
           }
 
           return FixedGrid(
-            spacing: spacing,
-            crossAxisCount: crossAxisCount,
-            mainAxisCount: mainAxisCount,
-            childAspectRatio: aspectRatio,
-            children: remoteParticipants
-                .map(
-                  (participant) => VideoTile(participant: participant),
-                )
-                .toList(),
-          );
+              spacing: spacing,
+              crossAxisCount: crossAxisCount,
+              mainAxisCount: mainAxisCount,
+              childAspectRatio: aspectRatio,
+              children: [
+                ...participantsSharingScreen
+                    .map(
+                      (participant) => VideoTile(
+                        participant: participant,
+                        isScreenShare: true,
+                      ),
+                    )
+                    .toList(),
+                ...remoteParticipants
+                    .map(
+                      (participant) => VideoTile(
+                        participant: participant,
+                        isScreenShare: false,
+                      ),
+                    )
+                    .toList(),
+              ]);
         },
       ),
     );
