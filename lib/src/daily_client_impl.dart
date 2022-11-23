@@ -105,12 +105,12 @@ class DailyClient extends DailyCallback {
     }
   }
 
-  void setMicrophoneEnabled(bool enableMic) {
-    _messenger.setMicrophoneEnabled(enableMic);
+  Future<void> setMicrophoneEnabled(bool enableMic) async {
+    await _messenger.setMicrophoneEnabled(enableMic);
   }
 
-  void setCameraEnabled(bool enableCamera) {
-    _messenger.setCameraEnabled(enableCamera);
+  Future<void> setCameraEnabled(bool enableCamera) async {
+    await _messenger.setCameraEnabled(enableCamera);
   }
 
   /// This function is called from the native side.
