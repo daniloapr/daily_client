@@ -17,7 +17,7 @@ class RemoteParticipant extends Participant {
       userId: message.userId,
       isCameraEnabled: message.isCameraEnabled,
       isMicrophoneEnabled: message.isMicrophoneEnabled,
-      media:message.media != null ?  Media.fromMessage(message.media!) : null,
+      media: message.media != null ? Media.fromMessage(message.media!) : null,
     );
   }
 
@@ -28,5 +28,10 @@ class RemoteParticipant extends Participant {
         .where((message) => message != null)
         .map((message) => RemoteParticipant.fromMessage(message!))
         .toList();
+  }
+
+  @override
+  String toString() {
+    return 'RemoteParticipant(id: $id)';
   }
 }

@@ -31,6 +31,11 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 }
 
 
+@interface UpdateSubscriptionArgs ()
++ (UpdateSubscriptionArgs *)fromMap:(NSDictionary *)dict;
++ (nullable UpdateSubscriptionArgs *)nullableFromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
+@end
 @interface VoidResult ()
 + (VoidResult *)fromMap:(NSDictionary *)dict;
 + (nullable VoidResult *)nullableFromMap:(NSDictionary *)dict;
@@ -44,6 +49,11 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 @interface JoinArgs ()
 + (JoinArgs *)fromMap:(NSDictionary *)dict;
 + (nullable JoinArgs *)nullableFromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
+@end
+@interface UpdateSubscriptionProfileArgs ()
++ (UpdateSubscriptionProfileArgs *)fromMap:(NSDictionary *)dict;
++ (nullable UpdateSubscriptionProfileArgs *)nullableFromMap:(NSDictionary *)dict;
 - (NSDictionary *)toMap;
 @end
 @interface JoinMessage ()
@@ -75,6 +85,31 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 + (TrackMessage *)fromMap:(NSDictionary *)dict;
 + (nullable TrackMessage *)nullableFromMap:(NSDictionary *)dict;
 - (NSDictionary *)toMap;
+@end
+
+@implementation UpdateSubscriptionArgs
++ (instancetype)makeWithParticipantId:(NSString *)participantId
+    profileName:(NSString *)profileName {
+  UpdateSubscriptionArgs* pigeonResult = [[UpdateSubscriptionArgs alloc] init];
+  pigeonResult.participantId = participantId;
+  pigeonResult.profileName = profileName;
+  return pigeonResult;
+}
++ (UpdateSubscriptionArgs *)fromMap:(NSDictionary *)dict {
+  UpdateSubscriptionArgs *pigeonResult = [[UpdateSubscriptionArgs alloc] init];
+  pigeonResult.participantId = GetNullableObject(dict, @"participantId");
+  NSAssert(pigeonResult.participantId != nil, @"");
+  pigeonResult.profileName = GetNullableObject(dict, @"profileName");
+  NSAssert(pigeonResult.profileName != nil, @"");
+  return pigeonResult;
+}
++ (nullable UpdateSubscriptionArgs *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [UpdateSubscriptionArgs fromMap:dict] : nil; }
+- (NSDictionary *)toMap {
+  return @{
+    @"participantId" : (self.participantId ?: [NSNull null]),
+    @"profileName" : (self.profileName ?: [NSNull null]),
+  };
+}
 @end
 
 @implementation VoidResult
@@ -124,12 +159,14 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 + (instancetype)makeWithUrl:(NSString *)url
     token:(NSString *)token
     enableMicrophone:(NSNumber *)enableMicrophone
-    enableCamera:(NSNumber *)enableCamera {
+    enableCamera:(NSNumber *)enableCamera
+    autoSubscribe:(NSNumber *)autoSubscribe {
   JoinArgs* pigeonResult = [[JoinArgs alloc] init];
   pigeonResult.url = url;
   pigeonResult.token = token;
   pigeonResult.enableMicrophone = enableMicrophone;
   pigeonResult.enableCamera = enableCamera;
+  pigeonResult.autoSubscribe = autoSubscribe;
   return pigeonResult;
 }
 + (JoinArgs *)fromMap:(NSDictionary *)dict {
@@ -142,6 +179,8 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   NSAssert(pigeonResult.enableMicrophone != nil, @"");
   pigeonResult.enableCamera = GetNullableObject(dict, @"enableCamera");
   NSAssert(pigeonResult.enableCamera != nil, @"");
+  pigeonResult.autoSubscribe = GetNullableObject(dict, @"autoSubscribe");
+  NSAssert(pigeonResult.autoSubscribe != nil, @"");
   return pigeonResult;
 }
 + (nullable JoinArgs *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [JoinArgs fromMap:dict] : nil; }
@@ -151,6 +190,37 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     @"token" : (self.token ?: [NSNull null]),
     @"enableMicrophone" : (self.enableMicrophone ?: [NSNull null]),
     @"enableCamera" : (self.enableCamera ?: [NSNull null]),
+    @"autoSubscribe" : (self.autoSubscribe ?: [NSNull null]),
+  };
+}
+@end
+
+@implementation UpdateSubscriptionProfileArgs
++ (instancetype)makeWithName:(NSString *)name
+    subscribeCamera:(NSNumber *)subscribeCamera
+    subscribeMicrophone:(NSNumber *)subscribeMicrophone {
+  UpdateSubscriptionProfileArgs* pigeonResult = [[UpdateSubscriptionProfileArgs alloc] init];
+  pigeonResult.name = name;
+  pigeonResult.subscribeCamera = subscribeCamera;
+  pigeonResult.subscribeMicrophone = subscribeMicrophone;
+  return pigeonResult;
+}
++ (UpdateSubscriptionProfileArgs *)fromMap:(NSDictionary *)dict {
+  UpdateSubscriptionProfileArgs *pigeonResult = [[UpdateSubscriptionProfileArgs alloc] init];
+  pigeonResult.name = GetNullableObject(dict, @"name");
+  NSAssert(pigeonResult.name != nil, @"");
+  pigeonResult.subscribeCamera = GetNullableObject(dict, @"subscribeCamera");
+  NSAssert(pigeonResult.subscribeCamera != nil, @"");
+  pigeonResult.subscribeMicrophone = GetNullableObject(dict, @"subscribeMicrophone");
+  NSAssert(pigeonResult.subscribeMicrophone != nil, @"");
+  return pigeonResult;
+}
++ (nullable UpdateSubscriptionProfileArgs *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [UpdateSubscriptionProfileArgs fromMap:dict] : nil; }
+- (NSDictionary *)toMap {
+  return @{
+    @"name" : (self.name ?: [NSNull null]),
+    @"subscribeCamera" : (self.subscribeCamera ?: [NSNull null]),
+    @"subscribeMicrophone" : (self.subscribeMicrophone ?: [NSNull null]),
   };
 }
 @end
@@ -378,6 +448,12 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
       return [TrackMessage fromMap:[self readValue]];
     
     case 136:     
+      return [UpdateSubscriptionArgs fromMap:[self readValue]];
+    
+    case 137:     
+      return [UpdateSubscriptionProfileArgs fromMap:[self readValue]];
+    
+    case 138:     
       return [VoidResult fromMap:[self readValue]];
     
     default:    
@@ -424,8 +500,16 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     [self writeByte:135];
     [self writeValue:[value toMap]];
   } else 
-  if ([value isKindOfClass:[VoidResult class]]) {
+  if ([value isKindOfClass:[UpdateSubscriptionArgs class]]) {
     [self writeByte:136];
+    [self writeValue:[value toMap]];
+  } else 
+  if ([value isKindOfClass:[UpdateSubscriptionProfileArgs class]]) {
+    [self writeByte:137];
+    [self writeValue:[value toMap]];
+  } else 
+  if ([value isKindOfClass:[VoidResult class]]) {
+    [self writeByte:138];
     [self writeValue:[value toMap]];
   } else 
 {
@@ -530,6 +614,46 @@ void DailyMessengerSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Da
         NSNumber *arg_enableCam = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         VoidResult *output = [api setCameraEnabledEnableCam:arg_enableCam error:&error];
+        callback(wrapResult(output, error));
+      }];
+    }
+    else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.DailyMessenger.updateSubscriptionProfiles"
+        binaryMessenger:binaryMessenger
+        codec:DailyMessengerGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(updateSubscriptionProfilesArgs:error:)], @"DailyMessenger api (%@) doesn't respond to @selector(updateSubscriptionProfilesArgs:error:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSArray<UpdateSubscriptionProfileArgs *> *arg_args = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        VoidResult *output = [api updateSubscriptionProfilesArgs:arg_args error:&error];
+        callback(wrapResult(output, error));
+      }];
+    }
+    else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.DailyMessenger.updateSubscriptions"
+        binaryMessenger:binaryMessenger
+        codec:DailyMessengerGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(updateSubscriptionsArgs:error:)], @"DailyMessenger api (%@) doesn't respond to @selector(updateSubscriptionsArgs:error:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSArray<UpdateSubscriptionArgs *> *arg_args = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        VoidResult *output = [api updateSubscriptionsArgs:arg_args error:&error];
         callback(wrapResult(output, error));
       }];
     }

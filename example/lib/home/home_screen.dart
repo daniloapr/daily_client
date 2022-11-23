@@ -1,3 +1,4 @@
+import 'package:daily_client_example/core/subscription_profiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:daily_client/daily_client.dart' as daily;
@@ -28,12 +29,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() => _isLoading = true);
     try {
+      final profiles =
+          SubscriptionProfiles.values.map((e) => e.settings).toList();
+      await _dailyClient.updateSubscriptionProfiles(profiles);
+
       final result = await _dailyClient.join(
         daily.JoinOptions(
           url: _urlController.text,
           token: _tokenController.text,
           enableCamera: _enableCamera,
           enableMicrophone: _enabledMicrophone,
+          autoSubscribe: false,
         ),
       );
       if (!mounted) return;

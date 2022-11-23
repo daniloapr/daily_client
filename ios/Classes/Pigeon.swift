@@ -18,6 +18,8 @@ enum ErrorCode: Int {
   case join = 1
   case updateCamera = 2
   case updateMicrophone = 3
+  case updateSubscriptions = 4
+  case updateSubscriptionProfiles = 5
 }
 
 enum TrackSubscriptionStateMessage: Int {
@@ -35,6 +37,28 @@ enum MediaStateMessage: Int {
   case playable = 4
   case interrupted = 5
   case unknown = 6
+}
+
+///Generated class from Pigeon that represents data sent in messages.
+struct UpdateSubscriptionArgs {
+  var participantId: String
+  var profileName: String
+
+  static func fromMap(_ map: [String: Any?]) -> UpdateSubscriptionArgs? {
+    let participantId = map["participantId"] as! String
+    let profileName = map["profileName"] as! String
+
+    return UpdateSubscriptionArgs(
+      participantId: participantId,
+      profileName: profileName
+    )
+  }
+  func toMap() -> [String: Any?] {
+    return [
+      "participantId": participantId,
+      "profileName": profileName
+    ]
+  }
 }
 
 ///Generated class from Pigeon that represents data sent in messages.
@@ -86,18 +110,21 @@ struct JoinArgs {
   var token: String
   var enableMicrophone: Bool
   var enableCamera: Bool
+  var autoSubscribe: Bool
 
   static func fromMap(_ map: [String: Any?]) -> JoinArgs? {
     let url = map["url"] as! String
     let token = map["token"] as! String
     let enableMicrophone = map["enableMicrophone"] as! Bool
     let enableCamera = map["enableCamera"] as! Bool
+    let autoSubscribe = map["autoSubscribe"] as! Bool
 
     return JoinArgs(
       url: url,
       token: token,
       enableMicrophone: enableMicrophone,
-      enableCamera: enableCamera
+      enableCamera: enableCamera,
+      autoSubscribe: autoSubscribe
     )
   }
   func toMap() -> [String: Any?] {
@@ -105,7 +132,34 @@ struct JoinArgs {
       "url": url,
       "token": token,
       "enableMicrophone": enableMicrophone,
-      "enableCamera": enableCamera
+      "enableCamera": enableCamera,
+      "autoSubscribe": autoSubscribe
+    ]
+  }
+}
+
+///Generated class from Pigeon that represents data sent in messages.
+struct UpdateSubscriptionProfileArgs {
+  var name: String
+  var subscribeCamera: Bool
+  var subscribeMicrophone: Bool
+
+  static func fromMap(_ map: [String: Any?]) -> UpdateSubscriptionProfileArgs? {
+    let name = map["name"] as! String
+    let subscribeCamera = map["subscribeCamera"] as! Bool
+    let subscribeMicrophone = map["subscribeMicrophone"] as! Bool
+
+    return UpdateSubscriptionProfileArgs(
+      name: name,
+      subscribeCamera: subscribeCamera,
+      subscribeMicrophone: subscribeMicrophone
+    )
+  }
+  func toMap() -> [String: Any?] {
+    return [
+      "name": name,
+      "subscribeCamera": subscribeCamera,
+      "subscribeMicrophone": subscribeMicrophone
     ]
   }
 }
@@ -319,6 +373,10 @@ private class DailyMessengerCodecReader: FlutterStandardReader {
       case 135:
         return TrackMessage.fromMap(self.readValue() as! [String: Any])      
       case 136:
+        return UpdateSubscriptionArgs.fromMap(self.readValue() as! [String: Any])      
+      case 137:
+        return UpdateSubscriptionProfileArgs.fromMap(self.readValue() as! [String: Any])      
+      case 138:
         return VoidResult.fromMap(self.readValue() as! [String: Any])      
       default:
         return super.readValue(ofType: type)
@@ -352,8 +410,14 @@ private class DailyMessengerCodecWriter: FlutterStandardWriter {
     } else if let value = value as? TrackMessage {
       super.writeByte(135)
       super.writeValue(value.toMap())
-    } else if let value = value as? VoidResult {
+    } else if let value = value as? UpdateSubscriptionArgs {
       super.writeByte(136)
+      super.writeValue(value.toMap())
+    } else if let value = value as? UpdateSubscriptionProfileArgs {
+      super.writeByte(137)
+      super.writeValue(value.toMap())
+    } else if let value = value as? VoidResult {
+      super.writeByte(138)
       super.writeValue(value.toMap())
     } else {
       super.writeValue(value)
@@ -386,6 +450,8 @@ protocol DailyMessenger {
   func leave() -> VoidResult
   func setMicrophoneEnabled(enableMic: Bool) -> VoidResult
   func setCameraEnabled(enableCam: Bool) -> VoidResult
+  func updateSubscriptionProfiles(args: [UpdateSubscriptionProfileArgs]) -> VoidResult
+  func updateSubscriptions(args: [UpdateSubscriptionArgs]) -> VoidResult
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -438,6 +504,28 @@ class DailyMessengerSetup {
       }
     } else {
       setCameraEnabledChannel.setMessageHandler(nil)
+    }
+    let updateSubscriptionProfilesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyMessenger.updateSubscriptionProfiles", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      updateSubscriptionProfilesChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let argsArg = args[0] as! [UpdateSubscriptionProfileArgs]
+        let result = api.updateSubscriptionProfiles(args: argsArg)
+        reply(wrapResult(result))
+      }
+    } else {
+      updateSubscriptionProfilesChannel.setMessageHandler(nil)
+    }
+    let updateSubscriptionsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyMessenger.updateSubscriptions", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      updateSubscriptionsChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let argsArg = args[0] as! [UpdateSubscriptionArgs]
+        let result = api.updateSubscriptions(args: argsArg)
+        reply(wrapResult(result))
+      }
+    } else {
+      updateSubscriptionsChannel.setMessageHandler(nil)
     }
   }
 }

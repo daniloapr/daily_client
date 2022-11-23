@@ -12,6 +12,8 @@ enum ErrorCode {
   join,
   updateCamera,
   updateMicrophone,
+  updateSubscriptions,
+  updateSubscriptionProfiles,
 }
 
 enum TrackSubscriptionStateMessage {
@@ -29,6 +31,31 @@ enum MediaStateMessage {
   playable,
   interrupted,
   unknown,
+}
+
+class UpdateSubscriptionArgs {
+  UpdateSubscriptionArgs({
+    required this.participantId,
+    required this.profileName,
+  });
+
+  String participantId;
+  String profileName;
+
+  Object encode() {
+    final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
+    pigeonMap['participantId'] = participantId;
+    pigeonMap['profileName'] = profileName;
+    return pigeonMap;
+  }
+
+  static UpdateSubscriptionArgs decode(Object message) {
+    final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
+    return UpdateSubscriptionArgs(
+      participantId: pigeonMap['participantId']! as String,
+      profileName: pigeonMap['profileName']! as String,
+    );
+  }
 }
 
 class VoidResult {
@@ -74,7 +101,8 @@ class PlatformError {
     final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
     return PlatformError(
       message: pigeonMap['message']! as String,
-      code: ErrorCode.values[pigeonMap['code']! as int],
+      code: ErrorCode.values[pigeonMap['code']! as int]
+,
     );
   }
 }
@@ -85,12 +113,14 @@ class JoinArgs {
     required this.token,
     required this.enableMicrophone,
     required this.enableCamera,
+    required this.autoSubscribe,
   });
 
   String url;
   String token;
   bool enableMicrophone;
   bool enableCamera;
+  bool autoSubscribe;
 
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
@@ -98,6 +128,7 @@ class JoinArgs {
     pigeonMap['token'] = token;
     pigeonMap['enableMicrophone'] = enableMicrophone;
     pigeonMap['enableCamera'] = enableCamera;
+    pigeonMap['autoSubscribe'] = autoSubscribe;
     return pigeonMap;
   }
 
@@ -108,6 +139,36 @@ class JoinArgs {
       token: pigeonMap['token']! as String,
       enableMicrophone: pigeonMap['enableMicrophone']! as bool,
       enableCamera: pigeonMap['enableCamera']! as bool,
+      autoSubscribe: pigeonMap['autoSubscribe']! as bool,
+    );
+  }
+}
+
+class UpdateSubscriptionProfileArgs {
+  UpdateSubscriptionProfileArgs({
+    required this.name,
+    required this.subscribeCamera,
+    required this.subscribeMicrophone,
+  });
+
+  String name;
+  bool subscribeCamera;
+  bool subscribeMicrophone;
+
+  Object encode() {
+    final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
+    pigeonMap['name'] = name;
+    pigeonMap['subscribeCamera'] = subscribeCamera;
+    pigeonMap['subscribeMicrophone'] = subscribeMicrophone;
+    return pigeonMap;
+  }
+
+  static UpdateSubscriptionProfileArgs decode(Object message) {
+    final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
+    return UpdateSubscriptionProfileArgs(
+      name: pigeonMap['name']! as String,
+      subscribeCamera: pigeonMap['subscribeCamera']! as bool,
+      subscribeMicrophone: pigeonMap['subscribeMicrophone']! as bool,
     );
   }
 }
@@ -138,8 +199,7 @@ class JoinMessage {
       localParticipant: pigeonMap['localParticipant'] != null
           ? LocalParticipantMessage.decode(pigeonMap['localParticipant']!)
           : null,
-      remoteParticipants: (pigeonMap['remoteParticipants'] as List<Object?>?)
-          ?.cast<RemoteParticipantMessage?>(),
+      remoteParticipants: (pigeonMap['remoteParticipants'] as List<Object?>?)?.cast<RemoteParticipantMessage?>(),
       error: pigeonMap['error'] != null
           ? PlatformError.decode(pigeonMap['error']!)
           : null,
@@ -250,10 +310,14 @@ class MediaMessage {
   static MediaMessage decode(Object message) {
     final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
     return MediaMessage(
-      camera: MediaInfoMessage.decode(pigeonMap['camera']!),
-      microphone: MediaInfoMessage.decode(pigeonMap['microphone']!),
-      screenVideo: MediaInfoMessage.decode(pigeonMap['screenVideo']!),
-      screenAudio: MediaInfoMessage.decode(pigeonMap['screenAudio']!),
+      camera: MediaInfoMessage.decode(pigeonMap['camera']!)
+,
+      microphone: MediaInfoMessage.decode(pigeonMap['microphone']!)
+,
+      screenVideo: MediaInfoMessage.decode(pigeonMap['screenVideo']!)
+,
+      screenAudio: MediaInfoMessage.decode(pigeonMap['screenAudio']!)
+,
     );
   }
 }
@@ -280,9 +344,10 @@ class MediaInfoMessage {
   static MediaInfoMessage decode(Object message) {
     final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
     return MediaInfoMessage(
-      state: MediaStateMessage.values[pigeonMap['state']! as int],
-      subscribed:
-          TrackSubscriptionStateMessage.values[pigeonMap['subscribed']! as int],
+      state: MediaStateMessage.values[pigeonMap['state']! as int]
+,
+      subscribed: TrackSubscriptionStateMessage.values[pigeonMap['subscribed']! as int]
+,
       track: pigeonMap['track'] != null
           ? TrackMessage.decode(pigeonMap['track']!)
           : null,
@@ -315,74 +380,97 @@ class TrackMessage {
   }
 }
 
-class _DailyMessengerCodec extends StandardMessageCodec {
+class _DailyMessengerCodec extends StandardMessageCodec{
   const _DailyMessengerCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is JoinArgs) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is JoinMessage) {
+    } else 
+    if (value is JoinMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is LocalParticipantMessage) {
+    } else 
+    if (value is LocalParticipantMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is MediaInfoMessage) {
+    } else 
+    if (value is MediaInfoMessage) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is MediaMessage) {
+    } else 
+    if (value is MediaMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformError) {
+    } else 
+    if (value is PlatformError) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is RemoteParticipantMessage) {
+    } else 
+    if (value is RemoteParticipantMessage) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is TrackMessage) {
+    } else 
+    if (value is TrackMessage) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is VoidResult) {
+    } else 
+    if (value is UpdateSubscriptionArgs) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else {
+    } else 
+    if (value is UpdateSubscriptionProfileArgs) {
+      buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    } else 
+    if (value is VoidResult) {
+      buffer.putUint8(138);
+      writeValue(buffer, value.encode());
+    } else 
+{
       super.writeValue(buffer, value);
     }
   }
-
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128:       
         return JoinArgs.decode(readValue(buffer)!);
-
-      case 129:
+      
+      case 129:       
         return JoinMessage.decode(readValue(buffer)!);
-
-      case 130:
+      
+      case 130:       
         return LocalParticipantMessage.decode(readValue(buffer)!);
-
-      case 131:
+      
+      case 131:       
         return MediaInfoMessage.decode(readValue(buffer)!);
-
-      case 132:
+      
+      case 132:       
         return MediaMessage.decode(readValue(buffer)!);
-
-      case 133:
+      
+      case 133:       
         return PlatformError.decode(readValue(buffer)!);
-
-      case 134:
+      
+      case 134:       
         return RemoteParticipantMessage.decode(readValue(buffer)!);
-
-      case 135:
+      
+      case 135:       
         return TrackMessage.decode(readValue(buffer)!);
-
-      case 136:
+      
+      case 136:       
+        return UpdateSubscriptionArgs.decode(readValue(buffer)!);
+      
+      case 137:       
+        return UpdateSubscriptionProfileArgs.decode(readValue(buffer)!);
+      
+      case 138:       
         return VoidResult.decode(readValue(buffer)!);
-
-      default:
+      
+      default:      
         return super.readValueOfType(type, buffer);
+      
     }
   }
 }
@@ -393,8 +481,7 @@ class DailyMessenger {
   /// Constructor for [DailyMessenger].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  DailyMessenger({BinaryMessenger? binaryMessenger})
-      : _binaryMessenger = binaryMessenger;
+  DailyMessenger({BinaryMessenger? binaryMessenger}) : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
   static const MessageCodec<Object?> codec = _DailyMessengerCodec();
@@ -402,8 +489,7 @@ class DailyMessenger {
   /// Join Daily call.
   Future<JoinMessage> join(JoinArgs arg_args) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.DailyMessenger.join', codec,
-        binaryMessenger: _binaryMessenger);
+        'dev.flutter.pigeon.DailyMessenger.join', codec, binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
         await channel.send(<Object?>[arg_args]) as Map<Object?, Object?>?;
     if (replyMap == null) {
@@ -412,8 +498,7 @@ class DailyMessenger {
         message: 'Unable to establish connection on channel.',
       );
     } else if (replyMap['error'] != null) {
-      final Map<Object?, Object?> error =
-          (replyMap['error'] as Map<Object?, Object?>?)!;
+      final Map<Object?, Object?> error = (replyMap['error'] as Map<Object?, Object?>?)!;
       throw PlatformException(
         code: (error['code'] as String?)!,
         message: error['message'] as String?,
@@ -432,8 +517,7 @@ class DailyMessenger {
   /// Leave Daily call.
   Future<VoidResult> leave() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.DailyMessenger.leave', codec,
-        binaryMessenger: _binaryMessenger);
+        'dev.flutter.pigeon.DailyMessenger.leave', codec, binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
         await channel.send(null) as Map<Object?, Object?>?;
     if (replyMap == null) {
@@ -442,8 +526,7 @@ class DailyMessenger {
         message: 'Unable to establish connection on channel.',
       );
     } else if (replyMap['error'] != null) {
-      final Map<Object?, Object?> error =
-          (replyMap['error'] as Map<Object?, Object?>?)!;
+      final Map<Object?, Object?> error = (replyMap['error'] as Map<Object?, Object?>?)!;
       throw PlatformException(
         code: (error['code'] as String?)!,
         message: error['message'] as String?,
@@ -461,8 +544,7 @@ class DailyMessenger {
 
   Future<VoidResult> setMicrophoneEnabled(bool arg_enableMic) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.DailyMessenger.setMicrophoneEnabled', codec,
-        binaryMessenger: _binaryMessenger);
+        'dev.flutter.pigeon.DailyMessenger.setMicrophoneEnabled', codec, binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
         await channel.send(<Object?>[arg_enableMic]) as Map<Object?, Object?>?;
     if (replyMap == null) {
@@ -471,8 +553,7 @@ class DailyMessenger {
         message: 'Unable to establish connection on channel.',
       );
     } else if (replyMap['error'] != null) {
-      final Map<Object?, Object?> error =
-          (replyMap['error'] as Map<Object?, Object?>?)!;
+      final Map<Object?, Object?> error = (replyMap['error'] as Map<Object?, Object?>?)!;
       throw PlatformException(
         code: (error['code'] as String?)!,
         message: error['message'] as String?,
@@ -490,8 +571,7 @@ class DailyMessenger {
 
   Future<VoidResult> setCameraEnabled(bool arg_enableCam) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.DailyMessenger.setCameraEnabled', codec,
-        binaryMessenger: _binaryMessenger);
+        'dev.flutter.pigeon.DailyMessenger.setCameraEnabled', codec, binaryMessenger: _binaryMessenger);
     final Map<Object?, Object?>? replyMap =
         await channel.send(<Object?>[arg_enableCam]) as Map<Object?, Object?>?;
     if (replyMap == null) {
@@ -500,8 +580,61 @@ class DailyMessenger {
         message: 'Unable to establish connection on channel.',
       );
     } else if (replyMap['error'] != null) {
-      final Map<Object?, Object?> error =
-          (replyMap['error'] as Map<Object?, Object?>?)!;
+      final Map<Object?, Object?> error = (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else if (replyMap['result'] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyMap['result'] as VoidResult?)!;
+    }
+  }
+
+  Future<VoidResult> updateSubscriptionProfiles(List<UpdateSubscriptionProfileArgs?> arg_args) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.DailyMessenger.updateSubscriptionProfiles', codec, binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(<Object?>[arg_args]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error = (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else if (replyMap['result'] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyMap['result'] as VoidResult?)!;
+    }
+  }
+
+  Future<VoidResult> updateSubscriptions(List<UpdateSubscriptionArgs?> arg_args) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.DailyMessenger.updateSubscriptions', codec, binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(<Object?>[arg_args]) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error = (replyMap['error'] as Map<Object?, Object?>?)!;
       throw PlatformException(
         code: (error['code'] as String?)!,
         message: error['message'] as String?,
@@ -518,100 +651,93 @@ class DailyMessenger {
   }
 }
 
-class _DailyCallbackCodec extends StandardMessageCodec {
+class _DailyCallbackCodec extends StandardMessageCodec{
   const _DailyCallbackCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is LocalParticipantMessage) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is MediaInfoMessage) {
+    } else 
+    if (value is MediaInfoMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is MediaMessage) {
+    } else 
+    if (value is MediaMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is RemoteParticipantMessage) {
+    } else 
+    if (value is RemoteParticipantMessage) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is TrackMessage) {
+    } else 
+    if (value is TrackMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else {
+    } else 
+{
       super.writeValue(buffer, value);
     }
   }
-
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128:       
         return LocalParticipantMessage.decode(readValue(buffer)!);
-
-      case 129:
+      
+      case 129:       
         return MediaInfoMessage.decode(readValue(buffer)!);
-
-      case 130:
+      
+      case 130:       
         return MediaMessage.decode(readValue(buffer)!);
-
-      case 131:
+      
+      case 131:       
         return RemoteParticipantMessage.decode(readValue(buffer)!);
-
-      case 132:
+      
+      case 132:       
         return TrackMessage.decode(readValue(buffer)!);
-
-      default:
+      
+      default:      
         return super.readValueOfType(type, buffer);
+      
     }
   }
 }
-
 abstract class DailyCallback {
   static const MessageCodec<Object?> codec = _DailyCallbackCodec();
 
-  void onParticipantsUpdated(LocalParticipantMessage localParticipantMessage,
-      List<RemoteParticipantMessage?> remoteParticipantsMessage);
+  void onParticipantsUpdated(LocalParticipantMessage localParticipantMessage, List<RemoteParticipantMessage?> remoteParticipantsMessage);
   void onCallStateUpdated(int stateCode);
   static void setup(DailyCallback? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.DailyCallback.onParticipantsUpdated', codec,
-          binaryMessenger: binaryMessenger);
+          'dev.flutter.pigeon.DailyCallback.onParticipantsUpdated', codec, binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.DailyCallback.onParticipantsUpdated was null.');
+          assert(message != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantsUpdated was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final LocalParticipantMessage? arg_localParticipantMessage =
-              (args[0] as LocalParticipantMessage?);
-          assert(arg_localParticipantMessage != null,
-              'Argument for dev.flutter.pigeon.DailyCallback.onParticipantsUpdated was null, expected non-null LocalParticipantMessage.');
-          final List<RemoteParticipantMessage?>? arg_remoteParticipantsMessage =
-              (args[1] as List<Object?>?)?.cast<RemoteParticipantMessage?>();
-          assert(arg_remoteParticipantsMessage != null,
-              'Argument for dev.flutter.pigeon.DailyCallback.onParticipantsUpdated was null, expected non-null List<RemoteParticipantMessage?>.');
-          api.onParticipantsUpdated(
-              arg_localParticipantMessage!, arg_remoteParticipantsMessage!);
+          final LocalParticipantMessage? arg_localParticipantMessage = (args[0] as LocalParticipantMessage?);
+          assert(arg_localParticipantMessage != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantsUpdated was null, expected non-null LocalParticipantMessage.');
+          final List<RemoteParticipantMessage?>? arg_remoteParticipantsMessage = (args[1] as List<Object?>?)?.cast<RemoteParticipantMessage?>();
+          assert(arg_remoteParticipantsMessage != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantsUpdated was null, expected non-null List<RemoteParticipantMessage?>.');
+          api.onParticipantsUpdated(arg_localParticipantMessage!, arg_remoteParticipantsMessage!);
           return;
         });
       }
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.DailyCallback.onCallStateUpdated', codec,
-          binaryMessenger: binaryMessenger);
+          'dev.flutter.pigeon.DailyCallback.onCallStateUpdated', codec, binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.DailyCallback.onCallStateUpdated was null.');
+          assert(message != null, 'Argument for dev.flutter.pigeon.DailyCallback.onCallStateUpdated was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_stateCode = (args[0] as int?);
-          assert(arg_stateCode != null,
-              'Argument for dev.flutter.pigeon.DailyCallback.onCallStateUpdated was null, expected non-null int.');
+          assert(arg_stateCode != null, 'Argument for dev.flutter.pigeon.DailyCallback.onCallStateUpdated was null, expected non-null int.');
           api.onCallStateUpdated(arg_stateCode!);
           return;
         });

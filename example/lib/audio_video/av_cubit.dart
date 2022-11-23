@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:daily_client/daily_client.dart' as daily;
+import 'package:daily_client_example/core/subscription_profiles.dart';
 import 'package:daily_client_example/dependencies.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -66,6 +67,17 @@ class AvCubit extends Cubit<AvState> {
   }
 
   void _onParticipantsUpdated(daily.Participants participants) {
+    final subscriptionsOptions = participants.remote
+        .map(
+          (e) => daily.UpdateSubscriptionOptions(
+            participantId: e.id,
+            profileName: SubscriptionProfiles.visible.name,
+          ),
+        )
+        .toList();
+
+    _dailyClient.updateSubscriptions(subscriptionsOptions);
+
     final currentState = state;
     if (currentState is! AvConnectedState) return;
 

@@ -144,6 +144,52 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         }
     }
     
+    func updateSubscriptionProfiles(args: [UpdateSubscriptionProfileArgs]) -> VoidResult {
+        do {
+            try args.forEach{ arg in
+                let _ = try call.updateSubscriptionProfiles{ profiles in
+                    profiles(SubscriptionProfile(stringLiteral: arg.name)) { profile in
+                        profile(\.camera, .subscribed(arg.subscribeCamera))
+                        profile(\.microphone, .subscribed(arg.subscribeMicrophone))
+                    }
+                }
+            }
+        } catch {
+            return VoidResult(
+                error: PlatformError(
+                    message: "\(error)",
+                    code: ErrorCode.updateSubscriptionProfiles
+                )
+            )
+        }
+        return VoidResult()
+    }
+    
+    func updateSubscriptions(args: [UpdateSubscriptionArgs]) -> VoidResult {
+        do {
+            let participants: SubscriptionSettingsUpdatesById = args.reduce(into: [:]) { dictionary, arg in
+                let participantId = ParticipantId(uuid: UUID(uuidString: arg.participantId)!)
+                let subscription: Update<SubscriptionSettingsUpdate> = .set(.init(
+                    profile: .set(.init(stringLiteral: arg.profileName))
+                ))
+                
+                dictionary[participantId] = subscription
+            }
+            
+            let _ = try call.updateSubscriptions(forParticipants: participants)
+            
+        } catch {
+            return VoidResult(
+                error: PlatformError(
+                    message: "\(error)",
+                    code: ErrorCode.updateSubscriptions
+                )
+            )
+        }
+        
+        return VoidResult()
+    }
+    
     private func getParticipantsMessage(
         fromParticipants participants: Daily.Participants
     ) -> (local: LocalParticipantMessage, remote: [RemoteParticipantMessage]) {
@@ -167,7 +213,6 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
                 userId: participant.info.userId?.uuid.uuidString ?? "",
                 media: getMediaMessage(fromMedia: participant.media)
             )
-            
         }
         
         return (localParticipantMessage, remoteParticipantsMessage)

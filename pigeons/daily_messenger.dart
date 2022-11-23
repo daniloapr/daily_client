@@ -12,6 +12,10 @@ abstract class DailyMessenger {
   VoidResult leave();
   VoidResult setMicrophoneEnabled(bool enableMic);
   VoidResult setCameraEnabled(bool enableCam);
+  VoidResult updateSubscriptionProfiles(
+    List<UpdateSubscriptionProfileArgs> args,
+  );
+  VoidResult updateSubscriptions(List<UpdateSubscriptionArgs> args);
 }
 
 @FlutterApi()
@@ -22,6 +26,13 @@ abstract class DailyCallback {
   );
 
   void onCallStateUpdated(int stateCode);
+}
+
+class UpdateSubscriptionArgs {
+  UpdateSubscriptionArgs(this.participantId, this.profileName);
+
+  final String participantId;
+  final String profileName;
 }
 
 class VoidResult extends Message {
@@ -43,6 +54,8 @@ enum ErrorCode {
   join,
   updateCamera,
   updateMicrophone,
+  updateSubscriptions,
+  updateSubscriptionProfiles,
 }
 
 class JoinArgs {
@@ -51,12 +64,26 @@ class JoinArgs {
     this.token,
     this.enableMicrophone,
     this.enableCamera,
+    this.autoSubscribe,
   );
 
   final String url;
   final String token;
   final bool enableMicrophone;
   final bool enableCamera;
+  final bool autoSubscribe;
+}
+
+class UpdateSubscriptionProfileArgs {
+  UpdateSubscriptionProfileArgs(
+    this.name,
+    this.subscribeCamera,
+    this.subscribeMicrophone,
+  );
+
+  final String name;
+  final bool subscribeCamera;
+  final bool subscribeMicrophone;
 }
 
 abstract class Message {
