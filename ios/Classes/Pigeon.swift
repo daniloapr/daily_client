@@ -242,6 +242,7 @@ struct RemoteParticipantMessage {
   var isMicrophoneEnabled: Bool
   var userId: String
   var media: MediaMessage? = nil
+  var joinAtInMillisSinceEpoch: Int32
 
   static func fromMap(_ map: [String: Any?]) -> RemoteParticipantMessage? {
     let id = map["id"] as! String
@@ -252,13 +253,15 @@ struct RemoteParticipantMessage {
     if let mediaMap = map["media"] as? [String: Any?] {
       media = MediaMessage.fromMap(mediaMap)
     }
+    let joinAtInMillisSinceEpoch = map["joinAtInMillisSinceEpoch"] as! Int32
 
     return RemoteParticipantMessage(
       id: id,
       isCameraEnabled: isCameraEnabled,
       isMicrophoneEnabled: isMicrophoneEnabled,
       userId: userId,
-      media: media
+      media: media,
+      joinAtInMillisSinceEpoch: joinAtInMillisSinceEpoch
     )
   }
   func toMap() -> [String: Any?] {
@@ -267,7 +270,8 @@ struct RemoteParticipantMessage {
       "isCameraEnabled": isCameraEnabled,
       "isMicrophoneEnabled": isMicrophoneEnabled,
       "userId": userId,
-      "media": media?.toMap()
+      "media": media?.toMap(),
+      "joinAtInMillisSinceEpoch": joinAtInMillisSinceEpoch
     ]
   }
 }

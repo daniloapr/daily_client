@@ -296,13 +296,15 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     isCameraEnabled:(NSNumber *)isCameraEnabled
     isMicrophoneEnabled:(NSNumber *)isMicrophoneEnabled
     userId:(NSString *)userId
-    media:(nullable MediaMessage *)media {
+    media:(nullable MediaMessage *)media
+    joinAtInMillisSinceEpoch:(NSNumber *)joinAtInMillisSinceEpoch {
   RemoteParticipantMessage* pigeonResult = [[RemoteParticipantMessage alloc] init];
   pigeonResult.id = id;
   pigeonResult.isCameraEnabled = isCameraEnabled;
   pigeonResult.isMicrophoneEnabled = isMicrophoneEnabled;
   pigeonResult.userId = userId;
   pigeonResult.media = media;
+  pigeonResult.joinAtInMillisSinceEpoch = joinAtInMillisSinceEpoch;
   return pigeonResult;
 }
 + (RemoteParticipantMessage *)fromMap:(NSDictionary *)dict {
@@ -316,6 +318,8 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   pigeonResult.userId = GetNullableObject(dict, @"userId");
   NSAssert(pigeonResult.userId != nil, @"");
   pigeonResult.media = [MediaMessage nullableFromMap:GetNullableObject(dict, @"media")];
+  pigeonResult.joinAtInMillisSinceEpoch = GetNullableObject(dict, @"joinAtInMillisSinceEpoch");
+  NSAssert(pigeonResult.joinAtInMillisSinceEpoch != nil, @"");
   return pigeonResult;
 }
 + (nullable RemoteParticipantMessage *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [RemoteParticipantMessage fromMap:dict] : nil; }
@@ -326,6 +330,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     @"isMicrophoneEnabled" : (self.isMicrophoneEnabled ?: [NSNull null]),
     @"userId" : (self.userId ?: [NSNull null]),
     @"media" : (self.media ? [self.media toMap] : [NSNull null]),
+    @"joinAtInMillisSinceEpoch" : (self.joinAtInMillisSinceEpoch ?: [NSNull null]),
   };
 }
 @end

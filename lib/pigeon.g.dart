@@ -253,6 +253,7 @@ class RemoteParticipantMessage {
     required this.isMicrophoneEnabled,
     required this.userId,
     this.media,
+    required this.joinAtInMillisSinceEpoch,
   });
 
   String id;
@@ -260,6 +261,7 @@ class RemoteParticipantMessage {
   bool isMicrophoneEnabled;
   String userId;
   MediaMessage? media;
+  int joinAtInMillisSinceEpoch;
 
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
@@ -268,6 +270,7 @@ class RemoteParticipantMessage {
     pigeonMap['isMicrophoneEnabled'] = isMicrophoneEnabled;
     pigeonMap['userId'] = userId;
     pigeonMap['media'] = media?.encode();
+    pigeonMap['joinAtInMillisSinceEpoch'] = joinAtInMillisSinceEpoch;
     return pigeonMap;
   }
 
@@ -281,6 +284,7 @@ class RemoteParticipantMessage {
       media: pigeonMap['media'] != null
           ? MediaMessage.decode(pigeonMap['media']!)
           : null,
+      joinAtInMillisSinceEpoch: pigeonMap['joinAtInMillisSinceEpoch']! as int,
     );
   }
 }

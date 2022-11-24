@@ -5,7 +5,6 @@ import 'package:daily_client_example/core/subscription_profiles.dart';
 import 'package:daily_client_example/dependencies.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'av_state.dart';
 
 class AvCubit extends Cubit<AvState> {

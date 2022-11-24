@@ -9,7 +9,10 @@ class RemoteParticipant extends Participant {
     required super.isCameraEnabled,
     required super.isMicrophoneEnabled,
     required super.media,
+    required this.joinedAt,
   });
+
+  final DateTime? joinedAt;
 
   factory RemoteParticipant.fromMessage(RemoteParticipantMessage message) {
     return RemoteParticipant(
@@ -18,6 +21,9 @@ class RemoteParticipant extends Participant {
       isCameraEnabled: message.isCameraEnabled,
       isMicrophoneEnabled: message.isMicrophoneEnabled,
       media: message.media != null ? Media.fromMessage(message.media!) : null,
+      joinedAt: DateTime.fromMillisecondsSinceEpoch(
+        message.joinAtInMillisSinceEpoch,
+      ),
     );
   }
 
