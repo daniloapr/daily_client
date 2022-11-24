@@ -65,7 +65,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
                 JoinMessage(
                     error: PlatformError(
                         message: "Invalid url",
-                        code: ErrorCode.invalidUrl
+                        code: Code.invalidUrl
                     )
                 )
             )
@@ -96,7 +96,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
                 JoinMessage(
                     error: PlatformError(
                         message: "\(error)",
-                        code: ErrorCode.join
+                        code: Code.join
                     )
                 )
             )
@@ -107,7 +107,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         call.leave()
         cancellables.forEach({$0.cancel()})
         cancellables = []
-        return VoidResult(error: nil)
+        return VoidResult()
     }
     
     func setMicrophoneEnabled(enableMic: Bool) -> VoidResult {
@@ -121,7 +121,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
             return VoidResult(
                 error: PlatformError(
                     message: "\(error)",
-                    code: ErrorCode.updateMicrophone
+                    code: Code.updateMicrophone
                 )
             )
         }
@@ -138,7 +138,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
             return VoidResult(
                 error: PlatformError(
                     message: "\(error)",
-                    code: ErrorCode.updateCamera
+                    code: Code.updateCamera
                 )
             )
         }
@@ -158,7 +158,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
             return VoidResult(
                 error: PlatformError(
                     message: "\(error)",
-                    code: ErrorCode.updateSubscriptionProfiles
+                    code: Code.updateSubscriptionProfiles
                 )
             )
         }
@@ -182,7 +182,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
             return VoidResult(
                 error: PlatformError(
                     message: "\(error)",
-                    code: ErrorCode.updateSubscriptions
+                    code: Code.updateSubscriptions
                 )
             )
         }
