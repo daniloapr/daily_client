@@ -206,14 +206,15 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         let remoteParticipantsMessage = participants.remote.map{
             let participant: Daily.Participant = $0.value
             
-            
+            let joinedAtIsoString = Date.ISOStringFromDate(date: participant.info.joinedAt)
             
             return RemoteParticipantMessage(
                 id: participant.id.uuid.uuidString,
                 isCameraEnabled: participant.media?.camera.state == .playable,
                 isMicrophoneEnabled: participant.media?.microphone.state == .playable,
                 userId: participant.info.userId?.uuid.uuidString ?? "",
-                media: getMediaMessage(fromMedia: participant.media)
+                media: getMediaMessage(fromMedia: participant.media),
+                joinedAtIsoString: joinedAtIsoString ?? ""
             )
         }
         

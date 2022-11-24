@@ -21,9 +21,7 @@ class RemoteParticipant extends Participant {
       isCameraEnabled: message.isCameraEnabled,
       isMicrophoneEnabled: message.isMicrophoneEnabled,
       media: message.media != null ? Media.fromMessage(message.media!) : null,
-      joinedAt: DateTime.fromMillisecondsSinceEpoch(
-        message.joinAtInMillisSinceEpoch,
-      ),
+      joinedAt: DateTime.tryParse(message.joinedAtIsoString),
     );
   }
 

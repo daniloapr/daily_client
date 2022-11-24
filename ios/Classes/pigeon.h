@@ -128,13 +128,13 @@ typedef NS_ENUM(NSUInteger, MediaStateMessage) {
     isMicrophoneEnabled:(NSNumber *)isMicrophoneEnabled
     userId:(NSString *)userId
     media:(nullable MediaMessage *)media
-    joinAtInMillisSinceEpoch:(NSNumber *)joinAtInMillisSinceEpoch;
+    joinedAtIsoString:(NSString *)joinedAtIsoString;
 @property(nonatomic, copy) NSString * id;
 @property(nonatomic, strong) NSNumber * isCameraEnabled;
 @property(nonatomic, strong) NSNumber * isMicrophoneEnabled;
 @property(nonatomic, copy) NSString * userId;
 @property(nonatomic, strong, nullable) MediaMessage * media;
-@property(nonatomic, strong) NSNumber * joinAtInMillisSinceEpoch;
+@property(nonatomic, copy) NSString * joinedAtIsoString;
 @end
 
 @interface MediaMessage : NSObject

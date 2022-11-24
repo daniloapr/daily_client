@@ -128,7 +128,7 @@ class RemoteParticipantMessage {
     required this.isCameraEnabled,
     required this.isMicrophoneEnabled,
     required this.media,
-    required this.joinAtInMillisSinceEpoch,
+    required this.joinedAtIsoString,
   });
 
   final String id;
@@ -136,7 +136,7 @@ class RemoteParticipantMessage {
   final bool isMicrophoneEnabled;
   final String userId;
   final MediaMessage? media;
-  final int joinAtInMillisSinceEpoch;
+  final String joinedAtIsoString;
 }
 
 class MediaMessage {

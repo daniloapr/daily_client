@@ -611,13 +611,13 @@ public class Pigeon {
       this.media = setterArg;
     }
 
-    private @NonNull Long joinAtInMillisSinceEpoch;
-    public @NonNull Long getJoinAtInMillisSinceEpoch() { return joinAtInMillisSinceEpoch; }
-    public void setJoinAtInMillisSinceEpoch(@NonNull Long setterArg) {
+    private @NonNull String joinedAtIsoString;
+    public @NonNull String getJoinedAtIsoString() { return joinedAtIsoString; }
+    public void setJoinedAtIsoString(@NonNull String setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"joinAtInMillisSinceEpoch\" is null.");
+        throw new IllegalStateException("Nonnull field \"joinedAtIsoString\" is null.");
       }
-      this.joinAtInMillisSinceEpoch = setterArg;
+      this.joinedAtIsoString = setterArg;
     }
 
     /**Constructor is private to enforce null safety; use Builder. */
@@ -648,9 +648,9 @@ public class Pigeon {
         this.media = setterArg;
         return this;
       }
-      private @Nullable Long joinAtInMillisSinceEpoch;
-      public @NonNull Builder setJoinAtInMillisSinceEpoch(@NonNull Long setterArg) {
-        this.joinAtInMillisSinceEpoch = setterArg;
+      private @Nullable String joinedAtIsoString;
+      public @NonNull Builder setJoinedAtIsoString(@NonNull String setterArg) {
+        this.joinedAtIsoString = setterArg;
         return this;
       }
       public @NonNull RemoteParticipantMessage build() {
@@ -660,7 +660,7 @@ public class Pigeon {
         pigeonReturn.setIsMicrophoneEnabled(isMicrophoneEnabled);
         pigeonReturn.setUserId(userId);
         pigeonReturn.setMedia(media);
-        pigeonReturn.setJoinAtInMillisSinceEpoch(joinAtInMillisSinceEpoch);
+        pigeonReturn.setJoinedAtIsoString(joinedAtIsoString);
         return pigeonReturn;
       }
     }
@@ -671,7 +671,7 @@ public class Pigeon {
       toMapResult.put("isMicrophoneEnabled", isMicrophoneEnabled);
       toMapResult.put("userId", userId);
       toMapResult.put("media", (media == null) ? null : media.toMap());
-      toMapResult.put("joinAtInMillisSinceEpoch", joinAtInMillisSinceEpoch);
+      toMapResult.put("joinedAtIsoString", joinedAtIsoString);
       return toMapResult;
     }
     static @NonNull RemoteParticipantMessage fromMap(@NonNull Map<String, Object> map) {
@@ -686,8 +686,8 @@ public class Pigeon {
       pigeonResult.setUserId((String)userId);
       Object media = map.get("media");
       pigeonResult.setMedia((media == null) ? null : MediaMessage.fromMap((Map)media));
-      Object joinAtInMillisSinceEpoch = map.get("joinAtInMillisSinceEpoch");
-      pigeonResult.setJoinAtInMillisSinceEpoch((joinAtInMillisSinceEpoch == null) ? null : ((joinAtInMillisSinceEpoch instanceof Integer) ? (Integer)joinAtInMillisSinceEpoch : (Long)joinAtInMillisSinceEpoch));
+      Object joinedAtIsoString = map.get("joinedAtIsoString");
+      pigeonResult.setJoinedAtIsoString((String)joinedAtIsoString);
       return pigeonResult;
     }
   }
