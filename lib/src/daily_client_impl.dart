@@ -89,17 +89,17 @@ class DailyClient extends DailyCallback {
   void _handleError(PlatformError? error) {
     if (error != null) {
       switch (error.code) {
-        case ErrorCode.invalidUrl:
+        case Code.invalidUrl:
           throw DailyInvalidUrlException();
-        case ErrorCode.join:
+        case Code.join:
           throw DailyJoinException();
-        case ErrorCode.updateCamera:
+        case Code.updateCamera:
           throw DailyUpdateCameraException();
-        case ErrorCode.updateMicrophone:
+        case Code.updateMicrophone:
           throw DailyUpdateCameraException();
-        case ErrorCode.updateSubscriptionProfiles:
+        case Code.updateSubscriptionProfiles:
           throw DailyUpdateSubscriptionProfiles();
-        case ErrorCode.updateSubscriptions:
+        case Code.updateSubscriptions:
           throw DailyUpdateSubscriptions();
       }
     }
