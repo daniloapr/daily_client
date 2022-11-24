@@ -133,7 +133,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 
 @implementation PlatformError
 + (instancetype)makeWithMessage:(NSString *)message
-    code:(ErrorCode)code {
+    code:(Code)code {
   PlatformError* pigeonResult = [[PlatformError alloc] init];
   pigeonResult.message = message;
   pigeonResult.code = code;

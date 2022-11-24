@@ -8,13 +8,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, ErrorCode) {
-  ErrorCodeInvalidUrl = 0,
-  ErrorCodeJoin = 1,
-  ErrorCodeUpdateCamera = 2,
-  ErrorCodeUpdateMicrophone = 3,
-  ErrorCodeUpdateSubscriptions = 4,
-  ErrorCodeUpdateSubscriptionProfiles = 5,
+typedef NS_ENUM(NSUInteger, Code) {
+  CodeInvalidUrl = 0,
+  CodeJoin = 1,
+  CodeUpdateCamera = 2,
+  CodeUpdateMicrophone = 3,
+  CodeUpdateSubscriptions = 4,
+  CodeUpdateSubscriptionProfiles = 5,
 };
 
 typedef NS_ENUM(NSUInteger, TrackSubscriptionStateMessage) {
@@ -64,9 +64,9 @@ typedef NS_ENUM(NSUInteger, MediaStateMessage) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithMessage:(NSString *)message
-    code:(ErrorCode)code;
+    code:(Code)code;
 @property(nonatomic, copy) NSString * message;
-@property(nonatomic, assign) ErrorCode code;
+@property(nonatomic, assign) Code code;
 @end
 
 @interface JoinArgs : NSObject

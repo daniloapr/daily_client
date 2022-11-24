@@ -23,7 +23,7 @@ import java.util.HashMap;
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression"})
 public class Pigeon {
 
-  public enum ErrorCode {
+  public enum Code {
     INVALID_URL(0),
     JOIN(1),
     UPDATE_CAMERA(2),
@@ -32,7 +32,7 @@ public class Pigeon {
     UPDATE_SUBSCRIPTION_PROFILES(5);
 
     private int index;
-    private ErrorCode(final int index) {
+    private Code(final int index) {
       this.index = index;
     }
   }
@@ -164,9 +164,9 @@ public class Pigeon {
       this.message = setterArg;
     }
 
-    private @NonNull ErrorCode code;
-    public @NonNull ErrorCode getCode() { return code; }
-    public void setCode(@NonNull ErrorCode setterArg) {
+    private @NonNull Code code;
+    public @NonNull Code getCode() { return code; }
+    public void setCode(@NonNull Code setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"code\" is null.");
       }
@@ -181,8 +181,8 @@ public class Pigeon {
         this.message = setterArg;
         return this;
       }
-      private @Nullable ErrorCode code;
-      public @NonNull Builder setCode(@NonNull ErrorCode setterArg) {
+      private @Nullable Code code;
+      public @NonNull Builder setCode(@NonNull Code setterArg) {
         this.code = setterArg;
         return this;
       }
@@ -204,7 +204,7 @@ public class Pigeon {
       Object message = map.get("message");
       pigeonResult.setMessage((String)message);
       Object code = map.get("code");
-      pigeonResult.setCode(code == null ? null : ErrorCode.values()[(int)code]);
+      pigeonResult.setCode(code == null ? null : Code.values()[(int)code]);
       return pigeonResult;
     }
   }

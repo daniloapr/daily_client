@@ -13,7 +13,7 @@ import FlutterMacOS
 
 /// Generated class from Pigeon.
 
-enum ErrorCode: Int {
+enum Code: Int {
   case invalidUrl = 0
   case join = 1
   case updateCamera = 2
@@ -85,11 +85,11 @@ struct VoidResult {
 ///Generated class from Pigeon that represents data sent in messages.
 struct PlatformError {
   var message: String
-  var code: ErrorCode
+  var code: Code
 
   static func fromMap(_ map: [String: Any?]) -> PlatformError? {
     let message = map["message"] as! String
-    let code = ErrorCode(rawValue: map["code"] as! Int)!
+    let code = Code(rawValue: map["code"] as! Int)!
 
     return PlatformError(
       message: message,

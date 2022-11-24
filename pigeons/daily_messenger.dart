@@ -46,10 +46,10 @@ class PlatformError {
   const PlatformError(this.message, this.code);
 
   final String message;
-  final ErrorCode code;
+  final Code code;
 }
 
-enum ErrorCode {
+enum Code {
   invalidUrl,
   join,
   updateCamera,

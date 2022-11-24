@@ -7,7 +7,7 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
-enum ErrorCode {
+enum Code {
   invalidUrl,
   join,
   updateCamera,
@@ -88,7 +88,7 @@ class PlatformError {
   });
 
   String message;
-  ErrorCode code;
+  Code code;
 
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
@@ -101,7 +101,7 @@ class PlatformError {
     final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
     return PlatformError(
       message: pigeonMap['message']! as String,
-      code: ErrorCode.values[pigeonMap['code']! as int]
+      code: Code.values[pigeonMap['code']! as int]
 ,
     );
   }
