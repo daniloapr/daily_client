@@ -37,14 +37,45 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
     private func startListeners() {
         call.events.participantUpdated
             .receive(on: DispatchQueue.main)
-            .sink() { _ in
+            .sink() { event in
                 //We are not handling each single participant update for simplifying reason.
-                let message = self.getParticipantsMessage(fromParticipants: self.call.participants)
-                self.callback.onParticipantsUpdated(
-                    localParticipantMessage:message.local,
-                    remoteParticipantsMessage: message.remote,
-                    completion: {}
-                )
+                print("DailyClient: participantUpdated")
+                self.onParticipantsUpdated()
+            }
+            .store(in: &cancellables)
+        
+        call.events.participantJoined
+            .receive(on: DispatchQueue.main)
+            .sink() { _ in
+                print("DailyClient: participantJoined")
+            }
+            .store(in: &cancellables)
+        
+        call.events.participantLeft
+            .receive(on: DispatchQueue.main)
+            .sink() { _ in
+                print("DailyClient: participantLeft")
+            }
+            .store(in: &cancellables)
+        
+        call.events.publishingUpdated
+            .receive(on: DispatchQueue.main)
+            .sink() { _ in
+                print("DailyClient: publishingUpdated")
+            }
+            .store(in: &cancellables)
+        
+        call.events.subscriptionProfilesUpdated
+            .receive(on: DispatchQueue.main)
+            .sink() { _ in
+                print("DailyClient: subscriptionProfilesUpdated")
+            }
+            .store(in: &cancellables)
+        
+        call.events.subscriptionsUpdated
+            .receive(on: DispatchQueue.main)
+            .sink() { _ in
+                print("DailyClient: subscriptionsUpdated")
             }
             .store(in: &cancellables)
         
@@ -57,6 +88,15 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
                     completion: {}
                 )
             } .store(in: &cancellables)
+    }
+    
+    private func onParticipantsUpdated() {
+        let message = self.getParticipantsMessage(fromParticipants: self.call.participants)
+        self.callback.onParticipantsUpdated(
+            localParticipantMessage:message.local,
+            remoteParticipantsMessage: message.remote,
+            completion: {}
+        )
     }
     
     func join(args: JoinArgs, completion: @escaping (JoinMessage) -> Void) {
@@ -73,6 +113,8 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         }
         
         do {
+            startListeners()
+            
             try call.join(
                 url: url,
                 token: args.token.isEmpty ? nil : MeetingToken(stringValue: args.token),
@@ -84,7 +126,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
                 )
             )
             
-            startListeners()
+            
             let message = getParticipantsMessage(fromParticipants: call.participants)
             
             completion(JoinMessage(
@@ -165,6 +207,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         return VoidResult()
     }
     
+    /// Participants subscription
     func updateSubscriptions(args: [UpdateSubscriptionArgs]) -> VoidResult {
         do {
             let participants: SubscriptionSettingsUpdatesById = args.reduce(into: [:]) { dictionary, arg in
@@ -203,16 +246,20 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
             userId: local.info.userId?.uuid.uuidString ?? ""
         )
         
-        let remoteParticipantsMessage = participants.remote.map{
-            let participant: Daily.Participant = $0.value
-            
+        print("DailyClient [getParticipantsMessage]: participants count = \(participants.remote.count) ")
+        
+        let remoteParticipantsMessage = participants.remote.map{ (participantMap) -> RemoteParticipantMessage in
+            let participant = participantMap.value
             let joinedAtIsoString = Date.ISOStringFromDate(date: participant.info.joinedAt)
+            
+            print("DailyClient [participant]: id = \(participant.id.uuid.uuidString), userId = \(participant.info.userId?.uuid.uuidString ?? ""), name = \(participant.info.username ?? "")")
             
             return RemoteParticipantMessage(
                 id: participant.id.uuid.uuidString,
                 isCameraEnabled: participant.media?.camera.state == .playable,
                 isMicrophoneEnabled: participant.media?.microphone.state == .playable,
                 userId: participant.info.userId?.uuid.uuidString ?? "",
+                userName: participant.info.username ?? "",
                 media: getMediaMessage(fromMedia: participant.media),
                 joinedAtIsoString: joinedAtIsoString ?? ""
             )

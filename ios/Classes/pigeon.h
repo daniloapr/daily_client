@@ -75,13 +75,11 @@ typedef NS_ENUM(NSUInteger, MediaStateMessage) {
 + (instancetype)makeWithUrl:(NSString *)url
     token:(NSString *)token
     enableMicrophone:(NSNumber *)enableMicrophone
-    enableCamera:(NSNumber *)enableCamera
-    autoSubscribe:(NSNumber *)autoSubscribe;
+    enableCamera:(NSNumber *)enableCamera;
 @property(nonatomic, copy) NSString * url;
 @property(nonatomic, copy) NSString * token;
 @property(nonatomic, strong) NSNumber * enableMicrophone;
 @property(nonatomic, strong) NSNumber * enableCamera;
-@property(nonatomic, strong) NSNumber * autoSubscribe;
 @end
 
 @interface UpdateSubscriptionProfileArgs : NSObject
@@ -127,12 +125,14 @@ typedef NS_ENUM(NSUInteger, MediaStateMessage) {
     isCameraEnabled:(NSNumber *)isCameraEnabled
     isMicrophoneEnabled:(NSNumber *)isMicrophoneEnabled
     userId:(NSString *)userId
+    userName:(NSString *)userName
     media:(nullable MediaMessage *)media
     joinedAtIsoString:(NSString *)joinedAtIsoString;
 @property(nonatomic, copy) NSString * id;
 @property(nonatomic, strong) NSNumber * isCameraEnabled;
 @property(nonatomic, strong) NSNumber * isMicrophoneEnabled;
 @property(nonatomic, copy) NSString * userId;
+@property(nonatomic, copy) NSString * userName;
 @property(nonatomic, strong, nullable) MediaMessage * media;
 @property(nonatomic, copy) NSString * joinedAtIsoString;
 @end

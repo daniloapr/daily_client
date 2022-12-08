@@ -110,21 +110,18 @@ struct JoinArgs {
   var token: String
   var enableMicrophone: Bool
   var enableCamera: Bool
-  var autoSubscribe: Bool
 
   static func fromMap(_ map: [String: Any?]) -> JoinArgs? {
     let url = map["url"] as! String
     let token = map["token"] as! String
     let enableMicrophone = map["enableMicrophone"] as! Bool
     let enableCamera = map["enableCamera"] as! Bool
-    let autoSubscribe = map["autoSubscribe"] as! Bool
 
     return JoinArgs(
       url: url,
       token: token,
       enableMicrophone: enableMicrophone,
-      enableCamera: enableCamera,
-      autoSubscribe: autoSubscribe
+      enableCamera: enableCamera
     )
   }
   func toMap() -> [String: Any?] {
@@ -132,8 +129,7 @@ struct JoinArgs {
       "url": url,
       "token": token,
       "enableMicrophone": enableMicrophone,
-      "enableCamera": enableCamera,
-      "autoSubscribe": autoSubscribe
+      "enableCamera": enableCamera
     ]
   }
 }
@@ -241,6 +237,7 @@ struct RemoteParticipantMessage {
   var isCameraEnabled: Bool
   var isMicrophoneEnabled: Bool
   var userId: String
+  var userName: String
   var media: MediaMessage? = nil
   var joinedAtIsoString: String
 
@@ -249,6 +246,7 @@ struct RemoteParticipantMessage {
     let isCameraEnabled = map["isCameraEnabled"] as! Bool
     let isMicrophoneEnabled = map["isMicrophoneEnabled"] as! Bool
     let userId = map["userId"] as! String
+    let userName = map["userName"] as! String
     var media: MediaMessage? = nil
     if let mediaMap = map["media"] as? [String: Any?] {
       media = MediaMessage.fromMap(mediaMap)
@@ -260,6 +258,7 @@ struct RemoteParticipantMessage {
       isCameraEnabled: isCameraEnabled,
       isMicrophoneEnabled: isMicrophoneEnabled,
       userId: userId,
+      userName: userName,
       media: media,
       joinedAtIsoString: joinedAtIsoString
     )
@@ -270,6 +269,7 @@ struct RemoteParticipantMessage {
       "isCameraEnabled": isCameraEnabled,
       "isMicrophoneEnabled": isMicrophoneEnabled,
       "userId": userId,
+      "userName": userName,
       "media": media?.toMap(),
       "joinedAtIsoString": joinedAtIsoString
     ]

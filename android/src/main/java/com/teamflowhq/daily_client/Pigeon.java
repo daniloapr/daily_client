@@ -247,15 +247,6 @@ public class Pigeon {
       this.enableCamera = setterArg;
     }
 
-    private @NonNull Boolean autoSubscribe;
-    public @NonNull Boolean getAutoSubscribe() { return autoSubscribe; }
-    public void setAutoSubscribe(@NonNull Boolean setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"autoSubscribe\" is null.");
-      }
-      this.autoSubscribe = setterArg;
-    }
-
     /**Constructor is private to enforce null safety; use Builder. */
     private JoinArgs() {}
     public static final class Builder {
@@ -279,18 +270,12 @@ public class Pigeon {
         this.enableCamera = setterArg;
         return this;
       }
-      private @Nullable Boolean autoSubscribe;
-      public @NonNull Builder setAutoSubscribe(@NonNull Boolean setterArg) {
-        this.autoSubscribe = setterArg;
-        return this;
-      }
       public @NonNull JoinArgs build() {
         JoinArgs pigeonReturn = new JoinArgs();
         pigeonReturn.setUrl(url);
         pigeonReturn.setToken(token);
         pigeonReturn.setEnableMicrophone(enableMicrophone);
         pigeonReturn.setEnableCamera(enableCamera);
-        pigeonReturn.setAutoSubscribe(autoSubscribe);
         return pigeonReturn;
       }
     }
@@ -300,7 +285,6 @@ public class Pigeon {
       toMapResult.put("token", token);
       toMapResult.put("enableMicrophone", enableMicrophone);
       toMapResult.put("enableCamera", enableCamera);
-      toMapResult.put("autoSubscribe", autoSubscribe);
       return toMapResult;
     }
     static @NonNull JoinArgs fromMap(@NonNull Map<String, Object> map) {
@@ -313,8 +297,6 @@ public class Pigeon {
       pigeonResult.setEnableMicrophone((Boolean)enableMicrophone);
       Object enableCamera = map.get("enableCamera");
       pigeonResult.setEnableCamera((Boolean)enableCamera);
-      Object autoSubscribe = map.get("autoSubscribe");
-      pigeonResult.setAutoSubscribe((Boolean)autoSubscribe);
       return pigeonResult;
     }
   }
@@ -605,6 +587,15 @@ public class Pigeon {
       this.userId = setterArg;
     }
 
+    private @NonNull String userName;
+    public @NonNull String getUserName() { return userName; }
+    public void setUserName(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"userName\" is null.");
+      }
+      this.userName = setterArg;
+    }
+
     private @Nullable MediaMessage media;
     public @Nullable MediaMessage getMedia() { return media; }
     public void setMedia(@Nullable MediaMessage setterArg) {
@@ -643,6 +634,11 @@ public class Pigeon {
         this.userId = setterArg;
         return this;
       }
+      private @Nullable String userName;
+      public @NonNull Builder setUserName(@NonNull String setterArg) {
+        this.userName = setterArg;
+        return this;
+      }
       private @Nullable MediaMessage media;
       public @NonNull Builder setMedia(@Nullable MediaMessage setterArg) {
         this.media = setterArg;
@@ -659,6 +655,7 @@ public class Pigeon {
         pigeonReturn.setIsCameraEnabled(isCameraEnabled);
         pigeonReturn.setIsMicrophoneEnabled(isMicrophoneEnabled);
         pigeonReturn.setUserId(userId);
+        pigeonReturn.setUserName(userName);
         pigeonReturn.setMedia(media);
         pigeonReturn.setJoinedAtIsoString(joinedAtIsoString);
         return pigeonReturn;
@@ -670,6 +667,7 @@ public class Pigeon {
       toMapResult.put("isCameraEnabled", isCameraEnabled);
       toMapResult.put("isMicrophoneEnabled", isMicrophoneEnabled);
       toMapResult.put("userId", userId);
+      toMapResult.put("userName", userName);
       toMapResult.put("media", (media == null) ? null : media.toMap());
       toMapResult.put("joinedAtIsoString", joinedAtIsoString);
       return toMapResult;
@@ -684,6 +682,8 @@ public class Pigeon {
       pigeonResult.setIsMicrophoneEnabled((Boolean)isMicrophoneEnabled);
       Object userId = map.get("userId");
       pigeonResult.setUserId((String)userId);
+      Object userName = map.get("userName");
+      pigeonResult.setUserName((String)userName);
       Object media = map.get("media");
       pigeonResult.setMedia((media == null) ? null : MediaMessage.fromMap((Map)media));
       Object joinedAtIsoString = map.get("joinedAtIsoString");

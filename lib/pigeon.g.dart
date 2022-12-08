@@ -113,14 +113,12 @@ class JoinArgs {
     required this.token,
     required this.enableMicrophone,
     required this.enableCamera,
-    required this.autoSubscribe,
   });
 
   String url;
   String token;
   bool enableMicrophone;
   bool enableCamera;
-  bool autoSubscribe;
 
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
@@ -128,7 +126,6 @@ class JoinArgs {
     pigeonMap['token'] = token;
     pigeonMap['enableMicrophone'] = enableMicrophone;
     pigeonMap['enableCamera'] = enableCamera;
-    pigeonMap['autoSubscribe'] = autoSubscribe;
     return pigeonMap;
   }
 
@@ -139,7 +136,6 @@ class JoinArgs {
       token: pigeonMap['token']! as String,
       enableMicrophone: pigeonMap['enableMicrophone']! as bool,
       enableCamera: pigeonMap['enableCamera']! as bool,
-      autoSubscribe: pigeonMap['autoSubscribe']! as bool,
     );
   }
 }
@@ -252,6 +248,7 @@ class RemoteParticipantMessage {
     required this.isCameraEnabled,
     required this.isMicrophoneEnabled,
     required this.userId,
+    required this.userName,
     this.media,
     required this.joinedAtIsoString,
   });
@@ -260,6 +257,7 @@ class RemoteParticipantMessage {
   bool isCameraEnabled;
   bool isMicrophoneEnabled;
   String userId;
+  String userName;
   MediaMessage? media;
   String joinedAtIsoString;
 
@@ -269,6 +267,7 @@ class RemoteParticipantMessage {
     pigeonMap['isCameraEnabled'] = isCameraEnabled;
     pigeonMap['isMicrophoneEnabled'] = isMicrophoneEnabled;
     pigeonMap['userId'] = userId;
+    pigeonMap['userName'] = userName;
     pigeonMap['media'] = media?.encode();
     pigeonMap['joinedAtIsoString'] = joinedAtIsoString;
     return pigeonMap;
@@ -281,6 +280,7 @@ class RemoteParticipantMessage {
       isCameraEnabled: pigeonMap['isCameraEnabled']! as bool,
       isMicrophoneEnabled: pigeonMap['isMicrophoneEnabled']! as bool,
       userId: pigeonMap['userId']! as String,
+      userName: pigeonMap['userName']! as String,
       media: pigeonMap['media'] != null
           ? MediaMessage.decode(pigeonMap['media']!)
           : null,

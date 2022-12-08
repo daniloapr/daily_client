@@ -159,14 +159,12 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
 + (instancetype)makeWithUrl:(NSString *)url
     token:(NSString *)token
     enableMicrophone:(NSNumber *)enableMicrophone
-    enableCamera:(NSNumber *)enableCamera
-    autoSubscribe:(NSNumber *)autoSubscribe {
+    enableCamera:(NSNumber *)enableCamera {
   JoinArgs* pigeonResult = [[JoinArgs alloc] init];
   pigeonResult.url = url;
   pigeonResult.token = token;
   pigeonResult.enableMicrophone = enableMicrophone;
   pigeonResult.enableCamera = enableCamera;
-  pigeonResult.autoSubscribe = autoSubscribe;
   return pigeonResult;
 }
 + (JoinArgs *)fromMap:(NSDictionary *)dict {
@@ -179,8 +177,6 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   NSAssert(pigeonResult.enableMicrophone != nil, @"");
   pigeonResult.enableCamera = GetNullableObject(dict, @"enableCamera");
   NSAssert(pigeonResult.enableCamera != nil, @"");
-  pigeonResult.autoSubscribe = GetNullableObject(dict, @"autoSubscribe");
-  NSAssert(pigeonResult.autoSubscribe != nil, @"");
   return pigeonResult;
 }
 + (nullable JoinArgs *)nullableFromMap:(NSDictionary *)dict { return (dict) ? [JoinArgs fromMap:dict] : nil; }
@@ -190,7 +186,6 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     @"token" : (self.token ?: [NSNull null]),
     @"enableMicrophone" : (self.enableMicrophone ?: [NSNull null]),
     @"enableCamera" : (self.enableCamera ?: [NSNull null]),
-    @"autoSubscribe" : (self.autoSubscribe ?: [NSNull null]),
   };
 }
 @end
@@ -296,6 +291,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     isCameraEnabled:(NSNumber *)isCameraEnabled
     isMicrophoneEnabled:(NSNumber *)isMicrophoneEnabled
     userId:(NSString *)userId
+    userName:(NSString *)userName
     media:(nullable MediaMessage *)media
     joinedAtIsoString:(NSString *)joinedAtIsoString {
   RemoteParticipantMessage* pigeonResult = [[RemoteParticipantMessage alloc] init];
@@ -303,6 +299,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   pigeonResult.isCameraEnabled = isCameraEnabled;
   pigeonResult.isMicrophoneEnabled = isMicrophoneEnabled;
   pigeonResult.userId = userId;
+  pigeonResult.userName = userName;
   pigeonResult.media = media;
   pigeonResult.joinedAtIsoString = joinedAtIsoString;
   return pigeonResult;
@@ -317,6 +314,8 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
   NSAssert(pigeonResult.isMicrophoneEnabled != nil, @"");
   pigeonResult.userId = GetNullableObject(dict, @"userId");
   NSAssert(pigeonResult.userId != nil, @"");
+  pigeonResult.userName = GetNullableObject(dict, @"userName");
+  NSAssert(pigeonResult.userName != nil, @"");
   pigeonResult.media = [MediaMessage nullableFromMap:GetNullableObject(dict, @"media")];
   pigeonResult.joinedAtIsoString = GetNullableObject(dict, @"joinedAtIsoString");
   NSAssert(pigeonResult.joinedAtIsoString != nil, @"");
@@ -329,6 +328,7 @@ static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
     @"isCameraEnabled" : (self.isCameraEnabled ?: [NSNull null]),
     @"isMicrophoneEnabled" : (self.isMicrophoneEnabled ?: [NSNull null]),
     @"userId" : (self.userId ?: [NSNull null]),
+    @"userName" : (self.userName ?: [NSNull null]),
     @"media" : (self.media ? [self.media toMap] : [NSNull null]),
     @"joinedAtIsoString" : (self.joinedAtIsoString ?: [NSNull null]),
   };

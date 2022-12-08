@@ -4,7 +4,8 @@ enum SubscriptionProfiles {
   base(
     SubscriptionProfileSettingsUpdate(
       name: 'base',
-      subscribeCamera: false,
+      //Hack: only participants with camera subscribed are returned in call.participants.remote
+      subscribeCamera: true,
       subscribeMicrophone: false,
     ),
   ),

@@ -1,4 +1,3 @@
-import 'package:daily_client_example/core/subscription_profiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:daily_client/daily_client.dart' as daily;
@@ -6,6 +5,8 @@ import 'package:daily_client/daily_client.dart' as daily;
 import 'package:daily_client_example/audio_video/av_cubit.dart';
 import 'package:daily_client_example/dependencies.dart';
 import 'package:daily_client_example/room/room_screen.dart';
+
+import '../core/subscription_profiles.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -39,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
           token: _tokenController.text,
           enableCamera: _enableCamera,
           enableMicrophone: _enabledMicrophone,
-          autoSubscribe: false,
         ),
       );
       if (!mounted) return;
@@ -120,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 16),
             SwitchListTile(
               value: _enableCamera,
-              title: const Text('Enable microphone'),
+              title: const Text('Enable camera'),
               onChanged: ((value) {
                 setState(() => _enableCamera = value);
               }),

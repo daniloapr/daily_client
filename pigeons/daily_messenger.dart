@@ -64,14 +64,12 @@ class JoinArgs {
     this.token,
     this.enableMicrophone,
     this.enableCamera,
-    this.autoSubscribe,
   );
 
   final String url;
   final String token;
   final bool enableMicrophone;
   final bool enableCamera;
-  final bool autoSubscribe;
 }
 
 class UpdateSubscriptionProfileArgs {
@@ -125,6 +123,7 @@ class RemoteParticipantMessage {
   RemoteParticipantMessage({
     required this.id,
     required this.userId,
+    required this.userName,
     required this.isCameraEnabled,
     required this.isMicrophoneEnabled,
     required this.media,
@@ -135,6 +134,7 @@ class RemoteParticipantMessage {
   final bool isCameraEnabled;
   final bool isMicrophoneEnabled;
   final String userId;
+  final String userName;
   final MediaMessage? media;
   final String joinedAtIsoString;
 }
