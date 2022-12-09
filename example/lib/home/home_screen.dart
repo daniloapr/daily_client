@@ -30,9 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() => _isLoading = true);
     try {
-      final profiles =
-          SubscriptionProfiles.values.map((e) => e.settings).toList();
-      await _dailyClient.updateSubscriptionProfiles(profiles);
+      // final profiles =
+      //     SubscriptionProfiles.values.map((e) => e.settings).toList();
+      // await _dailyClient.updateSubscriptionProfiles(profiles);
 
       final result = await _dailyClient.join(
         daily.JoinOptions(
