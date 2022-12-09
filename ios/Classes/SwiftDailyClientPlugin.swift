@@ -39,22 +39,22 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
             .receive(on: DispatchQueue.main)
             .sink() { event in
                 //We are not handling each single participant update for simplifying reason.
-                print("DailyClient: participantUpdated")
                 self.onParticipantsUpdated()
+                self.onParticipantUpdated(participant: event.participant)
             }
             .store(in: &cancellables)
         
         call.events.participantJoined
             .receive(on: DispatchQueue.main)
-            .sink() { _ in
-                print("DailyClient: participantJoined")
+            .sink() { event in
+                self.onParticipantJoined(participant: event.participant)
             }
             .store(in: &cancellables)
         
         call.events.participantLeft
             .receive(on: DispatchQueue.main)
-            .sink() { _ in
-                print("DailyClient: participantLeft")
+            .sink() { event in
+                self.onParticipantLeft(participant: event.participant)
             }
             .store(in: &cancellables)
         
@@ -82,21 +82,12 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         call.events.callStateUpdated
             .receive(on: DispatchQueue.main)
             .sink() {event in
-                let code = self.mapCallStateToCode(callState: event.state)
+                let code = mapCallStateToCode(callState: event.state)
                 self.callback.onCallStateUpdated(
                     stateCode: code,
                     completion: {}
                 )
             } .store(in: &cancellables)
-    }
-    
-    private func onParticipantsUpdated() {
-        let message = self.getParticipantsMessage(fromParticipants: self.call.participants)
-        self.callback.onParticipantsUpdated(
-            localParticipantMessage:message.local,
-            remoteParticipantsMessage: message.remote,
-            completion: {}
-        )
     }
     
     func join(args: JoinArgs, completion: @escaping (JoinMessage) -> Void) {
@@ -233,121 +224,55 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         return VoidResult()
     }
     
-    private func getParticipantsMessage(
-        fromParticipants participants: Daily.Participants
-    ) -> (local: LocalParticipantMessage, remote: [RemoteParticipantMessage]) {
-        let local = participants.local
-        let media = local.media
+    func getParticipants() -> ParticipantsMessage {
+        let participants = getParticipantsMessage(fromParticipants: call.participants)
         
-        let localParticipantMessage = LocalParticipantMessage(
-            id: local.id.uuid.uuidString,
-            isCameraEnabled: media?.camera.state == .playable,
-            isMicrophoneEnabled: media?.microphone.state == .playable,
-            userId: local.info.userId?.uuid.uuidString ?? ""
-        )
-        
-        print("DailyClient [getParticipantsMessage]: participants count = \(participants.remote.count) ")
-        
-        let remoteParticipantsMessage = participants.remote.map{ (participantMap) -> RemoteParticipantMessage in
-            let participant = participantMap.value
-            let joinedAtIsoString = Date.ISOStringFromDate(date: participant.info.joinedAt)
-            
-            print("DailyClient [participant]: id = \(participant.id.uuid.uuidString), userId = \(participant.info.userId?.uuid.uuidString ?? ""), name = \(participant.info.username ?? "")")
-            
-            return RemoteParticipantMessage(
-                id: participant.id.uuid.uuidString,
-                isCameraEnabled: participant.media?.camera.state == .playable,
-                isMicrophoneEnabled: participant.media?.microphone.state == .playable,
-                userId: participant.info.userId?.uuid.uuidString ?? "",
-                userName: participant.info.username ?? "",
-                media: getMediaMessage(fromMedia: participant.media),
-                joinedAtIsoString: joinedAtIsoString ?? ""
-            )
-        }
-        
-        return (localParticipantMessage, remoteParticipantsMessage)
-    }
-    
-    private func mapCallStateToCode(callState: Daily.CallState) -> Int32 {
-        switch callState {
-            
-        case .new:
-            return 0
-        case .joining:
-            return 1
-        case .joined:
-            return 2
-        case .leaving:
-            return 3
-        case .left:
-            return 4
-        @unknown default:
-            return -1
-        }
-    }
-    
-    private func getMediaMessage(fromMedia media: Daily.ParticipantMedia?) -> MediaMessage? {
-        
-        if let media {
-            return MediaMessage(
-                camera: getMediaInfoMessage(fromVideoInfo: media.camera),
-                microphone: getMediaInfoMessage(fromAudioInfo: media.microphone),
-                screenVideo: getMediaInfoMessage(fromVideoInfo: media.screenVideo),
-                screenAudio: getMediaInfoMessage(fromAudioInfo: media.screenAudio)
-            )
-        }
-        
-        return nil
-    }
-    
-    private func getMediaInfoMessage(fromVideoInfo info: Daily.ParticipantVideoInfo) -> MediaInfoMessage {
-        return MediaInfoMessage(
-            state: mapMediaStateToMessage(mediaState: info.state),
-            subscribed: mapTrackSubscriptionStateToMessage(subscriptionState: info.subscribed),
-            track: TrackMessage(id: info.track?.id ?? "", isEnabled: info.track?.isEnabled ?? false)
+        return ParticipantsMessage(
+            local: participants.local,
+            remote: participants.remote
         )
     }
     
-    
-    private func getMediaInfoMessage(fromAudioInfo info: Daily.ParticipantAudioInfo) -> MediaInfoMessage {
-        return MediaInfoMessage(
-            state: mapMediaStateToMessage(mediaState: info.state),
-            subscribed: mapTrackSubscriptionStateToMessage(subscriptionState: info.subscribed),
-            track: TrackMessage(id: info.track?.id ?? "", isEnabled: info.track?.isEnabled ?? false)
+    private func onParticipantsUpdated() {
+        print("DailyClient: participantsUpdated")
+        let message = getParticipantsMessage(fromParticipants: self.call.participants)
+        
+        self.callback.onParticipantsUpdated(
+            localParticipantMessage:message.local,
+            remoteParticipantsMessage: message.remote,
+            completion: {}
         )
     }
     
-    private func mapMediaStateToMessage(mediaState: Daily.MediaState) -> MediaStateMessage {
-        switch mediaState {
-            
-        case .blocked:
-            return .blocked
-        case .off:
-            return .off
-        case .receivable:
-            return .receivable
-        case .loading:
-            return .loading
-        case .playable:
-            return .playable
-        case .interrupted:
-            return .interrupted
-        @unknown default:
-            return .unknown
-        }
+    private func onParticipantUpdated(participant: Daily.Participant) {
+        print("DailyClient: onParticipantUpdated")
+        let participantMessage = mapRemoteParticipantToMessage(fromParticipant: participant)
+        printParticipant(participantMessage: participantMessage)
+        
+        self.callback.onParticipantUpdated(
+            remoteParticipantMessage: participantMessage,
+            completion: {}
+        )
     }
     
-    private func mapTrackSubscriptionStateToMessage(subscriptionState: Daily.TrackSubscriptionState) -> TrackSubscriptionStateMessage{
-        switch subscriptionState {
-            
-        case .subscribed:
-            return .subscribed
-        case .staged:
-            return .staged
-        case .unsubscribed:
-            return .unsubscribed
-        @unknown default:
-            return .unknown
-        }
+    private func onParticipantJoined(participant: Daily.Participant) {
+        print("DailyClient: participantJoined")
+        let participantMessage = mapRemoteParticipantToMessage(fromParticipant: participant)
+        printParticipant(participantMessage: participantMessage)
+        
+        self.callback.onParticipantJoined(
+            remoteParticipantMessage: participantMessage,
+            completion: {}
+        )
+    }
+    
+    private func onParticipantLeft(participant: Daily.Participant) {
+        print("DailyClient: onParticipantLeft")
+        let participantMessage = mapRemoteParticipantToMessage(fromParticipant: participant)
+        
+        self.callback.onParticipantLeft(
+            remoteParticipantMessage: participantMessage,
+            completion: {}
+        )
     }
 }

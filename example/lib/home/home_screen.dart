@@ -6,8 +6,6 @@ import 'package:daily_client_example/audio_video/av_cubit.dart';
 import 'package:daily_client_example/dependencies.dart';
 import 'package:daily_client_example/room/room_screen.dart';
 
-import '../core/subscription_profiles.dart';
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 

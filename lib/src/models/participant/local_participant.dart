@@ -1,7 +1,5 @@
+import 'package:daily_client/daily_client.dart';
 import 'package:daily_client/pigeon.g.dart';
-import 'package:daily_client/src/models/participant/participant.dart';
-
-import 'media.dart';
 
 class LocalParticipant extends Participant {
   const LocalParticipant({
@@ -14,17 +12,27 @@ class LocalParticipant extends Participant {
 
   factory LocalParticipant.fromMessage(LocalParticipantMessage message) {
     final mediaMessage = message.media;
+    final media = mediaMessage != null ? Media.fromMessage(mediaMessage) : null;
+    
     return LocalParticipant(
       id: message.id,
       userId: message.userId,
-      isCameraEnabled: message.isCameraEnabled,
-      isMicrophoneEnabled: message.isMicrophoneEnabled,
-      media: mediaMessage != null ? Media.fromMessage(mediaMessage) : null,
+      isCameraEnabled: media?.camera.state == MediaState.playable,
+      isMicrophoneEnabled: media?.microphone.state == MediaState.playable,
+      media: media,
     );
   }
 
   @override
   String toString() {
-    return 'LocalParticipant(id: $id)';
+    return '''
+    LocalParticipant(
+      id: $id,
+      userId: $userId,
+      isCameraEnabled: $isCameraEnabled,
+      isMicrophoneEnabled: $isMicrophoneEnabled,
+      media: $media
+    )
+    ''';
   }
 }

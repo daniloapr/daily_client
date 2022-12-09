@@ -27,6 +27,16 @@ class MediaInfo {
       track: track,
     );
   }
+
+  @override
+  String toString() {
+    return '''
+      MediaInfo(
+        state: ${state.name},
+        subscribed: $subscribed,
+      )
+    ''';
+  }
 }
 
 MediaState _mapMediaStateMessage(MediaStateMessage message) {

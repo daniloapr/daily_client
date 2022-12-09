@@ -1,6 +1,5 @@
+import '../../../daily_client.dart';
 import '../../../pigeon.g.dart';
-import 'media.dart';
-import 'participant.dart';
 
 class RemoteParticipant extends Participant {
   const RemoteParticipant({
@@ -9,18 +8,24 @@ class RemoteParticipant extends Participant {
     required super.isCameraEnabled,
     required super.isMicrophoneEnabled,
     required super.media,
+    required this.userName,
     required this.joinedAt,
   });
 
   final DateTime? joinedAt;
+  final String userName;
 
   factory RemoteParticipant.fromMessage(RemoteParticipantMessage message) {
+    final mediaMessage = message.media;
+    final media = mediaMessage != null ? Media.fromMessage(mediaMessage) : null;
+
     return RemoteParticipant(
       id: message.id,
       userId: message.userId,
-      isCameraEnabled: message.isCameraEnabled,
-      isMicrophoneEnabled: message.isMicrophoneEnabled,
-      media: message.media != null ? Media.fromMessage(message.media!) : null,
+      userName: message.userName,
+      isCameraEnabled: media?.camera.state == MediaState.playable,
+      isMicrophoneEnabled: media?.microphone.state == MediaState.playable,
+      media: media,
       joinedAt: DateTime.tryParse(message.joinedAtIsoString),
     );
   }
@@ -36,6 +41,15 @@ class RemoteParticipant extends Participant {
 
   @override
   String toString() {
-    return 'RemoteParticipant(id: $id)';
+    return '''
+    RemoteParticipant(
+      id: $id,
+      userId: $userId,
+      isCameraEnabled: $isCameraEnabled,
+      isMicrophoneEnabled: $isMicrophoneEnabled,
+      media: $media,
+      joinedAt: $joinedAt
+    )
+    ''';
   }
 }

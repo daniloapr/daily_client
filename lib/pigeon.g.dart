@@ -206,23 +206,17 @@ class JoinMessage {
 class LocalParticipantMessage {
   LocalParticipantMessage({
     required this.id,
-    required this.isCameraEnabled,
-    required this.isMicrophoneEnabled,
     required this.userId,
     this.media,
   });
 
   String id;
-  bool isCameraEnabled;
-  bool isMicrophoneEnabled;
   String userId;
   MediaMessage? media;
 
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
     pigeonMap['id'] = id;
-    pigeonMap['isCameraEnabled'] = isCameraEnabled;
-    pigeonMap['isMicrophoneEnabled'] = isMicrophoneEnabled;
     pigeonMap['userId'] = userId;
     pigeonMap['media'] = media?.encode();
     return pigeonMap;
@@ -232,8 +226,6 @@ class LocalParticipantMessage {
     final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
     return LocalParticipantMessage(
       id: pigeonMap['id']! as String,
-      isCameraEnabled: pigeonMap['isCameraEnabled']! as bool,
-      isMicrophoneEnabled: pigeonMap['isMicrophoneEnabled']! as bool,
       userId: pigeonMap['userId']! as String,
       media: pigeonMap['media'] != null
           ? MediaMessage.decode(pigeonMap['media']!)
@@ -245,8 +237,6 @@ class LocalParticipantMessage {
 class RemoteParticipantMessage {
   RemoteParticipantMessage({
     required this.id,
-    required this.isCameraEnabled,
-    required this.isMicrophoneEnabled,
     required this.userId,
     required this.userName,
     this.media,
@@ -254,8 +244,6 @@ class RemoteParticipantMessage {
   });
 
   String id;
-  bool isCameraEnabled;
-  bool isMicrophoneEnabled;
   String userId;
   String userName;
   MediaMessage? media;
@@ -264,8 +252,6 @@ class RemoteParticipantMessage {
   Object encode() {
     final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
     pigeonMap['id'] = id;
-    pigeonMap['isCameraEnabled'] = isCameraEnabled;
-    pigeonMap['isMicrophoneEnabled'] = isMicrophoneEnabled;
     pigeonMap['userId'] = userId;
     pigeonMap['userName'] = userName;
     pigeonMap['media'] = media?.encode();
@@ -277,14 +263,38 @@ class RemoteParticipantMessage {
     final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
     return RemoteParticipantMessage(
       id: pigeonMap['id']! as String,
-      isCameraEnabled: pigeonMap['isCameraEnabled']! as bool,
-      isMicrophoneEnabled: pigeonMap['isMicrophoneEnabled']! as bool,
       userId: pigeonMap['userId']! as String,
       userName: pigeonMap['userName']! as String,
       media: pigeonMap['media'] != null
           ? MediaMessage.decode(pigeonMap['media']!)
           : null,
       joinedAtIsoString: pigeonMap['joinedAtIsoString']! as String,
+    );
+  }
+}
+
+class ParticipantsMessage {
+  ParticipantsMessage({
+    required this.local,
+    required this.remote,
+  });
+
+  LocalParticipantMessage local;
+  List<RemoteParticipantMessage?> remote;
+
+  Object encode() {
+    final Map<Object?, Object?> pigeonMap = <Object?, Object?>{};
+    pigeonMap['local'] = local.encode();
+    pigeonMap['remote'] = remote;
+    return pigeonMap;
+  }
+
+  static ParticipantsMessage decode(Object message) {
+    final Map<Object?, Object?> pigeonMap = message as Map<Object?, Object?>;
+    return ParticipantsMessage(
+      local: LocalParticipantMessage.decode(pigeonMap['local']!)
+,
+      remote: (pigeonMap['remote'] as List<Object?>?)!.cast<RemoteParticipantMessage?>(),
     );
   }
 }
@@ -400,36 +410,44 @@ class _DailyMessengerCodec extends StandardMessageCodec{
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else 
-    if (value is MediaInfoMessage) {
+    if (value is LocalParticipantMessage) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else 
-    if (value is MediaMessage) {
+    if (value is MediaInfoMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else 
-    if (value is PlatformError) {
+    if (value is MediaMessage) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else 
-    if (value is RemoteParticipantMessage) {
+    if (value is ParticipantsMessage) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
     } else 
-    if (value is TrackMessage) {
+    if (value is PlatformError) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
     } else 
-    if (value is UpdateSubscriptionArgs) {
+    if (value is RemoteParticipantMessage) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
     } else 
-    if (value is UpdateSubscriptionProfileArgs) {
+    if (value is TrackMessage) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
     } else 
-    if (value is VoidResult) {
+    if (value is UpdateSubscriptionArgs) {
       buffer.putUint8(138);
+      writeValue(buffer, value.encode());
+    } else 
+    if (value is UpdateSubscriptionProfileArgs) {
+      buffer.putUint8(139);
+      writeValue(buffer, value.encode());
+    } else 
+    if (value is VoidResult) {
+      buffer.putUint8(140);
       writeValue(buffer, value.encode());
     } else 
 {
@@ -449,27 +467,33 @@ class _DailyMessengerCodec extends StandardMessageCodec{
         return LocalParticipantMessage.decode(readValue(buffer)!);
       
       case 131:       
-        return MediaInfoMessage.decode(readValue(buffer)!);
+        return LocalParticipantMessage.decode(readValue(buffer)!);
       
       case 132:       
-        return MediaMessage.decode(readValue(buffer)!);
+        return MediaInfoMessage.decode(readValue(buffer)!);
       
       case 133:       
-        return PlatformError.decode(readValue(buffer)!);
+        return MediaMessage.decode(readValue(buffer)!);
       
       case 134:       
-        return RemoteParticipantMessage.decode(readValue(buffer)!);
+        return ParticipantsMessage.decode(readValue(buffer)!);
       
       case 135:       
-        return TrackMessage.decode(readValue(buffer)!);
+        return PlatformError.decode(readValue(buffer)!);
       
       case 136:       
-        return UpdateSubscriptionArgs.decode(readValue(buffer)!);
+        return RemoteParticipantMessage.decode(readValue(buffer)!);
       
       case 137:       
-        return UpdateSubscriptionProfileArgs.decode(readValue(buffer)!);
+        return TrackMessage.decode(readValue(buffer)!);
       
       case 138:       
+        return UpdateSubscriptionArgs.decode(readValue(buffer)!);
+      
+      case 139:       
+        return UpdateSubscriptionProfileArgs.decode(readValue(buffer)!);
+      
+      case 140:       
         return VoidResult.decode(readValue(buffer)!);
       
       default:      
@@ -653,6 +677,33 @@ class DailyMessenger {
       return (replyMap['result'] as VoidResult?)!;
     }
   }
+
+  Future<ParticipantsMessage> getParticipants() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.DailyMessenger.getParticipants', codec, binaryMessenger: _binaryMessenger);
+    final Map<Object?, Object?>? replyMap =
+        await channel.send(null) as Map<Object?, Object?>?;
+    if (replyMap == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyMap['error'] != null) {
+      final Map<Object?, Object?> error = (replyMap['error'] as Map<Object?, Object?>?)!;
+      throw PlatformException(
+        code: (error['code'] as String?)!,
+        message: error['message'] as String?,
+        details: error['details'],
+      );
+    } else if (replyMap['result'] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyMap['result'] as ParticipantsMessage?)!;
+    }
+  }
 }
 
 class _DailyCallbackCodec extends StandardMessageCodec{
@@ -675,8 +726,12 @@ class _DailyCallbackCodec extends StandardMessageCodec{
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else 
-    if (value is TrackMessage) {
+    if (value is RemoteParticipantMessage) {
       buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else 
+    if (value is TrackMessage) {
+      buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else 
 {
@@ -699,6 +754,9 @@ class _DailyCallbackCodec extends StandardMessageCodec{
         return RemoteParticipantMessage.decode(readValue(buffer)!);
       
       case 132:       
+        return RemoteParticipantMessage.decode(readValue(buffer)!);
+      
+      case 133:       
         return TrackMessage.decode(readValue(buffer)!);
       
       default:      
@@ -711,6 +769,10 @@ abstract class DailyCallback {
   static const MessageCodec<Object?> codec = _DailyCallbackCodec();
 
   void onParticipantsUpdated(LocalParticipantMessage localParticipantMessage, List<RemoteParticipantMessage?> remoteParticipantsMessage);
+  void onParticipantUpdated(RemoteParticipantMessage remoteParticipantMessage);
+  void onLocalParticipantUpdated(LocalParticipantMessage localParticipantMessage);
+  void onParticipantJoined(RemoteParticipantMessage remoteParticipantMessage);
+  void onParticipantLeft(RemoteParticipantMessage remoteParticipantMessage);
   void onCallStateUpdated(int stateCode);
   static void setup(DailyCallback? api, {BinaryMessenger? binaryMessenger}) {
     {
@@ -727,6 +789,70 @@ abstract class DailyCallback {
           final List<RemoteParticipantMessage?>? arg_remoteParticipantsMessage = (args[1] as List<Object?>?)?.cast<RemoteParticipantMessage?>();
           assert(arg_remoteParticipantsMessage != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantsUpdated was null, expected non-null List<RemoteParticipantMessage?>.');
           api.onParticipantsUpdated(arg_localParticipantMessage!, arg_remoteParticipantsMessage!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.DailyCallback.onParticipantUpdated', codec, binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantUpdated was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final RemoteParticipantMessage? arg_remoteParticipantMessage = (args[0] as RemoteParticipantMessage?);
+          assert(arg_remoteParticipantMessage != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantUpdated was null, expected non-null RemoteParticipantMessage.');
+          api.onParticipantUpdated(arg_remoteParticipantMessage!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.DailyCallback.onLocalParticipantUpdated', codec, binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null, 'Argument for dev.flutter.pigeon.DailyCallback.onLocalParticipantUpdated was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final LocalParticipantMessage? arg_localParticipantMessage = (args[0] as LocalParticipantMessage?);
+          assert(arg_localParticipantMessage != null, 'Argument for dev.flutter.pigeon.DailyCallback.onLocalParticipantUpdated was null, expected non-null LocalParticipantMessage.');
+          api.onLocalParticipantUpdated(arg_localParticipantMessage!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.DailyCallback.onParticipantJoined', codec, binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantJoined was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final RemoteParticipantMessage? arg_remoteParticipantMessage = (args[0] as RemoteParticipantMessage?);
+          assert(arg_remoteParticipantMessage != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantJoined was null, expected non-null RemoteParticipantMessage.');
+          api.onParticipantJoined(arg_remoteParticipantMessage!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.DailyCallback.onParticipantLeft', codec, binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantLeft was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final RemoteParticipantMessage? arg_remoteParticipantMessage = (args[0] as RemoteParticipantMessage?);
+          assert(arg_remoteParticipantMessage != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantLeft was null, expected non-null RemoteParticipantMessage.');
+          api.onParticipantLeft(arg_remoteParticipantMessage!);
           return;
         });
       }

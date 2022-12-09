@@ -42,6 +42,7 @@ typedef NS_ENUM(NSUInteger, MediaStateMessage) {
 @class JoinMessage;
 @class LocalParticipantMessage;
 @class RemoteParticipantMessage;
+@class ParticipantsMessage;
 @class MediaMessage;
 @class MediaInfoMessage;
 @class TrackMessage;
@@ -107,13 +108,9 @@ typedef NS_ENUM(NSUInteger, MediaStateMessage) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithId:(NSString *)id
-    isCameraEnabled:(NSNumber *)isCameraEnabled
-    isMicrophoneEnabled:(NSNumber *)isMicrophoneEnabled
     userId:(NSString *)userId
     media:(nullable MediaMessage *)media;
 @property(nonatomic, copy) NSString * id;
-@property(nonatomic, strong) NSNumber * isCameraEnabled;
-@property(nonatomic, strong) NSNumber * isMicrophoneEnabled;
 @property(nonatomic, copy) NSString * userId;
 @property(nonatomic, strong, nullable) MediaMessage * media;
 @end
@@ -122,19 +119,24 @@ typedef NS_ENUM(NSUInteger, MediaStateMessage) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithId:(NSString *)id
-    isCameraEnabled:(NSNumber *)isCameraEnabled
-    isMicrophoneEnabled:(NSNumber *)isMicrophoneEnabled
     userId:(NSString *)userId
     userName:(NSString *)userName
     media:(nullable MediaMessage *)media
     joinedAtIsoString:(NSString *)joinedAtIsoString;
 @property(nonatomic, copy) NSString * id;
-@property(nonatomic, strong) NSNumber * isCameraEnabled;
-@property(nonatomic, strong) NSNumber * isMicrophoneEnabled;
 @property(nonatomic, copy) NSString * userId;
 @property(nonatomic, copy) NSString * userName;
 @property(nonatomic, strong, nullable) MediaMessage * media;
 @property(nonatomic, copy) NSString * joinedAtIsoString;
+@end
+
+@interface ParticipantsMessage : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithLocal:(LocalParticipantMessage *)local
+    remote:(NSArray<RemoteParticipantMessage *> *)remote;
+@property(nonatomic, strong) LocalParticipantMessage * local;
+@property(nonatomic, strong) NSArray<RemoteParticipantMessage *> * remote;
 @end
 
 @interface MediaMessage : NSObject
@@ -190,6 +192,8 @@ NSObject<FlutterMessageCodec> *DailyMessengerGetCodec(void);
 - (nullable VoidResult *)updateSubscriptionProfilesArgs:(NSArray<UpdateSubscriptionProfileArgs *> *)args error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable VoidResult *)updateSubscriptionsArgs:(NSArray<UpdateSubscriptionArgs *> *)args error:(FlutterError *_Nullable *_Nonnull)error;
+/// @return `nil` only when `error != nil`.
+- (nullable ParticipantsMessage *)getParticipantsWithError:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void DailyMessengerSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<DailyMessenger> *_Nullable api);
@@ -200,6 +204,10 @@ NSObject<FlutterMessageCodec> *DailyCallbackGetCodec(void);
 @interface DailyCallback : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 - (void)onParticipantsUpdatedLocalParticipantMessage:(LocalParticipantMessage *)localParticipantMessage remoteParticipantsMessage:(NSArray<RemoteParticipantMessage *> *)remoteParticipantsMessage completion:(void(^)(NSError *_Nullable))completion;
+- (void)onParticipantUpdatedRemoteParticipantMessage:(RemoteParticipantMessage *)remoteParticipantMessage completion:(void(^)(NSError *_Nullable))completion;
+- (void)onLocalParticipantUpdatedLocalParticipantMessage:(LocalParticipantMessage *)localParticipantMessage completion:(void(^)(NSError *_Nullable))completion;
+- (void)onParticipantJoinedRemoteParticipantMessage:(RemoteParticipantMessage *)remoteParticipantMessage completion:(void(^)(NSError *_Nullable))completion;
+- (void)onParticipantLeftRemoteParticipantMessage:(RemoteParticipantMessage *)remoteParticipantMessage completion:(void(^)(NSError *_Nullable))completion;
 - (void)onCallStateUpdatedStateCode:(NSNumber *)stateCode completion:(void(^)(NSError *_Nullable))completion;
 @end
 NS_ASSUME_NONNULL_END
