@@ -659,6 +659,12 @@ class DailyCallback {
       completion()
     }
   }
+  func activeSpeakerChanged(remoteParticipantMessage remoteParticipantMessageArg: RemoteParticipantMessage, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyCallback.activeSpeakerChanged", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([remoteParticipantMessageArg]) { _ in
+      completion()
+    }
+  }
   func onCallStateUpdated(stateCode stateCodeArg: Int32, completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyCallback.onCallStateUpdated", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([stateCodeArg]) { _ in

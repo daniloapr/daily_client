@@ -160,6 +160,13 @@ class DailyClient extends DailyCallback {
   }
 
   @override
+  void activeSpeakerChanged(RemoteParticipantMessage remoteParticipantMessage) {
+    _eventsController.add(ActiveSpeakerChangedEvent(
+      RemoteParticipant.fromMessage(remoteParticipantMessage),
+    ));
+  }
+
+  @override
   void onCallStateUpdated(int stateCode) {
     final callState = _mapCodeToCallState(stateCode);
     _callStateController.add(callState);

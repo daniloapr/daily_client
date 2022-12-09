@@ -855,6 +855,15 @@ NSObject<FlutterMessageCodec> *DailyCallbackGetCodec() {
     completion(nil);
   }];
 }
+- (void)activeSpeakerChangedRemoteParticipantMessage:(RemoteParticipantMessage *)arg_remoteParticipantMessage completion:(void(^)(NSError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.DailyCallback.activeSpeakerChanged"
+      binaryMessenger:self.binaryMessenger
+      codec:DailyCallbackGetCodec()      ];  [channel sendMessage:@[arg_remoteParticipantMessage ?: [NSNull null]] reply:^(id reply) {
+    completion(nil);
+  }];
+}
 - (void)onCallStateUpdatedStateCode:(NSNumber *)arg_stateCode completion:(void(^)(NSError *_Nullable))completion {
   FlutterBasicMessageChannel *channel =
     [FlutterBasicMessageChannel

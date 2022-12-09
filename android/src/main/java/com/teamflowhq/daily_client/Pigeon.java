@@ -1315,6 +1315,13 @@ public class Pigeon {
         callback.reply(null);
       });
     }
+    public void activeSpeakerChanged(@NonNull RemoteParticipantMessage remoteParticipantMessageArg, Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.DailyCallback.activeSpeakerChanged", getCodec());
+      channel.send(new ArrayList<Object>(Collections.singletonList(remoteParticipantMessageArg)), channelReply -> {
+        callback.reply(null);
+      });
+    }
     public void onCallStateUpdated(@NonNull Long stateCodeArg, Reply<Void> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.DailyCallback.onCallStateUpdated", getCodec());
