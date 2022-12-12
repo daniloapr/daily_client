@@ -35,16 +35,57 @@ func mapRemoteParticipantToMessage(fromParticipant participant: Daily.Participan
 }
 
 func printParticipant(participantMessage: RemoteParticipantMessage) {
+    let cameraState = mapMediaStateMessageToString(mediaState: participantMessage.media?.camera.state)
+    let micState = mapMediaStateMessageToString(mediaState: participantMessage.media?.microphone.state)
+    let cameraTrackState = mapTrackStateMessageToString(trackState: participantMessage.media?.camera.subscribed)
+    let micTrackState = mapTrackStateMessageToString(trackState: participantMessage.media?.microphone.subscribed)
     print("""
         DailyClient [participant]:
             id = \(participantMessage.id)
             userId = \(participantMessage.userId)
             name = \(participantMessage.userName)
             joinedAt = \(participantMessage.joinedAtIsoString)
-            camera = \(participantMessage.media?.camera.state.rawValue ?? -1)
-            mic = \(participantMessage.media?.microphone.state.rawValue ?? -1)
+            camera = \(cameraState), \(cameraTrackState)
+            mic = \(micState), \(micTrackState)
     """
     )
+}
+
+func mapMediaStateMessageToString(mediaState: MediaStateMessage?) -> String {
+    switch(mediaState){
+    case .blocked:
+        return "blocked"
+    case .off:
+        return "off"
+    case .receivable:
+        return "receivable"
+    case .loading:
+        return "loading"
+    case .playable:
+        return "playable"
+    case .interrupted:
+        return "interrupted"
+    case .unknown:
+        return "unknown"
+    default:
+        return "nil"
+    }
+}
+
+func mapTrackStateMessageToString(trackState: TrackSubscriptionStateMessage?) -> String {
+    switch(trackState) {
+        
+    case .subscribed:
+        return "subscribed"
+    case .staged:
+        return "staged"
+    case .unsubscribed:
+        return "unsubscribed"
+    case .unknown:
+        return "unknown"
+    default:
+        return "nil"
+    }
 }
 
 func mapCallStateToCode(callState: Daily.CallState) -> Int32 {
