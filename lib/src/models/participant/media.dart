@@ -22,4 +22,16 @@ class Media {
       screenAudio: MediaInfo.fromMessage(mediaMessage.screenAudio),
     );
   }
+
+  @override
+  String toString() {
+    return '''
+      Media(
+        camera: $camera,
+        microphone: $microphone ,
+        screenVideo: $screenVideo ,
+        screenAudio: $screenAudio ,
+      )
+    ''';
+  }
 }

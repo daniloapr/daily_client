@@ -110,21 +110,18 @@ struct JoinArgs {
   var token: String
   var enableMicrophone: Bool
   var enableCamera: Bool
-  var autoSubscribe: Bool
 
   static func fromMap(_ map: [String: Any?]) -> JoinArgs? {
     let url = map["url"] as! String
     let token = map["token"] as! String
     let enableMicrophone = map["enableMicrophone"] as! Bool
     let enableCamera = map["enableCamera"] as! Bool
-    let autoSubscribe = map["autoSubscribe"] as! Bool
 
     return JoinArgs(
       url: url,
       token: token,
       enableMicrophone: enableMicrophone,
-      enableCamera: enableCamera,
-      autoSubscribe: autoSubscribe
+      enableCamera: enableCamera
     )
   }
   func toMap() -> [String: Any?] {
@@ -132,8 +129,7 @@ struct JoinArgs {
       "url": url,
       "token": token,
       "enableMicrophone": enableMicrophone,
-      "enableCamera": enableCamera,
-      "autoSubscribe": autoSubscribe
+      "enableCamera": enableCamera
     ]
   }
 }
@@ -201,15 +197,11 @@ struct JoinMessage {
 ///Generated class from Pigeon that represents data sent in messages.
 struct LocalParticipantMessage {
   var id: String
-  var isCameraEnabled: Bool
-  var isMicrophoneEnabled: Bool
   var userId: String
   var media: MediaMessage? = nil
 
   static func fromMap(_ map: [String: Any?]) -> LocalParticipantMessage? {
     let id = map["id"] as! String
-    let isCameraEnabled = map["isCameraEnabled"] as! Bool
-    let isMicrophoneEnabled = map["isMicrophoneEnabled"] as! Bool
     let userId = map["userId"] as! String
     var media: MediaMessage? = nil
     if let mediaMap = map["media"] as? [String: Any?] {
@@ -218,8 +210,6 @@ struct LocalParticipantMessage {
 
     return LocalParticipantMessage(
       id: id,
-      isCameraEnabled: isCameraEnabled,
-      isMicrophoneEnabled: isMicrophoneEnabled,
       userId: userId,
       media: media
     )
@@ -227,8 +217,6 @@ struct LocalParticipantMessage {
   func toMap() -> [String: Any?] {
     return [
       "id": id,
-      "isCameraEnabled": isCameraEnabled,
-      "isMicrophoneEnabled": isMicrophoneEnabled,
       "userId": userId,
       "media": media?.toMap()
     ]
@@ -238,17 +226,15 @@ struct LocalParticipantMessage {
 ///Generated class from Pigeon that represents data sent in messages.
 struct RemoteParticipantMessage {
   var id: String
-  var isCameraEnabled: Bool
-  var isMicrophoneEnabled: Bool
   var userId: String
+  var userName: String
   var media: MediaMessage? = nil
   var joinedAtIsoString: String
 
   static func fromMap(_ map: [String: Any?]) -> RemoteParticipantMessage? {
     let id = map["id"] as! String
-    let isCameraEnabled = map["isCameraEnabled"] as! Bool
-    let isMicrophoneEnabled = map["isMicrophoneEnabled"] as! Bool
     let userId = map["userId"] as! String
+    let userName = map["userName"] as! String
     var media: MediaMessage? = nil
     if let mediaMap = map["media"] as? [String: Any?] {
       media = MediaMessage.fromMap(mediaMap)
@@ -257,9 +243,8 @@ struct RemoteParticipantMessage {
 
     return RemoteParticipantMessage(
       id: id,
-      isCameraEnabled: isCameraEnabled,
-      isMicrophoneEnabled: isMicrophoneEnabled,
       userId: userId,
+      userName: userName,
       media: media,
       joinedAtIsoString: joinedAtIsoString
     )
@@ -267,11 +252,32 @@ struct RemoteParticipantMessage {
   func toMap() -> [String: Any?] {
     return [
       "id": id,
-      "isCameraEnabled": isCameraEnabled,
-      "isMicrophoneEnabled": isMicrophoneEnabled,
       "userId": userId,
+      "userName": userName,
       "media": media?.toMap(),
       "joinedAtIsoString": joinedAtIsoString
+    ]
+  }
+}
+
+///Generated class from Pigeon that represents data sent in messages.
+struct ParticipantsMessage {
+  var local: LocalParticipantMessage
+  var remote: [RemoteParticipantMessage?]
+
+  static func fromMap(_ map: [String: Any?]) -> ParticipantsMessage? {
+    let local = LocalParticipantMessage.fromMap(map["local"] as! [String: Any?])!
+    let remote = map["remote"] as! [RemoteParticipantMessage?]
+
+    return ParticipantsMessage(
+      local: local,
+      remote: remote
+    )
+  }
+  func toMap() -> [String: Any?] {
+    return [
+      "local": local.toMap(),
+      "remote": remote
     ]
   }
 }
@@ -367,20 +373,24 @@ private class DailyMessengerCodecReader: FlutterStandardReader {
       case 130:
         return LocalParticipantMessage.fromMap(self.readValue() as! [String: Any])      
       case 131:
-        return MediaInfoMessage.fromMap(self.readValue() as! [String: Any])      
+        return LocalParticipantMessage.fromMap(self.readValue() as! [String: Any])      
       case 132:
-        return MediaMessage.fromMap(self.readValue() as! [String: Any])      
+        return MediaInfoMessage.fromMap(self.readValue() as! [String: Any])      
       case 133:
-        return PlatformError.fromMap(self.readValue() as! [String: Any])      
+        return MediaMessage.fromMap(self.readValue() as! [String: Any])      
       case 134:
-        return RemoteParticipantMessage.fromMap(self.readValue() as! [String: Any])      
+        return ParticipantsMessage.fromMap(self.readValue() as! [String: Any])      
       case 135:
-        return TrackMessage.fromMap(self.readValue() as! [String: Any])      
+        return PlatformError.fromMap(self.readValue() as! [String: Any])      
       case 136:
-        return UpdateSubscriptionArgs.fromMap(self.readValue() as! [String: Any])      
+        return RemoteParticipantMessage.fromMap(self.readValue() as! [String: Any])      
       case 137:
-        return UpdateSubscriptionProfileArgs.fromMap(self.readValue() as! [String: Any])      
+        return TrackMessage.fromMap(self.readValue() as! [String: Any])      
       case 138:
+        return UpdateSubscriptionArgs.fromMap(self.readValue() as! [String: Any])      
+      case 139:
+        return UpdateSubscriptionProfileArgs.fromMap(self.readValue() as! [String: Any])      
+      case 140:
         return VoidResult.fromMap(self.readValue() as! [String: Any])      
       default:
         return super.readValue(ofType: type)
@@ -399,29 +409,35 @@ private class DailyMessengerCodecWriter: FlutterStandardWriter {
     } else if let value = value as? LocalParticipantMessage {
       super.writeByte(130)
       super.writeValue(value.toMap())
-    } else if let value = value as? MediaInfoMessage {
+    } else if let value = value as? LocalParticipantMessage {
       super.writeByte(131)
       super.writeValue(value.toMap())
-    } else if let value = value as? MediaMessage {
+    } else if let value = value as? MediaInfoMessage {
       super.writeByte(132)
       super.writeValue(value.toMap())
-    } else if let value = value as? PlatformError {
+    } else if let value = value as? MediaMessage {
       super.writeByte(133)
       super.writeValue(value.toMap())
-    } else if let value = value as? RemoteParticipantMessage {
+    } else if let value = value as? ParticipantsMessage {
       super.writeByte(134)
       super.writeValue(value.toMap())
-    } else if let value = value as? TrackMessage {
+    } else if let value = value as? PlatformError {
       super.writeByte(135)
       super.writeValue(value.toMap())
-    } else if let value = value as? UpdateSubscriptionArgs {
+    } else if let value = value as? RemoteParticipantMessage {
       super.writeByte(136)
       super.writeValue(value.toMap())
-    } else if let value = value as? UpdateSubscriptionProfileArgs {
+    } else if let value = value as? TrackMessage {
       super.writeByte(137)
       super.writeValue(value.toMap())
-    } else if let value = value as? VoidResult {
+    } else if let value = value as? UpdateSubscriptionArgs {
       super.writeByte(138)
+      super.writeValue(value.toMap())
+    } else if let value = value as? UpdateSubscriptionProfileArgs {
+      super.writeByte(139)
+      super.writeValue(value.toMap())
+    } else if let value = value as? VoidResult {
+      super.writeByte(140)
       super.writeValue(value.toMap())
     } else {
       super.writeValue(value)
@@ -456,6 +472,7 @@ protocol DailyMessenger {
   func setCameraEnabled(enableCam: Bool) -> VoidResult
   func updateSubscriptionProfiles(args: [UpdateSubscriptionProfileArgs]) -> VoidResult
   func updateSubscriptions(args: [UpdateSubscriptionArgs]) -> VoidResult
+  func getParticipants() -> ParticipantsMessage
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -531,6 +548,15 @@ class DailyMessengerSetup {
     } else {
       updateSubscriptionsChannel.setMessageHandler(nil)
     }
+    let getParticipantsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyMessenger.getParticipants", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getParticipantsChannel.setMessageHandler { _, reply in
+        let result = api.getParticipants()
+        reply(wrapResult(result))
+      }
+    } else {
+      getParticipantsChannel.setMessageHandler(nil)
+    }
   }
 }
 private class DailyCallbackCodecReader: FlutterStandardReader {
@@ -545,6 +571,8 @@ private class DailyCallbackCodecReader: FlutterStandardReader {
       case 131:
         return RemoteParticipantMessage.fromMap(self.readValue() as! [String: Any])      
       case 132:
+        return RemoteParticipantMessage.fromMap(self.readValue() as! [String: Any])      
+      case 133:
         return TrackMessage.fromMap(self.readValue() as! [String: Any])      
       default:
         return super.readValue(ofType: type)
@@ -566,8 +594,11 @@ private class DailyCallbackCodecWriter: FlutterStandardWriter {
     } else if let value = value as? RemoteParticipantMessage {
       super.writeByte(131)
       super.writeValue(value.toMap())
-    } else if let value = value as? TrackMessage {
+    } else if let value = value as? RemoteParticipantMessage {
       super.writeByte(132)
+      super.writeValue(value.toMap())
+    } else if let value = value as? TrackMessage {
+      super.writeByte(133)
       super.writeValue(value.toMap())
     } else {
       super.writeValue(value)
@@ -601,6 +632,36 @@ class DailyCallback {
   func onParticipantsUpdated(localParticipantMessage localParticipantMessageArg: LocalParticipantMessage, remoteParticipantsMessage remoteParticipantsMessageArg: [RemoteParticipantMessage?], completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyCallback.onParticipantsUpdated", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([localParticipantMessageArg, remoteParticipantsMessageArg]) { _ in
+      completion()
+    }
+  }
+  func onParticipantUpdated(remoteParticipantMessage remoteParticipantMessageArg: RemoteParticipantMessage, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyCallback.onParticipantUpdated", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([remoteParticipantMessageArg]) { _ in
+      completion()
+    }
+  }
+  func onLocalParticipantUpdated(localParticipantMessage localParticipantMessageArg: LocalParticipantMessage, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyCallback.onLocalParticipantUpdated", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([localParticipantMessageArg]) { _ in
+      completion()
+    }
+  }
+  func onParticipantJoined(remoteParticipantMessage remoteParticipantMessageArg: RemoteParticipantMessage, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyCallback.onParticipantJoined", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([remoteParticipantMessageArg]) { _ in
+      completion()
+    }
+  }
+  func onParticipantLeft(remoteParticipantMessage remoteParticipantMessageArg: RemoteParticipantMessage, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyCallback.onParticipantLeft", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([remoteParticipantMessageArg]) { _ in
+      completion()
+    }
+  }
+  func activeSpeakerChanged(remoteParticipantMessage remoteParticipantMessageArg: RemoteParticipantMessage?, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyCallback.activeSpeakerChanged", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([remoteParticipantMessageArg]) { _ in
       completion()
     }
   }

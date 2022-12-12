@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import '../pigeon.g.dart';
+import 'models/events/daily_event.dart';
 import 'models/exception/daily_client_exception.dart';
 import 'models/join/join_options.dart';
 import 'models/join/join_result.dart';
@@ -19,9 +20,11 @@ class DailyClient extends DailyCallback {
   final _messenger = DailyMessenger();
 
   final _participantsController = StreamController<Participants>.broadcast();
+  final _eventsController = StreamController<DailyEvent>.broadcast();
   final _callStateController = StreamController<CallState>.broadcast();
 
   Stream<Participants> get participants => _participantsController.stream;
+  Stream<DailyEvent> get events => _eventsController.stream;
   Stream<CallState> get callState => _callStateController.stream;
 
   Future<JoinResult> join(JoinOptions options) async {
@@ -31,7 +34,6 @@ class DailyClient extends DailyCallback {
         token: options.token,
         enableMicrophone: options.enableMicrophone,
         enableCamera: options.enableCamera,
-        autoSubscribe: options.autoSubscribe,
       ),
     );
     _handleError(result.error);
@@ -123,6 +125,48 @@ class DailyClient extends DailyCallback {
       local: LocalParticipant.fromMessage(localParticipantMessage),
       remote: RemoteParticipant.listFromMessage(remoteParticipantsMessage),
     ));
+  }
+
+  @override
+  void onParticipantUpdated(
+    RemoteParticipantMessage remoteParticipantMessage,
+  ) {
+    _eventsController.add(ParticipantUpdatedEvent(
+      RemoteParticipant.fromMessage(remoteParticipantMessage),
+    ));
+  }
+
+  @override
+  void onLocalParticipantUpdated(
+    LocalParticipantMessage localParticipantMessage,
+  ) {
+    _eventsController.add(LocalParticipantUpdatedEvent(
+      LocalParticipant.fromMessage(localParticipantMessage),
+    ));
+  }
+
+  @override
+  void onParticipantJoined(RemoteParticipantMessage remoteParticipantMessage) {
+    _eventsController.add(ParticipantJoinedEvent(
+      RemoteParticipant.fromMessage(remoteParticipantMessage),
+    ));
+  }
+
+  @override
+  void onParticipantLeft(RemoteParticipantMessage remoteParticipantMessage) {
+    _eventsController.add(ParticipantLeftEvent(
+      RemoteParticipant.fromMessage(remoteParticipantMessage),
+    ));
+  }
+
+  @override
+  void activeSpeakerChanged(
+      RemoteParticipantMessage? remoteParticipantMessage) {
+    final participant = remoteParticipantMessage != null
+        ? RemoteParticipant.fromMessage(remoteParticipantMessage)
+        : null;
+
+    _eventsController.add(ActiveSpeakerChangedEvent(participant));
   }
 
   @override

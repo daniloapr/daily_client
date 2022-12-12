@@ -16,6 +16,7 @@ abstract class DailyMessenger {
     List<UpdateSubscriptionProfileArgs> args,
   );
   VoidResult updateSubscriptions(List<UpdateSubscriptionArgs> args);
+  ParticipantsMessage getParticipants();
 }
 
 @FlutterApi()
@@ -24,7 +25,13 @@ abstract class DailyCallback {
     LocalParticipantMessage localParticipantMessage,
     List<RemoteParticipantMessage?> remoteParticipantsMessage,
   );
-
+  void onParticipantUpdated(RemoteParticipantMessage remoteParticipantMessage);
+  void onLocalParticipantUpdated(
+    LocalParticipantMessage localParticipantMessage,
+  );
+  void onParticipantJoined(RemoteParticipantMessage remoteParticipantMessage);
+  void onParticipantLeft(RemoteParticipantMessage remoteParticipantMessage);
+  void activeSpeakerChanged(RemoteParticipantMessage? remoteParticipantMessage);
   void onCallStateUpdated(int stateCode);
 }
 
@@ -64,14 +71,12 @@ class JoinArgs {
     this.token,
     this.enableMicrophone,
     this.enableCamera,
-    this.autoSubscribe,
   );
 
   final String url;
   final String token;
   final bool enableMicrophone;
   final bool enableCamera;
-  final bool autoSubscribe;
 }
 
 class UpdateSubscriptionProfileArgs {
@@ -109,14 +114,10 @@ class LocalParticipantMessage {
   LocalParticipantMessage({
     required this.id,
     required this.userId,
-    required this.isCameraEnabled,
-    required this.isMicrophoneEnabled,
     required this.media,
   });
 
   final String id;
-  final bool isCameraEnabled;
-  final bool isMicrophoneEnabled;
   final String userId;
   final MediaMessage? media;
 }
@@ -125,18 +126,23 @@ class RemoteParticipantMessage {
   RemoteParticipantMessage({
     required this.id,
     required this.userId,
-    required this.isCameraEnabled,
-    required this.isMicrophoneEnabled,
+    required this.userName,
     required this.media,
     required this.joinedAtIsoString,
   });
 
   final String id;
-  final bool isCameraEnabled;
-  final bool isMicrophoneEnabled;
   final String userId;
+  final String userName;
   final MediaMessage? media;
   final String joinedAtIsoString;
+}
+
+class ParticipantsMessage {
+  final LocalParticipantMessage local;
+  final List<RemoteParticipantMessage?> remote;
+
+  ParticipantsMessage(this.local, this.remote);
 }
 
 class MediaMessage {

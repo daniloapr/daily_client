@@ -247,15 +247,6 @@ public class Pigeon {
       this.enableCamera = setterArg;
     }
 
-    private @NonNull Boolean autoSubscribe;
-    public @NonNull Boolean getAutoSubscribe() { return autoSubscribe; }
-    public void setAutoSubscribe(@NonNull Boolean setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"autoSubscribe\" is null.");
-      }
-      this.autoSubscribe = setterArg;
-    }
-
     /**Constructor is private to enforce null safety; use Builder. */
     private JoinArgs() {}
     public static final class Builder {
@@ -279,18 +270,12 @@ public class Pigeon {
         this.enableCamera = setterArg;
         return this;
       }
-      private @Nullable Boolean autoSubscribe;
-      public @NonNull Builder setAutoSubscribe(@NonNull Boolean setterArg) {
-        this.autoSubscribe = setterArg;
-        return this;
-      }
       public @NonNull JoinArgs build() {
         JoinArgs pigeonReturn = new JoinArgs();
         pigeonReturn.setUrl(url);
         pigeonReturn.setToken(token);
         pigeonReturn.setEnableMicrophone(enableMicrophone);
         pigeonReturn.setEnableCamera(enableCamera);
-        pigeonReturn.setAutoSubscribe(autoSubscribe);
         return pigeonReturn;
       }
     }
@@ -300,7 +285,6 @@ public class Pigeon {
       toMapResult.put("token", token);
       toMapResult.put("enableMicrophone", enableMicrophone);
       toMapResult.put("enableCamera", enableCamera);
-      toMapResult.put("autoSubscribe", autoSubscribe);
       return toMapResult;
     }
     static @NonNull JoinArgs fromMap(@NonNull Map<String, Object> map) {
@@ -313,8 +297,6 @@ public class Pigeon {
       pigeonResult.setEnableMicrophone((Boolean)enableMicrophone);
       Object enableCamera = map.get("enableCamera");
       pigeonResult.setEnableCamera((Boolean)enableCamera);
-      Object autoSubscribe = map.get("autoSubscribe");
-      pigeonResult.setAutoSubscribe((Boolean)autoSubscribe);
       return pigeonResult;
     }
   }
@@ -471,24 +453,6 @@ public class Pigeon {
       this.id = setterArg;
     }
 
-    private @NonNull Boolean isCameraEnabled;
-    public @NonNull Boolean getIsCameraEnabled() { return isCameraEnabled; }
-    public void setIsCameraEnabled(@NonNull Boolean setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"isCameraEnabled\" is null.");
-      }
-      this.isCameraEnabled = setterArg;
-    }
-
-    private @NonNull Boolean isMicrophoneEnabled;
-    public @NonNull Boolean getIsMicrophoneEnabled() { return isMicrophoneEnabled; }
-    public void setIsMicrophoneEnabled(@NonNull Boolean setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"isMicrophoneEnabled\" is null.");
-      }
-      this.isMicrophoneEnabled = setterArg;
-    }
-
     private @NonNull String userId;
     public @NonNull String getUserId() { return userId; }
     public void setUserId(@NonNull String setterArg) {
@@ -512,16 +476,6 @@ public class Pigeon {
         this.id = setterArg;
         return this;
       }
-      private @Nullable Boolean isCameraEnabled;
-      public @NonNull Builder setIsCameraEnabled(@NonNull Boolean setterArg) {
-        this.isCameraEnabled = setterArg;
-        return this;
-      }
-      private @Nullable Boolean isMicrophoneEnabled;
-      public @NonNull Builder setIsMicrophoneEnabled(@NonNull Boolean setterArg) {
-        this.isMicrophoneEnabled = setterArg;
-        return this;
-      }
       private @Nullable String userId;
       public @NonNull Builder setUserId(@NonNull String setterArg) {
         this.userId = setterArg;
@@ -535,8 +489,6 @@ public class Pigeon {
       public @NonNull LocalParticipantMessage build() {
         LocalParticipantMessage pigeonReturn = new LocalParticipantMessage();
         pigeonReturn.setId(id);
-        pigeonReturn.setIsCameraEnabled(isCameraEnabled);
-        pigeonReturn.setIsMicrophoneEnabled(isMicrophoneEnabled);
         pigeonReturn.setUserId(userId);
         pigeonReturn.setMedia(media);
         return pigeonReturn;
@@ -545,8 +497,6 @@ public class Pigeon {
     @NonNull Map<String, Object> toMap() {
       Map<String, Object> toMapResult = new HashMap<>();
       toMapResult.put("id", id);
-      toMapResult.put("isCameraEnabled", isCameraEnabled);
-      toMapResult.put("isMicrophoneEnabled", isMicrophoneEnabled);
       toMapResult.put("userId", userId);
       toMapResult.put("media", (media == null) ? null : media.toMap());
       return toMapResult;
@@ -555,10 +505,6 @@ public class Pigeon {
       LocalParticipantMessage pigeonResult = new LocalParticipantMessage();
       Object id = map.get("id");
       pigeonResult.setId((String)id);
-      Object isCameraEnabled = map.get("isCameraEnabled");
-      pigeonResult.setIsCameraEnabled((Boolean)isCameraEnabled);
-      Object isMicrophoneEnabled = map.get("isMicrophoneEnabled");
-      pigeonResult.setIsMicrophoneEnabled((Boolean)isMicrophoneEnabled);
       Object userId = map.get("userId");
       pigeonResult.setUserId((String)userId);
       Object media = map.get("media");
@@ -578,24 +524,6 @@ public class Pigeon {
       this.id = setterArg;
     }
 
-    private @NonNull Boolean isCameraEnabled;
-    public @NonNull Boolean getIsCameraEnabled() { return isCameraEnabled; }
-    public void setIsCameraEnabled(@NonNull Boolean setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"isCameraEnabled\" is null.");
-      }
-      this.isCameraEnabled = setterArg;
-    }
-
-    private @NonNull Boolean isMicrophoneEnabled;
-    public @NonNull Boolean getIsMicrophoneEnabled() { return isMicrophoneEnabled; }
-    public void setIsMicrophoneEnabled(@NonNull Boolean setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"isMicrophoneEnabled\" is null.");
-      }
-      this.isMicrophoneEnabled = setterArg;
-    }
-
     private @NonNull String userId;
     public @NonNull String getUserId() { return userId; }
     public void setUserId(@NonNull String setterArg) {
@@ -603,6 +531,15 @@ public class Pigeon {
         throw new IllegalStateException("Nonnull field \"userId\" is null.");
       }
       this.userId = setterArg;
+    }
+
+    private @NonNull String userName;
+    public @NonNull String getUserName() { return userName; }
+    public void setUserName(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"userName\" is null.");
+      }
+      this.userName = setterArg;
     }
 
     private @Nullable MediaMessage media;
@@ -628,19 +565,14 @@ public class Pigeon {
         this.id = setterArg;
         return this;
       }
-      private @Nullable Boolean isCameraEnabled;
-      public @NonNull Builder setIsCameraEnabled(@NonNull Boolean setterArg) {
-        this.isCameraEnabled = setterArg;
-        return this;
-      }
-      private @Nullable Boolean isMicrophoneEnabled;
-      public @NonNull Builder setIsMicrophoneEnabled(@NonNull Boolean setterArg) {
-        this.isMicrophoneEnabled = setterArg;
-        return this;
-      }
       private @Nullable String userId;
       public @NonNull Builder setUserId(@NonNull String setterArg) {
         this.userId = setterArg;
+        return this;
+      }
+      private @Nullable String userName;
+      public @NonNull Builder setUserName(@NonNull String setterArg) {
+        this.userName = setterArg;
         return this;
       }
       private @Nullable MediaMessage media;
@@ -656,9 +588,8 @@ public class Pigeon {
       public @NonNull RemoteParticipantMessage build() {
         RemoteParticipantMessage pigeonReturn = new RemoteParticipantMessage();
         pigeonReturn.setId(id);
-        pigeonReturn.setIsCameraEnabled(isCameraEnabled);
-        pigeonReturn.setIsMicrophoneEnabled(isMicrophoneEnabled);
         pigeonReturn.setUserId(userId);
+        pigeonReturn.setUserName(userName);
         pigeonReturn.setMedia(media);
         pigeonReturn.setJoinedAtIsoString(joinedAtIsoString);
         return pigeonReturn;
@@ -667,9 +598,8 @@ public class Pigeon {
     @NonNull Map<String, Object> toMap() {
       Map<String, Object> toMapResult = new HashMap<>();
       toMapResult.put("id", id);
-      toMapResult.put("isCameraEnabled", isCameraEnabled);
-      toMapResult.put("isMicrophoneEnabled", isMicrophoneEnabled);
       toMapResult.put("userId", userId);
+      toMapResult.put("userName", userName);
       toMapResult.put("media", (media == null) ? null : media.toMap());
       toMapResult.put("joinedAtIsoString", joinedAtIsoString);
       return toMapResult;
@@ -678,16 +608,70 @@ public class Pigeon {
       RemoteParticipantMessage pigeonResult = new RemoteParticipantMessage();
       Object id = map.get("id");
       pigeonResult.setId((String)id);
-      Object isCameraEnabled = map.get("isCameraEnabled");
-      pigeonResult.setIsCameraEnabled((Boolean)isCameraEnabled);
-      Object isMicrophoneEnabled = map.get("isMicrophoneEnabled");
-      pigeonResult.setIsMicrophoneEnabled((Boolean)isMicrophoneEnabled);
       Object userId = map.get("userId");
       pigeonResult.setUserId((String)userId);
+      Object userName = map.get("userName");
+      pigeonResult.setUserName((String)userName);
       Object media = map.get("media");
       pigeonResult.setMedia((media == null) ? null : MediaMessage.fromMap((Map)media));
       Object joinedAtIsoString = map.get("joinedAtIsoString");
       pigeonResult.setJoinedAtIsoString((String)joinedAtIsoString);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static class ParticipantsMessage {
+    private @NonNull LocalParticipantMessage local;
+    public @NonNull LocalParticipantMessage getLocal() { return local; }
+    public void setLocal(@NonNull LocalParticipantMessage setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"local\" is null.");
+      }
+      this.local = setterArg;
+    }
+
+    private @NonNull List<RemoteParticipantMessage> remote;
+    public @NonNull List<RemoteParticipantMessage> getRemote() { return remote; }
+    public void setRemote(@NonNull List<RemoteParticipantMessage> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"remote\" is null.");
+      }
+      this.remote = setterArg;
+    }
+
+    /**Constructor is private to enforce null safety; use Builder. */
+    private ParticipantsMessage() {}
+    public static final class Builder {
+      private @Nullable LocalParticipantMessage local;
+      public @NonNull Builder setLocal(@NonNull LocalParticipantMessage setterArg) {
+        this.local = setterArg;
+        return this;
+      }
+      private @Nullable List<RemoteParticipantMessage> remote;
+      public @NonNull Builder setRemote(@NonNull List<RemoteParticipantMessage> setterArg) {
+        this.remote = setterArg;
+        return this;
+      }
+      public @NonNull ParticipantsMessage build() {
+        ParticipantsMessage pigeonReturn = new ParticipantsMessage();
+        pigeonReturn.setLocal(local);
+        pigeonReturn.setRemote(remote);
+        return pigeonReturn;
+      }
+    }
+    @NonNull Map<String, Object> toMap() {
+      Map<String, Object> toMapResult = new HashMap<>();
+      toMapResult.put("local", (local == null) ? null : local.toMap());
+      toMapResult.put("remote", remote);
+      return toMapResult;
+    }
+    static @NonNull ParticipantsMessage fromMap(@NonNull Map<String, Object> map) {
+      ParticipantsMessage pigeonResult = new ParticipantsMessage();
+      Object local = map.get("local");
+      pigeonResult.setLocal((local == null) ? null : LocalParticipantMessage.fromMap((Map)local));
+      Object remote = map.get("remote");
+      pigeonResult.setRemote((List<RemoteParticipantMessage>)remote);
       return pigeonResult;
     }
   }
@@ -931,27 +915,33 @@ public class Pigeon {
           return LocalParticipantMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)131:         
-          return MediaInfoMessage.fromMap((Map<String, Object>) readValue(buffer));
+          return LocalParticipantMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)132:         
-          return MediaMessage.fromMap((Map<String, Object>) readValue(buffer));
+          return MediaInfoMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)133:         
-          return PlatformError.fromMap((Map<String, Object>) readValue(buffer));
+          return MediaMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)134:         
-          return RemoteParticipantMessage.fromMap((Map<String, Object>) readValue(buffer));
+          return ParticipantsMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)135:         
-          return TrackMessage.fromMap((Map<String, Object>) readValue(buffer));
+          return PlatformError.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)136:         
-          return UpdateSubscriptionArgs.fromMap((Map<String, Object>) readValue(buffer));
+          return RemoteParticipantMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)137:         
-          return UpdateSubscriptionProfileArgs.fromMap((Map<String, Object>) readValue(buffer));
+          return TrackMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)138:         
+          return UpdateSubscriptionArgs.fromMap((Map<String, Object>) readValue(buffer));
+        
+        case (byte)139:         
+          return UpdateSubscriptionProfileArgs.fromMap((Map<String, Object>) readValue(buffer));
+        
+        case (byte)140:         
           return VoidResult.fromMap((Map<String, Object>) readValue(buffer));
         
         default:        
@@ -973,36 +963,44 @@ public class Pigeon {
         stream.write(130);
         writeValue(stream, ((LocalParticipantMessage) value).toMap());
       } else 
-      if (value instanceof MediaInfoMessage) {
+      if (value instanceof LocalParticipantMessage) {
         stream.write(131);
+        writeValue(stream, ((LocalParticipantMessage) value).toMap());
+      } else 
+      if (value instanceof MediaInfoMessage) {
+        stream.write(132);
         writeValue(stream, ((MediaInfoMessage) value).toMap());
       } else 
       if (value instanceof MediaMessage) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, ((MediaMessage) value).toMap());
       } else 
+      if (value instanceof ParticipantsMessage) {
+        stream.write(134);
+        writeValue(stream, ((ParticipantsMessage) value).toMap());
+      } else 
       if (value instanceof PlatformError) {
-        stream.write(133);
+        stream.write(135);
         writeValue(stream, ((PlatformError) value).toMap());
       } else 
       if (value instanceof RemoteParticipantMessage) {
-        stream.write(134);
+        stream.write(136);
         writeValue(stream, ((RemoteParticipantMessage) value).toMap());
       } else 
       if (value instanceof TrackMessage) {
-        stream.write(135);
+        stream.write(137);
         writeValue(stream, ((TrackMessage) value).toMap());
       } else 
       if (value instanceof UpdateSubscriptionArgs) {
-        stream.write(136);
+        stream.write(138);
         writeValue(stream, ((UpdateSubscriptionArgs) value).toMap());
       } else 
       if (value instanceof UpdateSubscriptionProfileArgs) {
-        stream.write(137);
+        stream.write(139);
         writeValue(stream, ((UpdateSubscriptionProfileArgs) value).toMap());
       } else 
       if (value instanceof VoidResult) {
-        stream.write(138);
+        stream.write(140);
         writeValue(stream, ((VoidResult) value).toMap());
       } else 
 {
@@ -1026,6 +1024,7 @@ public class Pigeon {
     @NonNull VoidResult setCameraEnabled(@NonNull Boolean enableCam);
     @NonNull VoidResult updateSubscriptionProfiles(@NonNull List<UpdateSubscriptionProfileArgs> args);
     @NonNull VoidResult updateSubscriptions(@NonNull List<UpdateSubscriptionArgs> args);
+    @NonNull ParticipantsMessage getParticipants();
 
     /** The codec used by DailyMessenger. */
     static MessageCodec<Object> getCodec() {
@@ -1186,6 +1185,25 @@ public class Pigeon {
           channel.setMessageHandler(null);
         }
       }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.DailyMessenger.getParticipants", getCodec());
+        if (api != null) {
+          channel.setMessageHandler((message, reply) -> {
+            Map<String, Object> wrapped = new HashMap<>();
+            try {
+              ParticipantsMessage output = api.getParticipants();
+              wrapped.put("result", output);
+            }
+            catch (Error | RuntimeException exception) {
+              wrapped.put("error", wrapError(exception));
+            }
+            reply.reply(wrapped);
+          });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
     }
   }
   private static class DailyCallbackCodec extends StandardMessageCodec {
@@ -1207,6 +1225,9 @@ public class Pigeon {
           return RemoteParticipantMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         case (byte)132:         
+          return RemoteParticipantMessage.fromMap((Map<String, Object>) readValue(buffer));
+        
+        case (byte)133:         
           return TrackMessage.fromMap((Map<String, Object>) readValue(buffer));
         
         default:        
@@ -1232,8 +1253,12 @@ public class Pigeon {
         stream.write(131);
         writeValue(stream, ((RemoteParticipantMessage) value).toMap());
       } else 
-      if (value instanceof TrackMessage) {
+      if (value instanceof RemoteParticipantMessage) {
         stream.write(132);
+        writeValue(stream, ((RemoteParticipantMessage) value).toMap());
+      } else 
+      if (value instanceof TrackMessage) {
+        stream.write(133);
         writeValue(stream, ((TrackMessage) value).toMap());
       } else 
 {
@@ -1259,6 +1284,41 @@ public class Pigeon {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.DailyCallback.onParticipantsUpdated", getCodec());
       channel.send(new ArrayList<Object>(Arrays.asList(localParticipantMessageArg, remoteParticipantsMessageArg)), channelReply -> {
+        callback.reply(null);
+      });
+    }
+    public void onParticipantUpdated(@NonNull RemoteParticipantMessage remoteParticipantMessageArg, Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.DailyCallback.onParticipantUpdated", getCodec());
+      channel.send(new ArrayList<Object>(Collections.singletonList(remoteParticipantMessageArg)), channelReply -> {
+        callback.reply(null);
+      });
+    }
+    public void onLocalParticipantUpdated(@NonNull LocalParticipantMessage localParticipantMessageArg, Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.DailyCallback.onLocalParticipantUpdated", getCodec());
+      channel.send(new ArrayList<Object>(Collections.singletonList(localParticipantMessageArg)), channelReply -> {
+        callback.reply(null);
+      });
+    }
+    public void onParticipantJoined(@NonNull RemoteParticipantMessage remoteParticipantMessageArg, Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.DailyCallback.onParticipantJoined", getCodec());
+      channel.send(new ArrayList<Object>(Collections.singletonList(remoteParticipantMessageArg)), channelReply -> {
+        callback.reply(null);
+      });
+    }
+    public void onParticipantLeft(@NonNull RemoteParticipantMessage remoteParticipantMessageArg, Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.DailyCallback.onParticipantLeft", getCodec());
+      channel.send(new ArrayList<Object>(Collections.singletonList(remoteParticipantMessageArg)), channelReply -> {
+        callback.reply(null);
+      });
+    }
+    public void activeSpeakerChanged(@Nullable RemoteParticipantMessage remoteParticipantMessageArg, Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.DailyCallback.activeSpeakerChanged", getCodec());
+      channel.send(new ArrayList<Object>(Collections.singletonList(remoteParticipantMessageArg)), channelReply -> {
         callback.reply(null);
       });
     }
