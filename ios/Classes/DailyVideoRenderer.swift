@@ -15,7 +15,7 @@ class DailyVideoRendererFactory: NSObject, FlutterPlatformViewFactory {
         super.init()
     }
     
-    func create(
+    @MainActor func create(
         withFrame frame: CGRect,
         viewIdentifier viewId: Int64,
         arguments args: Any?
@@ -37,7 +37,7 @@ class DailyVideoRendererFactory: NSObject, FlutterPlatformViewFactory {
 class DailyVideoRenderer: NSObject, FlutterPlatformView {
     private var _view: UIView
     
-    init(
+    @MainActor init(
         frame: CGRect,
         viewIdentifier viewId: Int64,
         arguments args: Any?,

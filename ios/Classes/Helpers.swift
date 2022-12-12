@@ -19,7 +19,7 @@ func getParticipantsMessage(
 func mapLocalParticipantToMessage(fromParticipant participant: Daily.Participant) -> LocalParticipantMessage {
     return LocalParticipantMessage(
         id: participant.id.uuid.uuidString,
-        userId: participant.info.userId?.uuid.uuidString ?? "",
+        userId: participant.info.userId ?? "",
         media: getMediaMessage(fromMedia: participant.media)
     )
 }
@@ -27,7 +27,7 @@ func mapLocalParticipantToMessage(fromParticipant participant: Daily.Participant
 func mapRemoteParticipantToMessage(fromParticipant participant: Daily.Participant) -> RemoteParticipantMessage {
     return RemoteParticipantMessage(
         id: participant.id.uuid.uuidString,
-        userId: participant.info.userId?.uuid.uuidString ?? "",
+        userId: participant.info.userId ?? "",
         userName: participant.info.username ?? "",
         media: getMediaMessage(fromMedia: participant.media),
         joinedAtIsoString: Date.ISOStringFromDate(date: participant.info.joinedAt) ?? ""
@@ -49,8 +49,7 @@ func printParticipant(participantMessage: RemoteParticipantMessage) {
 
 func mapCallStateToCode(callState: Daily.CallState) -> Int32 {
     switch callState {
-        
-    case .new:
+    case .initialized:
         return 0
     case .joining:
         return 1

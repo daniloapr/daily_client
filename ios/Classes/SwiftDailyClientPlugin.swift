@@ -5,92 +5,36 @@ import Combine
 
 public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
     /// Client from Daily SDK
-    private let call: Daily.CallClient
+    @MainActor private lazy var callClient: CallClient = {
+        let callClient = CallClient()
+        callClient.delegate = self
+        return callClient
+    }()
+
     /// Sends data back to the Flutter layer
     let callback: DailyCallback
     /// Stores the individual event observers
     var cancellables: Set<AnyCancellable> = []
     
-    init(
-        call: Daily.CallClient,
-        callback: DailyCallback
-    ) {
-        self.call = call
+    init(callback: DailyCallback) {
         self.callback = callback
     }
     
     /// Register flutter plugin
-    public static func register(with registrar: FlutterPluginRegistrar) {
-        let call = Daily.CallClient()
+    @MainActor public static func register(with registrar: FlutterPluginRegistrar) {
         let callback = DailyCallback(binaryMessenger: registrar.messenger())
-        let plugin = SwiftDailyClientPlugin(call: call, callback: callback)
+        let plugin = SwiftDailyClientPlugin(callback: callback)
         
         DailyMessengerSetup.setUp(
             binaryMessenger: registrar.messenger(),
             api: plugin
         )
         
-        let factory = DailyVideoRendererFactory(messenger: registrar.messenger(), call: call)
+        let factory = DailyVideoRendererFactory(messenger: registrar.messenger(), call: plugin.callClient)
         registrar.register(factory, withId: "DailyVideoRenderer")
     }
     
-    private func startListeners() {
-        call.events.participantUpdated
-            .receive(on: DispatchQueue.main)
-            .sink() { event in
-                //We are not handling each single participant update for simplifying reason.
-                self.onParticipantsUpdated()
-                self.onParticipantUpdated(participant: event.participant)
-            }
-            .store(in: &cancellables)
-        
-        call.events.participantJoined
-            .receive(on: DispatchQueue.main)
-            .sink() { event in
-                self.onParticipantJoined(participant: event.participant)
-            }
-            .store(in: &cancellables)
-        
-        call.events.participantLeft
-            .receive(on: DispatchQueue.main)
-            .sink() { event in
-                self.onParticipantLeft(participant: event.participant)
-            }
-            .store(in: &cancellables)
-        
-        call.events.publishingUpdated
-            .receive(on: DispatchQueue.main)
-            .sink() { _ in
-                print("DailyClient: publishingUpdated")
-            }
-            .store(in: &cancellables)
-        
-        call.events.subscriptionProfilesUpdated
-            .receive(on: DispatchQueue.main)
-            .sink() { _ in
-                print("DailyClient: subscriptionProfilesUpdated")
-            }
-            .store(in: &cancellables)
-        
-        call.events.subscriptionsUpdated
-            .receive(on: DispatchQueue.main)
-            .sink() { _ in
-                print("DailyClient: subscriptionsUpdated")
-            }
-            .store(in: &cancellables)
-        
-        call.events.callStateUpdated
-            .receive(on: DispatchQueue.main)
-            .sink() {event in
-                let code = mapCallStateToCode(callState: event.state)
-                self.callback.onCallStateUpdated(
-                    stateCode: code,
-                    completion: {}
-                )
-            } .store(in: &cancellables)
-    }
-    
-    func join(args: JoinArgs, completion: @escaping (JoinMessage) -> Void) {
+    @MainActor func join(args: JoinArgs, completion: @escaping (JoinMessage) -> Void)  {
         guard let url = URL(string: args.url) else {
             completion(
                 JoinMessage(
@@ -104,9 +48,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         }
         
         do {
-            startListeners()
-            
-            try call.join(
+            try callClient.join(
                 url: url,
                 token: args.token.isEmpty ? nil : MeetingToken(stringValue: args.token),
                 settings: .init(
@@ -118,7 +60,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
             )
             
             
-            let message = getParticipantsMessage(fromParticipants: call.participants)
+            let message = getParticipantsMessage(fromParticipants: callClient.participants)
             
             completion(JoinMessage(
                 localParticipant: message.local,
@@ -136,16 +78,16 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         }
     }
     
-    func leave() -> VoidResult {
-        call.leave()
+    @MainActor func leave() -> VoidResult {
+        callClient.leave()
         cancellables.forEach({$0.cancel()})
         cancellables = []
         return VoidResult()
     }
     
-    func setMicrophoneEnabled(enableMic: Bool) -> VoidResult {
+    @MainActor func setMicrophoneEnabled(enableMic: Bool) -> VoidResult {
         do {
-            _ = try call.updateInputs {inputs in
+            _ = try callClient.updateInputs {inputs in
                 inputs(\.microphone, .enabled(enableMic))
             }
             
@@ -161,9 +103,9 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         
     }
     
-    func setCameraEnabled(enableCam: Bool) -> VoidResult {
+    @MainActor func setCameraEnabled(enableCam: Bool) -> VoidResult {
         do {
-            _ = try call.updateInputs {inputs in
+            _ = try callClient.updateInputs {inputs in
                 inputs(\.camera, .enabled(enableCam))
             }
             return VoidResult()
@@ -177,10 +119,10 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         }
     }
     
-    func updateSubscriptionProfiles(args: [UpdateSubscriptionProfileArgs]) -> VoidResult {
+    @MainActor func updateSubscriptionProfiles(args: [UpdateSubscriptionProfileArgs]) -> VoidResult {
         do {
             try args.forEach{ arg in
-                let _ = try call.updateSubscriptionProfiles{ profiles in
+                let _ = try callClient.updateSubscriptionProfiles{ profiles in
                     profiles(SubscriptionProfile(stringLiteral: arg.name)) { profile in
                         profile(\.camera, .subscribed(arg.subscribeCamera))
                         profile(\.microphone, .subscribed(arg.subscribeMicrophone))
@@ -199,7 +141,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
     }
     
     /// Participants subscription
-    func updateSubscriptions(args: [UpdateSubscriptionArgs]) -> VoidResult {
+    @MainActor func updateSubscriptions(args: [UpdateSubscriptionArgs]) -> VoidResult {
         do {
             let participants: SubscriptionSettingsUpdatesById = args.reduce(into: [:]) { dictionary, arg in
                 let participantId = ParticipantId(uuid: UUID(uuidString: arg.participantId)!)
@@ -210,7 +152,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
                 dictionary[participantId] = subscription
             }
             
-            let _ = try call.updateSubscriptions(forParticipants: participants)
+            let _ = try callClient.updateSubscriptions(forParticipants: participants)
             
         } catch {
             return VoidResult(
@@ -224,8 +166,8 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         return VoidResult()
     }
     
-    func getParticipants() -> ParticipantsMessage {
-        let participants = getParticipantsMessage(fromParticipants: call.participants)
+    @MainActor func getParticipants() -> ParticipantsMessage {
+        let participants = getParticipantsMessage(fromParticipants: callClient.participants)
         
         return ParticipantsMessage(
             local: participants.local,
@@ -233,9 +175,9 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         )
     }
     
-    private func onParticipantsUpdated() {
+    @MainActor func onParticipantsUpdated() {
         print("DailyClient: participantsUpdated")
-        let message = getParticipantsMessage(fromParticipants: self.call.participants)
+        let message = getParticipantsMessage(fromParticipants: self.callClient.participants)
         
         self.callback.onParticipantsUpdated(
             localParticipantMessage:message.local,
@@ -244,7 +186,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         )
     }
     
-    private func onParticipantUpdated(participant: Daily.Participant) {
+    func onParticipantUpdated(participant: Daily.Participant) {
         print("DailyClient: onParticipantUpdated")
         let participantMessage = mapRemoteParticipantToMessage(fromParticipant: participant)
         printParticipant(participantMessage: participantMessage)
@@ -255,7 +197,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         )
     }
     
-    private func onParticipantJoined(participant: Daily.Participant) {
+    func onParticipantJoined(participant: Daily.Participant) {
         print("DailyClient: participantJoined")
         let participantMessage = mapRemoteParticipantToMessage(fromParticipant: participant)
         printParticipant(participantMessage: participantMessage)
@@ -266,11 +208,21 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         )
     }
     
-    private func onParticipantLeft(participant: Daily.Participant) {
+    func onParticipantLeft(participant: Daily.Participant) {
         print("DailyClient: onParticipantLeft")
         let participantMessage = mapRemoteParticipantToMessage(fromParticipant: participant)
         
         self.callback.onParticipantLeft(
+            remoteParticipantMessage: participantMessage,
+            completion: {}
+        )
+    }
+    
+    func onActiveSpeakerChanged(participant: Daily.Participant?) {
+        print("DailyClient: onActiveSpeakerChanged")
+        let participantMessage = participant != nil ? mapRemoteParticipantToMessage(fromParticipant: participant!) : nil
+        
+        self.callback.activeSpeakerChanged(
             remoteParticipantMessage: participantMessage,
             completion: {}
         )

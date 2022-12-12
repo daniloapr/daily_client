@@ -773,7 +773,7 @@ abstract class DailyCallback {
   void onLocalParticipantUpdated(LocalParticipantMessage localParticipantMessage);
   void onParticipantJoined(RemoteParticipantMessage remoteParticipantMessage);
   void onParticipantLeft(RemoteParticipantMessage remoteParticipantMessage);
-  void activeSpeakerChanged(RemoteParticipantMessage remoteParticipantMessage);
+  void activeSpeakerChanged(RemoteParticipantMessage? remoteParticipantMessage);
   void onCallStateUpdated(int stateCode);
   static void setup(DailyCallback? api, {BinaryMessenger? binaryMessenger}) {
     {
@@ -868,8 +868,7 @@ abstract class DailyCallback {
           assert(message != null, 'Argument for dev.flutter.pigeon.DailyCallback.activeSpeakerChanged was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final RemoteParticipantMessage? arg_remoteParticipantMessage = (args[0] as RemoteParticipantMessage?);
-          assert(arg_remoteParticipantMessage != null, 'Argument for dev.flutter.pigeon.DailyCallback.activeSpeakerChanged was null, expected non-null RemoteParticipantMessage.');
-          api.activeSpeakerChanged(arg_remoteParticipantMessage!);
+          api.activeSpeakerChanged(arg_remoteParticipantMessage);
           return;
         });
       }

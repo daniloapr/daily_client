@@ -855,7 +855,7 @@ NSObject<FlutterMessageCodec> *DailyCallbackGetCodec() {
     completion(nil);
   }];
 }
-- (void)activeSpeakerChangedRemoteParticipantMessage:(RemoteParticipantMessage *)arg_remoteParticipantMessage completion:(void(^)(NSError *_Nullable))completion {
+- (void)activeSpeakerChangedRemoteParticipantMessage:(nullable RemoteParticipantMessage *)arg_remoteParticipantMessage completion:(void(^)(NSError *_Nullable))completion {
   FlutterBasicMessageChannel *channel =
     [FlutterBasicMessageChannel
       messageChannelWithName:@"dev.flutter.pigeon.DailyCallback.activeSpeakerChanged"

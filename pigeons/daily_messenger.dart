@@ -31,7 +31,7 @@ abstract class DailyCallback {
   );
   void onParticipantJoined(RemoteParticipantMessage remoteParticipantMessage);
   void onParticipantLeft(RemoteParticipantMessage remoteParticipantMessage);
-  void activeSpeakerChanged(RemoteParticipantMessage remoteParticipantMessage);
+  void activeSpeakerChanged(RemoteParticipantMessage? remoteParticipantMessage);
   void onCallStateUpdated(int stateCode);
 }
 

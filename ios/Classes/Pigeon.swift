@@ -659,7 +659,7 @@ class DailyCallback {
       completion()
     }
   }
-  func activeSpeakerChanged(remoteParticipantMessage remoteParticipantMessageArg: RemoteParticipantMessage, completion: @escaping () -> Void) {
+  func activeSpeakerChanged(remoteParticipantMessage remoteParticipantMessageArg: RemoteParticipantMessage?, completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyCallback.activeSpeakerChanged", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([remoteParticipantMessageArg]) { _ in
       completion()

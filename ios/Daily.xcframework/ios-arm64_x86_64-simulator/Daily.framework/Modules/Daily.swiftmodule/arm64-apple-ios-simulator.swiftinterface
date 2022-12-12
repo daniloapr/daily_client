@@ -1,0 +1,1272 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.7 (swiftlang-5.7.0.127.4 clang-1400.0.29.50)
+// swift-module-flags: -target arm64-apple-ios13.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name Daily
+// swift-module-flags-ignorable: -enable-bare-slash-regex
+import AVFoundation
+import Combine
+import Foundation
+import Swift
+import UIKit
+import _Concurrency
+import _StringProcessing
+import os.log
+import os
+extension Daily.CallClient {
+  @_Concurrency.MainActor final public func updateSubscriptions(forParticipants closure: (inout Daily.SubscriptionSettingsUpdatesById) -> ()) throws -> Daily.SubscriptionSettingsById
+  @_Concurrency.MainActor final public func updateSubscriptions(forParticipants subscriptionsById: Daily.SubscriptionSettingsUpdatesById) throws -> Daily.SubscriptionSettingsById
+  @_Concurrency.MainActor final public func updateSubscriptions(forParticipants subscriptionsById: Daily.Update<Daily.SubscriptionSettingsUpdatesById>) throws -> Daily.SubscriptionSettingsById
+  @_Concurrency.MainActor final public func updateSubscriptions(forParticipantsWithProfiles closure: (inout Daily.SubscriptionSettingsUpdatesByProfile) -> ()) throws -> Daily.SubscriptionSettingsById
+  @_Concurrency.MainActor final public func updateSubscriptions(forParticipantsWithProfiles subscriptionsByProfile: Daily.SubscriptionSettingsUpdatesByProfile) throws -> Daily.SubscriptionSettingsById
+  @_Concurrency.MainActor final public func updateSubscriptions(forParticipantsWithProfiles subscriptionsByProfile: Daily.Update<Daily.SubscriptionSettingsUpdatesByProfile>) throws -> Daily.SubscriptionSettingsById
+  @_Concurrency.MainActor final public func updateSubscriptions(forParticipants closureForParticipants: (inout Daily.SubscriptionSettingsUpdatesById) -> (), participantsWithProfiles closureForParticipantsWithProfiles: (inout Daily.SubscriptionSettingsUpdatesByProfile) -> ()) throws -> Daily.SubscriptionSettingsById
+  @_Concurrency.MainActor final public func updateSubscriptions(forParticipants subscriptionsById: Daily.SubscriptionSettingsUpdatesById, participantsWithProfiles subscriptionsByProfile: Daily.SubscriptionSettingsUpdatesByProfile) throws -> Daily.SubscriptionSettingsById
+  @_Concurrency.MainActor final public func updateSubscriptions(forParticipants subscriptionsById: Daily.Update<Daily.SubscriptionSettingsUpdatesById>, participantsWithProfiles subscriptionsByProfile: Daily.Update<Daily.SubscriptionSettingsUpdatesByProfile>) throws -> Daily.SubscriptionSettingsById
+}
+public enum AudioSendQuality : Swift.String, Swift.RawRepresentable, Swift.CaseIterable, Swift.Equatable, Swift.Hashable {
+  case speech
+  case music
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [Daily.AudioSendQuality]
+  public typealias RawValue = Swift.String
+  public static var allCases: [Daily.AudioSendQuality] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension Daily.AudioSendQuality : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public enum VideoSendSettingsMaxQuality : Swift.String, Swift.RawRepresentable, Swift.CaseIterable, Swift.Equatable, Swift.Hashable {
+  case low
+  case medium
+  case high
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [Daily.VideoSendSettingsMaxQuality]
+  public typealias RawValue = Swift.String
+  public static var allCases: [Daily.VideoSendSettingsMaxQuality] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension Daily.VideoSendSettingsMaxQuality : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public enum MediaState : Swift.String, Swift.RawRepresentable, Swift.CaseIterable, Swift.Equatable, Swift.Hashable {
+  case blocked
+  case off
+  case receivable
+  case loading
+  case playable
+  case interrupted
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [Daily.MediaState]
+  public typealias RawValue = Swift.String
+  public static var allCases: [Daily.MediaState] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension Daily.MediaState : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct MeetingToken : Swift.Hashable {
+  public let stringValue: Swift.String
+  public init(stringValue: Swift.String)
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func == (a: Daily.MeetingToken, b: Daily.MeetingToken) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Daily.MeetingToken : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension Daily.MeetingToken : Swift.ExpressibleByStringLiteral {
+  public init(stringLiteral value: Swift.StaticString)
+  public typealias ExtendedGraphemeClusterLiteralType = Swift.StaticString
+  public typealias StringLiteralType = Swift.StaticString
+  public typealias UnicodeScalarLiteralType = Swift.StaticString
+}
+extension Daily.MeetingToken : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+extension Daily.MeetingToken : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public enum CanSendPermission : Swift.String, Swift.RawRepresentable, Swift.CaseIterable, Swift.Equatable, Swift.Hashable {
+  case camera
+  case microphone
+  case screenVideo
+  case screenAudio
+  case customVideo
+  case customAudio
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [Daily.CanSendPermission]
+  public typealias RawValue = Swift.String
+  public static var allCases: [Daily.CanSendPermission] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension Daily.CanSendPermission : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct ParticipantInfo : Swift.Equatable {
+  public let joinedAt: Foundation.Date?
+  public let isLocal: Swift.Bool
+  public let isOwner: Swift.Bool
+  public let userId: Swift.String?
+  public let username: Swift.String?
+  public let permissions: Daily.ParticipantPermissions?
+  public static func == (a: Daily.ParticipantInfo, b: Daily.ParticipantInfo) -> Swift.Bool
+}
+extension Daily.ParticipantInfo : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+extension Daily.CallClient {
+  @_Concurrency.MainActor final public func updateInputs(_ closure: (inout Daily.InputSettingsUpdate) -> ()) throws -> Daily.InputSettings
+  @_Concurrency.MainActor final public func updateInputs(_ inputs: Daily.InputSettingsUpdate) throws -> Daily.InputSettings
+  @_Concurrency.MainActor final public func updateInputs(_ inputs: Daily.Update<Daily.InputSettingsUpdate>) throws -> Daily.InputSettings
+}
+public enum VideoReceiveSettingsMaxQuality : Swift.String, Swift.RawRepresentable, Swift.CaseIterable, Swift.Equatable, Swift.Hashable {
+  case low
+  case medium
+  case high
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [Daily.VideoReceiveSettingsMaxQuality]
+  public typealias RawValue = Swift.String
+  public static var allCases: [Daily.VideoReceiveSettingsMaxQuality] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension Daily.VideoReceiveSettingsMaxQuality : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+extension Daily.CallClient {
+  @_Concurrency.MainActor final public func updatePublishing(_ closure: (inout Daily.PublishingSettingsUpdate) -> ()) throws -> Daily.PublishingSettings
+  @_Concurrency.MainActor final public func updatePublishing(_ publishing: Daily.PublishingSettingsUpdate) throws -> Daily.PublishingSettings
+  @_Concurrency.MainActor final public func updatePublishing(_ publishing: Daily.Update<Daily.PublishingSettingsUpdate>) throws -> Daily.PublishingSettings
+}
+public struct VideoEncodingSettings : Swift.Equatable {
+  public var maxBitrate: Swift.UInt32
+  public var maxFramerate: Swift.Float64
+  public var scaleResolutionDownBy: Swift.Float64
+  public static func == (a: Daily.VideoEncodingSettings, b: Daily.VideoEncodingSettings) -> Swift.Bool
+}
+extension Daily.VideoEncodingSettings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct VideoEncodingSettingsUpdate : Swift.Equatable {
+  public var maxBitrate: Daily.Update<Swift.UInt32>?
+  public var maxFramerate: Daily.Update<Swift.Float64>?
+  public var scaleResolutionDownBy: Daily.Update<Swift.Float64>?
+  public init()
+  public init(maxBitrate: Daily.Update<Swift.UInt32>? = nil, maxFramerate: Daily.Update<Swift.Float64>? = nil, scaleResolutionDownBy: Daily.Update<Swift.Float64>? = nil)
+  public static func == (a: Daily.VideoEncodingSettingsUpdate, b: Daily.VideoEncodingSettingsUpdate) -> Swift.Bool
+}
+extension Daily.VideoEncodingSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.VideoEncodingSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+public typealias SubscriptionSettingsById = Daily.KeyedSettings<Daily.ParticipantId, Daily.SubscriptionSettings>
+public typealias SubscriptionSettingsUpdatesById = Daily.KeyedSettingsUpdate<Daily.ParticipantId, Daily.SubscriptionSettingsUpdate>
+public typealias SubscriptionSettingsUpdatesByProfile = Daily.KeyedSettingsUpdate<Daily.SubscriptionProfile, Daily.SubscriptionSettingsUpdate>
+public struct SubscriptionSettings : Swift.Equatable {
+  public let profile: Daily.SubscriptionProfile
+  public let media: Daily.MediaSubscriptionSettings
+  public static func == (a: Daily.SubscriptionSettings, b: Daily.SubscriptionSettings) -> Swift.Bool
+}
+extension Daily.SubscriptionSettings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct SubscriptionSettingsUpdate : Swift.Equatable {
+  public var profile: Daily.Update<Daily.SubscriptionProfile>?
+  public var media: Daily.Update<Daily.MediaSubscriptionSettingsUpdate>?
+  public init()
+  public init(profile: Daily.Update<Daily.SubscriptionProfile>? = nil, media: Daily.Update<Daily.MediaSubscriptionSettingsUpdate>? = nil)
+  public static func subscribed(_ isSubscribed: Swift.Bool) -> Daily.SubscriptionSettingsUpdate
+  public static func == (a: Daily.SubscriptionSettingsUpdate, b: Daily.SubscriptionSettingsUpdate) -> Swift.Bool
+}
+extension Daily.SubscriptionSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.SubscriptionSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+@_hasMissingDesignatedInitializers final public class VideoTrack {
+  @objc deinit
+}
+extension Daily.VideoTrack : Daily.MediaStreamTrack {
+  final public var id: Swift.String {
+    get
+  }
+  final public var isEnabled: Swift.Bool {
+    get
+  }
+}
+extension Daily.VideoTrack : Swift.CustomStringConvertible {
+  final public var description: Swift.String {
+    get
+  }
+}
+public struct KeyedSettings<Key, Settings> where Key : Swift.Hashable {
+  public typealias Value = Settings
+  public typealias ValuesByKey = [Key : Daily.KeyedSettings<Key, Settings>.Value]
+  public var keys: Daily.KeyedSettings<Key, Settings>.ValuesByKey.Keys {
+    get
+  }
+  public var values: Daily.KeyedSettings<Key, Settings>.ValuesByKey.Values {
+    get
+  }
+  public var isEmpty: Swift.Bool {
+    get
+  }
+  public var count: Swift.Int {
+    get
+  }
+  public init()
+  public init(_ valuesByKey: Daily.KeyedSettings<Key, Settings>.ValuesByKey = [:])
+  public subscript(key: Key) -> Daily.KeyedSettings<Key, Settings>.Value? {
+    get
+  }
+  public subscript(key: Key, default defaultValue: @autoclosure () -> Daily.KeyedSettings<Key, Settings>.Value) -> Daily.KeyedSettings<Key, Settings>.Value {
+    get
+  }
+}
+extension Daily.KeyedSettings : Swift.ExpressibleByDictionaryLiteral {
+  public init(dictionaryLiteral elements: (Key, Daily.KeyedSettings<Key, Settings>.Value)...)
+}
+extension Daily.KeyedSettings : Swift.Equatable where Settings : Swift.Equatable {
+  public static func == (a: Daily.KeyedSettings<Key, Settings>, b: Daily.KeyedSettings<Key, Settings>) -> Swift.Bool
+}
+extension Daily.KeyedSettings : Swift.Hashable where Settings : Swift.Hashable {
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Daily.KeyedSettings : Swift.Sendable where Key : Swift.Sendable, Settings : Swift.Sendable {
+}
+extension Daily.KeyedSettings : Swift.Sequence {
+  public typealias Element = Daily.KeyedSettings<Key, Settings>.ValuesByKey.Element
+  public typealias Iterator = Daily.KeyedSettings<Key, Settings>.ValuesByKey.Iterator
+  public func makeIterator() -> Daily.KeyedSettings<Key, Settings>.Iterator
+}
+extension Daily.KeyedSettings : Swift.Collection {
+  public typealias Index = Daily.KeyedSettings<Key, Settings>.ValuesByKey.Index
+  public var startIndex: Daily.KeyedSettings<Key, Settings>.Index {
+    get
+  }
+  public var endIndex: Daily.KeyedSettings<Key, Settings>.Index {
+    get
+  }
+  public subscript(index: Daily.KeyedSettings<Key, Settings>.Index) -> Daily.KeyedSettings<Key, Settings>.Iterator.Element {
+    get
+  }
+  public func index(after i: Daily.KeyedSettings<Key, Settings>.Index) -> Daily.KeyedSettings<Key, Settings>.Index
+  public typealias Indices = Swift.DefaultIndices<Daily.KeyedSettings<Key, Settings>>
+  public typealias SubSequence = Swift.Slice<Daily.KeyedSettings<Key, Settings>>
+}
+extension Daily.KeyedSettings : Swift.Decodable where Key : Daily.DailyCodingKeyRepresentable, Key : Swift.Decodable, Settings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public enum CallState : Swift.String, Swift.RawRepresentable, Swift.CaseIterable, Swift.Equatable, Swift.Hashable {
+  case initialized
+  case joining
+  case joined
+  case leaving
+  case left
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [Daily.CallState]
+  public typealias RawValue = Swift.String
+  public static var allCases: [Daily.CallState] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension Daily.CallState : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct SubscriptionProfile : Swift.Equatable, Swift.Hashable {
+  public let stringValue: Swift.String
+  public static var base: Daily.SubscriptionProfile {
+    get
+  }
+  public static func == (a: Daily.SubscriptionProfile, b: Daily.SubscriptionProfile) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Daily.SubscriptionProfile : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+extension Daily.SubscriptionProfile : Swift.CodingKeyRepresentable {
+  public var codingKey: Swift.CodingKey {
+    get
+  }
+  public init?<T>(codingKey: T) where T : Swift.CodingKey
+}
+extension Daily.SubscriptionProfile : Daily.DailyCodingKeyRepresentable {
+}
+extension Daily.SubscriptionProfile : Swift.ExpressibleByStringLiteral {
+  public init(stringLiteral value: Swift.StringLiteralType)
+  public typealias ExtendedGraphemeClusterLiteralType = Swift.StringLiteralType
+  public typealias StringLiteralType = Swift.StringLiteralType
+  public typealias UnicodeScalarLiteralType = Swift.StringLiteralType
+}
+extension Daily.SubscriptionProfile : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers final public class AudioTrack {
+  @objc deinit
+}
+extension Daily.AudioTrack : Daily.MediaStreamTrack {
+  final public var id: Swift.String {
+    get
+  }
+  final public var isEnabled: Swift.Bool {
+    get
+  }
+}
+extension Daily.AudioTrack : Swift.CustomStringConvertible {
+  final public var description: Swift.String {
+    get
+  }
+}
+public protocol MediaStreamTrack {
+  var id: Swift.String { get }
+  var isEnabled: Swift.Bool { get }
+}
+public struct CameraSubscriptionSettings : Swift.Equatable {
+  public let subscriptionState: Daily.SubscriptionState
+  public let receiveSettings: Daily.VideoReceiveSettings
+  public static func == (a: Daily.CameraSubscriptionSettings, b: Daily.CameraSubscriptionSettings) -> Swift.Bool
+}
+extension Daily.CameraSubscriptionSettings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct CameraSubscriptionSettingsUpdate : Swift.Equatable {
+  public var subscriptionState: Daily.Update<Daily.SubscriptionState>?
+  public var receiveSettings: Daily.Update<Daily.VideoReceiveSettingsUpdate>?
+  public init()
+  public init(subscriptionState: Daily.Update<Daily.SubscriptionState>? = nil, receiveSettings: Daily.Update<Daily.VideoReceiveSettingsUpdate>? = nil)
+  public static func subscribed(_ isSubscribed: Swift.Bool) -> Daily.CameraSubscriptionSettingsUpdate
+  public static func == (a: Daily.CameraSubscriptionSettingsUpdate, b: Daily.CameraSubscriptionSettingsUpdate) -> Swift.Bool
+}
+extension Daily.CameraSubscriptionSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.CameraSubscriptionSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+public enum VideoSendSettingsCodingKeys : Swift.String, Swift.CodingKey {
+  case maxQuality
+  case encodings
+  public init?(rawValue: Swift.String)
+  public init?(stringValue: Swift.String)
+  public init?(intValue: Swift.Int)
+  public typealias RawValue = Swift.String
+  public var intValue: Swift.Int? {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+  public var stringValue: Swift.String {
+    get
+  }
+}
+public struct VideoSendSettings : Swift.Equatable {
+  public let maxQuality: Daily.VideoSendSettingsMaxQuality
+  public let encodings: Daily.VideoEncodingSettingsByQuality
+  public static func == (a: Daily.VideoSendSettings, b: Daily.VideoSendSettings) -> Swift.Bool
+}
+extension Daily.VideoSendSettings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct VideoSendSettingsUpdate : Swift.Equatable {
+  public var maxQuality: Daily.Update<Daily.VideoSendSettingsMaxQuality>?
+  public var encodings: Daily.Update<Daily.VideoEncodingSettingsByQualityUpdate>?
+  public init()
+  public init(maxQuality: Daily.Update<Daily.VideoSendSettingsMaxQuality>? = nil, encodings: Daily.Update<Daily.VideoEncodingSettingsByQualityUpdate>? = nil)
+  public static func == (a: Daily.VideoSendSettingsUpdate, b: Daily.VideoSendSettingsUpdate) -> Swift.Bool
+}
+extension Daily.VideoSendSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.VideoSendSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+public struct InputSettings : Swift.Equatable {
+  public var camera: Daily.CameraInputSettings
+  public var microphone: Daily.MicrophoneInputSettings
+  public static func == (a: Daily.InputSettings, b: Daily.InputSettings) -> Swift.Bool
+}
+extension Daily.InputSettings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct InputSettingsUpdate : Swift.Equatable {
+  public var camera: Daily.Update<Daily.CameraInputSettingsUpdate>?
+  public var microphone: Daily.Update<Daily.MicrophoneInputSettingsUpdate>?
+  public init()
+  public init(camera: Daily.Update<Daily.CameraInputSettingsUpdate>? = nil, microphone: Daily.Update<Daily.MicrophoneInputSettingsUpdate>? = nil)
+  public static func == (a: Daily.InputSettingsUpdate, b: Daily.InputSettingsUpdate) -> Swift.Bool
+}
+extension Daily.InputSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.InputSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+public struct MicrophoneSubscriptionSettings : Swift.Equatable {
+  public let subscriptionState: Daily.SubscriptionState
+  public static func == (a: Daily.MicrophoneSubscriptionSettings, b: Daily.MicrophoneSubscriptionSettings) -> Swift.Bool
+}
+extension Daily.MicrophoneSubscriptionSettings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct MicrophoneSubscriptionSettingsUpdate : Swift.Equatable {
+  public var subscriptionState: Daily.Update<Daily.SubscriptionState>?
+  public init()
+  public init(subscriptionState: Daily.Update<Daily.SubscriptionState>? = nil)
+  public static func subscribed(_ isSubscribed: Swift.Bool) -> Daily.MicrophoneSubscriptionSettingsUpdate
+  public static func == (a: Daily.MicrophoneSubscriptionSettingsUpdate, b: Daily.MicrophoneSubscriptionSettingsUpdate) -> Swift.Bool
+}
+extension Daily.MicrophoneSubscriptionSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.MicrophoneSubscriptionSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+public struct VideoEncodingSettingsByQuality : Swift.Equatable {
+  public let low: Daily.VideoEncodingSettings
+  public let medium: Daily.VideoEncodingSettings?
+  public let high: Daily.VideoEncodingSettings?
+  public static func == (a: Daily.VideoEncodingSettingsByQuality, b: Daily.VideoEncodingSettingsByQuality) -> Swift.Bool
+}
+extension Daily.VideoEncodingSettingsByQuality : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct VideoEncodingSettingsByQualityUpdate : Swift.Equatable {
+  public var low: Daily.Update<Daily.VideoEncodingSettingsUpdate>?
+  public var medium: Daily.Update<Daily.VideoEncodingSettingsUpdate>?
+  public var high: Daily.Update<Daily.VideoEncodingSettingsUpdate>?
+  public init()
+  public init(low: Daily.Update<Daily.VideoEncodingSettingsUpdate>? = nil, medium: Daily.Update<Daily.VideoEncodingSettingsUpdate>? = nil, high: Daily.Update<Daily.VideoEncodingSettingsUpdate>? = nil)
+  public static func == (a: Daily.VideoEncodingSettingsByQualityUpdate, b: Daily.VideoEncodingSettingsByQualityUpdate) -> Swift.Bool
+}
+extension Daily.VideoEncodingSettingsByQualityUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.VideoEncodingSettingsByQualityUpdate : Daily.ComplexSettingsUpdate {
+}
+public struct CameraPublishingSettings : Swift.Equatable {
+  public let isPublishing: Swift.Bool
+  public let sendSettings: Daily.VideoSendSettings
+  public static func == (a: Daily.CameraPublishingSettings, b: Daily.CameraPublishingSettings) -> Swift.Bool
+}
+extension Daily.CameraPublishingSettings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct CameraPublishingSettingsUpdate : Swift.Equatable {
+  public var isPublishing: Daily.Update<Swift.Bool>?
+  public var sendSettings: Daily.Update<Daily.VideoSendSettingsUpdate>?
+  public init()
+  public init(isPublishing: Daily.Update<Swift.Bool>? = nil, sendSettings: Daily.Update<Daily.VideoSendSettingsUpdate>? = nil)
+  public static func publishing(_ isPublishing: Swift.Bool) -> Daily.CameraPublishingSettingsUpdate
+  public static func == (a: Daily.CameraPublishingSettingsUpdate, b: Daily.CameraPublishingSettingsUpdate) -> Swift.Bool
+}
+extension Daily.CameraPublishingSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.CameraPublishingSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+public enum LogLevel : Swift.UInt8 {
+  case off
+  case error
+  case warn
+  case debug
+  case info
+  case trace
+  public init?(rawValue: Swift.UInt8)
+  public typealias RawValue = Swift.UInt8
+  public var rawValue: Swift.UInt8 {
+    get
+  }
+}
+public func setLogLevel(_ logLevel: Daily.LogLevel)
+extension Daily.ParticipantVideoInfo {
+  public var track: Daily.VideoTrack? {
+    get
+  }
+}
+@available(iOS, deprecated: 15.4, message: "Use the built-in API instead")
+@available(macOS, deprecated: 12.3, message: "Use the built-in API instead")
+@available(tvOS, deprecated: 15.4, message: "Use the built-in API instead")
+@available(watchOS, deprecated: 8.5, message: "Use the built-in API instead")
+public protocol DailyCodingKeyRepresentable {
+  var codingKey: Swift.CodingKey { get }
+  init?<T>(codingKey: T) where T : Swift.CodingKey
+}
+public struct Participant : Swift.Equatable {
+  public let id: Daily.ParticipantId
+  public let info: Daily.ParticipantInfo
+  public let media: Daily.ParticipantMedia?
+  public static func == (a: Daily.Participant, b: Daily.Participant) -> Swift.Bool
+}
+extension Daily.Participant : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public typealias SubscriptionProfileSettingsByProfile = Daily.KeyedSettings<Daily.SubscriptionProfile, Daily.SubscriptionProfileSettings>
+public typealias SubscriptionProfileSettingsUpdatesByProfile = Daily.KeyedSettingsUpdate<Daily.SubscriptionProfile, Daily.SubscriptionProfileSettingsUpdate>
+public typealias SubscriptionProfileSettings = Daily.MediaSubscriptionSettings
+public typealias SubscriptionProfileSettingsUpdate = Daily.MediaSubscriptionSettingsUpdate
+public struct Participants : Swift.Equatable {
+  public var local: Daily.Participant {
+    get
+  }
+  public var remote: [Daily.ParticipantId : Daily.Participant] {
+    get
+  }
+  public var all: [Daily.ParticipantId : Daily.Participant] {
+    get
+  }
+  public static func == (a: Daily.Participants, b: Daily.Participants) -> Swift.Bool
+}
+extension Daily.Participants : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public enum SubscriptionState : Swift.String, Swift.RawRepresentable, Swift.CaseIterable, Swift.Equatable, Swift.Hashable {
+  case subscribed
+  case unsubscribed
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [Daily.SubscriptionState]
+  public typealias RawValue = Swift.String
+  public static var allCases: [Daily.SubscriptionState] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension Daily.SubscriptionState : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct Devices : Swift.Equatable {
+  public let camera: [Daily.Device]
+  public let microphone: [Daily.Device]
+  public let speaker: [Daily.Device]
+  public let audio: [Daily.Device]
+  public static func == (a: Daily.Devices, b: Daily.Devices) -> Swift.Bool
+}
+extension Daily.Devices : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct ParticipantPermissions : Swift.Equatable {
+  public let hasPresence: Swift.Bool
+  public let canSend: Swift.Set<Daily.CanSendPermission>
+  public static func == (a: Daily.ParticipantPermissions, b: Daily.ParticipantPermissions) -> Swift.Bool
+}
+extension Daily.ParticipantPermissions : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct PublishingSettings : Swift.Equatable {
+  public let camera: Daily.CameraPublishingSettings
+  public let microphone: Daily.MicrophonePublishingSettings
+  public static func == (a: Daily.PublishingSettings, b: Daily.PublishingSettings) -> Swift.Bool
+}
+extension Daily.PublishingSettings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct PublishingSettingsUpdate : Swift.Equatable {
+  public var camera: Daily.Update<Daily.CameraPublishingSettingsUpdate>?
+  public var microphone: Daily.Update<Daily.MicrophonePublishingSettingsUpdate>?
+  public init()
+  public init(camera: Daily.Update<Daily.CameraPublishingSettingsUpdate>? = nil, microphone: Daily.Update<Daily.MicrophonePublishingSettingsUpdate>? = nil)
+  public static func == (a: Daily.PublishingSettingsUpdate, b: Daily.PublishingSettingsUpdate) -> Swift.Bool
+}
+extension Daily.PublishingSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.PublishingSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+public struct MicrophonePublishingSettings : Swift.Equatable {
+  public let isPublishing: Swift.Bool
+  public let sendSettings: Daily.AudioSendSettings
+  public static func == (a: Daily.MicrophonePublishingSettings, b: Daily.MicrophonePublishingSettings) -> Swift.Bool
+}
+extension Daily.MicrophonePublishingSettings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct MicrophonePublishingSettingsUpdate : Swift.Equatable {
+  public var isPublishing: Daily.Update<Swift.Bool>?
+  public var sendSettings: Daily.Update<Daily.AudioSendSettingsUpdate>?
+  public init()
+  public init(isPublishing: Daily.Update<Swift.Bool>? = nil, sendSettings: Daily.Update<Daily.AudioSendSettingsUpdate>? = nil)
+  public static func publishing(_ isPublishing: Swift.Bool) -> Daily.MicrophonePublishingSettingsUpdate
+  public static func == (a: Daily.MicrophonePublishingSettingsUpdate, b: Daily.MicrophonePublishingSettingsUpdate) -> Swift.Bool
+}
+extension Daily.MicrophonePublishingSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.MicrophonePublishingSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+public enum ParticipantLeftReason : Swift.String, Swift.RawRepresentable, Swift.CaseIterable, Swift.Equatable, Swift.Hashable {
+  case hidden
+  case leftCall
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [Daily.ParticipantLeftReason]
+  public typealias RawValue = Swift.String
+  public static var allCases: [Daily.ParticipantLeftReason] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension Daily.ParticipantLeftReason : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct CameraInputSettings : Swift.Equatable {
+  public var isEnabled: Swift.Bool
+  public var settings: Daily.VideoMediaTrackSettings
+  public static func == (a: Daily.CameraInputSettings, b: Daily.CameraInputSettings) -> Swift.Bool
+}
+extension Daily.CameraInputSettings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct CameraInputSettingsUpdate : Swift.Equatable {
+  public var isEnabled: Daily.Update<Swift.Bool>?
+  public var settings: Daily.Update<Daily.VideoMediaTrackSettingsUpdate>?
+  public init()
+  public init(isEnabled: Daily.Update<Swift.Bool>? = nil, settings: Daily.Update<Daily.VideoMediaTrackSettingsUpdate>? = nil)
+  public static func enabled(_ isEnabled: Swift.Bool) -> Daily.CameraInputSettingsUpdate
+  public static func == (a: Daily.CameraInputSettingsUpdate, b: Daily.CameraInputSettingsUpdate) -> Swift.Bool
+}
+extension Daily.CameraInputSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.CameraInputSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+extension Daily.Update where Value == Daily.CameraInputSettingsUpdate {
+  public static func set(isEnabled: Daily.Update<Swift.Bool>? = nil, settings: Daily.Update<Daily.VideoMediaTrackSettingsUpdate>? = nil) -> Daily.Update<Value>
+}
+public protocol VideoViewDelegate : AnyObject {
+  func videoView(_ videoView: Daily.VideoView, didChangeVideoSize size: CoreFoundation.CGSize)
+}
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @_Concurrency.MainActor(unsafe) final public class VideoView : UIKit.UIView {
+  public enum VideoScaleMode : Swift.Equatable, Swift.Hashable, Swift.CaseIterable {
+    case fit
+    case fill
+    public static func == (a: Daily.VideoView.VideoScaleMode, b: Daily.VideoView.VideoScaleMode) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public typealias AllCases = [Daily.VideoView.VideoScaleMode]
+    public static var allCases: [Daily.VideoView.VideoScaleMode] {
+      get
+    }
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  @_Concurrency.MainActor(unsafe) @objc override final public var intrinsicContentSize: CoreFoundation.CGSize {
+    @objc get
+  }
+  @_Concurrency.MainActor(unsafe) final public var track: Daily.VideoTrack? {
+    get
+    set
+  }
+  @_Concurrency.MainActor(unsafe) final public var videoScaleMode: Daily.VideoView.VideoScaleMode {
+    get
+    set
+  }
+  @_Concurrency.MainActor(unsafe) final public var videoSize: CoreFoundation.CGSize {
+    get
+  }
+  @_Concurrency.MainActor(unsafe) weak final public var delegate: Daily.VideoViewDelegate?
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public init(frame: CoreFoundation.CGRect)
+  @objc deinit
+  @_Concurrency.MainActor(unsafe) @objc override final public func updateConstraints()
+}
+public enum DeviceKind : Swift.RawRepresentable, Swift.CaseIterable, Swift.Equatable, Swift.Hashable {
+  case videoInput
+  case audio(Daily.PortKind)
+  public typealias RawValue = Swift.String
+  public var rawValue: Daily.DeviceKind.RawValue {
+    get
+  }
+  public static var allCases: [Daily.DeviceKind] {
+    get
+  }
+  public init?(rawValue: Daily.DeviceKind.RawValue)
+  public typealias AllCases = [Daily.DeviceKind]
+}
+public enum PortKind : Swift.CaseIterable, Swift.Equatable, Swift.Hashable {
+  case input
+  case output
+  public static func == (a: Daily.PortKind, b: Daily.PortKind) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public typealias AllCases = [Daily.PortKind]
+  public static var allCases: [Daily.PortKind] {
+    get
+  }
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum AudioDeviceType : Swift.String, Swift.RawRepresentable {
+  case bluetooth
+  case speakerphone
+  case wired
+  case earpiece
+  public var deviceId: Swift.String {
+    get
+  }
+  public init?(deviceId: Swift.String)
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension Daily.DeviceKind : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct Device : Swift.Equatable {
+  public let deviceId: Swift.String
+  public let groupId: Swift.String
+  public let kind: Daily.DeviceKind
+  public let label: Swift.String
+  public static func == (a: Daily.Device, b: Daily.Device) -> Swift.Bool
+}
+extension Daily.Device : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct AudioSendSettingsConfig : Swift.Equatable {
+  public var channelConfig: Daily.AudioSendSettingsChannelConfig
+  public var bitrate: Swift.UInt32?
+  public static func == (a: Daily.AudioSendSettingsConfig, b: Daily.AudioSendSettingsConfig) -> Swift.Bool
+}
+extension Daily.AudioSendSettingsConfig : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct AudioSendSettingsConfigUpdate : Swift.Equatable {
+  public var channelConfig: Daily.Update<Daily.AudioSendSettingsChannelConfig>?
+  public var bitrate: Daily.Update<Swift.UInt32>?
+  public init()
+  public init(channelConfig: Daily.Update<Daily.AudioSendSettingsChannelConfig>? = nil, bitrate: Daily.Update<Swift.UInt32>? = nil)
+  public static func == (a: Daily.AudioSendSettingsConfigUpdate, b: Daily.AudioSendSettingsConfigUpdate) -> Swift.Bool
+}
+extension Daily.AudioSendSettingsConfigUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.AudioSendSettingsConfigUpdate : Daily.ComplexSettingsUpdate {
+}
+public struct ParticipantAudioInfo : Swift.Equatable {
+  public let state: Daily.MediaState
+  public let subscribed: Daily.TrackSubscriptionState
+  public static func == (a: Daily.ParticipantAudioInfo, b: Daily.ParticipantAudioInfo) -> Swift.Bool
+}
+extension Daily.ParticipantAudioInfo : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+extension Daily.CallClient {
+  @_Concurrency.MainActor final public func updateSubscriptionProfiles(_ closure: (inout Daily.SubscriptionProfileSettingsUpdatesByProfile) -> ()) throws -> Daily.SubscriptionProfileSettingsByProfile
+  @_Concurrency.MainActor final public func updateSubscriptionProfiles(_ subscriptionsByProfile: Daily.SubscriptionProfileSettingsUpdatesByProfile) throws -> Daily.SubscriptionProfileSettingsByProfile
+  @_Concurrency.MainActor final public func updateSubscriptionProfiles(_ subscriptionsByProfile: Daily.Update<Daily.SubscriptionProfileSettingsUpdatesByProfile>) throws -> Daily.SubscriptionProfileSettingsByProfile
+}
+public struct ClientSettingsUpdate {
+  public var inputs: Daily.Update<Daily.InputSettingsUpdate>?
+  public var publishing: Daily.Update<Daily.PublishingSettingsUpdate>?
+  public init()
+  public init(inputs: Daily.Update<Daily.InputSettingsUpdate>? = nil, publishing: Daily.Update<Daily.PublishingSettingsUpdate>? = nil)
+}
+extension Daily.ClientSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.ClientSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+public struct VideoMediaTrackSettings : Swift.Equatable {
+  public var deviceId: Daily.MediaTrackDeviceId?
+  public var width: Daily.MediaTrackWidth
+  public var height: Daily.MediaTrackHeight
+  public var frameRate: Daily.MediaTrackFrameRate
+  public var facingMode: Daily.MediaTrackFacingMode
+  public static func == (a: Daily.VideoMediaTrackSettings, b: Daily.VideoMediaTrackSettings) -> Swift.Bool
+}
+extension Daily.VideoMediaTrackSettings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct VideoMediaTrackSettingsUpdate : Swift.Equatable {
+  public var deviceId: Daily.Update<Daily.MediaTrackDeviceId>?
+  public var width: Daily.Update<Daily.MediaTrackWidth>?
+  public var height: Daily.Update<Daily.MediaTrackHeight>?
+  public var frameRate: Daily.Update<Daily.MediaTrackFrameRate>?
+  public var facingMode: Daily.Update<Daily.MediaTrackFacingMode>?
+  public init()
+  public init(deviceId: Daily.Update<Daily.MediaTrackDeviceId>? = nil, width: Daily.Update<Daily.MediaTrackWidth>? = nil, height: Daily.Update<Daily.MediaTrackHeight>? = nil, frameRate: Daily.Update<Daily.MediaTrackFrameRate>? = nil, facingMode: Daily.Update<Daily.MediaTrackFacingMode>? = nil)
+  public static func == (a: Daily.VideoMediaTrackSettingsUpdate, b: Daily.VideoMediaTrackSettingsUpdate) -> Swift.Bool
+}
+extension Daily.VideoMediaTrackSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.VideoMediaTrackSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+extension Daily.Update where Value == Daily.VideoMediaTrackSettingsUpdate {
+  public static func set(deviceId: Daily.Update<Daily.MediaTrackDeviceId>? = nil, width: Daily.Update<Daily.MediaTrackWidth>? = nil, height: Daily.Update<Daily.MediaTrackHeight>? = nil, frameRate: Daily.Update<Daily.MediaTrackFrameRate>? = nil, facingMode: Daily.Update<Daily.MediaTrackFacingMode>? = nil) -> Daily.Update<Value>
+}
+public enum Update<Value> {
+  case set(Value)
+  case fromDefaults
+  public func map<T>(_ transform: (Value) throws -> T) rethrows -> Daily.Update<T>
+}
+extension Daily.Update : Swift.Equatable where Value : Swift.Equatable {
+  public static func == (a: Daily.Update<Value>, b: Daily.Update<Value>) -> Swift.Bool
+}
+extension Daily.Update : Swift.Hashable where Value : Swift.Hashable {
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Daily.Update : Swift.Sendable where Value : Swift.Sendable {
+}
+extension Daily.Update : Swift.Encodable where Value : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.Update : Swift.Decodable where Value : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct ParticipantMedia : Swift.Equatable {
+  public let camera: Daily.ParticipantVideoInfo
+  public let microphone: Daily.ParticipantAudioInfo
+  public let screenVideo: Daily.ParticipantVideoInfo
+  public let screenAudio: Daily.ParticipantAudioInfo
+  public static func == (a: Daily.ParticipantMedia, b: Daily.ParticipantMedia) -> Swift.Bool
+}
+extension Daily.ParticipantMedia : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public enum TrackSubscriptionState : Swift.String, Swift.RawRepresentable, Swift.CaseIterable, Swift.Equatable, Swift.Hashable {
+  case subscribed
+  case staged
+  case unsubscribed
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [Daily.TrackSubscriptionState]
+  public typealias RawValue = Swift.String
+  public static var allCases: [Daily.TrackSubscriptionState] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension Daily.TrackSubscriptionState : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public typealias AudioSendSettings = Daily.AudioSendSettingsConfig
+public enum AudioSendSettingsUpdate : Swift.Equatable {
+  case quality(Daily.AudioSendQuality)
+  case config(Daily.AudioSendSettingsConfigUpdate)
+  public static func == (a: Daily.AudioSendSettingsUpdate, b: Daily.AudioSendSettingsUpdate) -> Swift.Bool
+}
+extension Daily.AudioSendSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct MicrophoneInputSettings : Swift.Equatable {
+  public var isEnabled: Swift.Bool
+  public var settings: Daily.AudioMediaTrackSettings
+  public static func == (a: Daily.MicrophoneInputSettings, b: Daily.MicrophoneInputSettings) -> Swift.Bool
+}
+extension Daily.MicrophoneInputSettings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct MicrophoneInputSettingsUpdate : Swift.Equatable {
+  public var isEnabled: Daily.Update<Swift.Bool>?
+  public var settings: Daily.Update<Daily.AudioMediaTrackSettingsUpdate>?
+  public init()
+  public init(isEnabled: Daily.Update<Swift.Bool>? = nil, settings: Daily.Update<Daily.AudioMediaTrackSettingsUpdate>? = nil)
+  public static func enabled(_ isEnabled: Swift.Bool) -> Daily.MicrophoneInputSettingsUpdate
+  public static func == (a: Daily.MicrophoneInputSettingsUpdate, b: Daily.MicrophoneInputSettingsUpdate) -> Swift.Bool
+}
+extension Daily.MicrophoneInputSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.MicrophoneInputSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+extension Daily.Update where Value == Daily.MicrophoneInputSettingsUpdate {
+  public static func set(isEnabled: Daily.Update<Swift.Bool>? = nil, settings: Daily.Update<Daily.AudioMediaTrackSettingsUpdate>? = nil) -> Daily.Update<Value>
+}
+public struct MediaSubscriptionSettings : Swift.Equatable {
+  public let camera: Daily.CameraSubscriptionSettings
+  public let microphone: Daily.MicrophoneSubscriptionSettings
+  public static func == (a: Daily.MediaSubscriptionSettings, b: Daily.MediaSubscriptionSettings) -> Swift.Bool
+}
+extension Daily.MediaSubscriptionSettings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct MediaSubscriptionSettingsUpdate : Swift.Equatable {
+  public var camera: Daily.Update<Daily.CameraSubscriptionSettingsUpdate>?
+  public var microphone: Daily.Update<Daily.MicrophoneSubscriptionSettingsUpdate>?
+  public init()
+  public init(camera: Daily.Update<Daily.CameraSubscriptionSettingsUpdate>? = nil, microphone: Daily.Update<Daily.MicrophoneSubscriptionSettingsUpdate>? = nil)
+  public static func subscribed(_ isSubscribed: Swift.Bool) -> Daily.MediaSubscriptionSettingsUpdate
+  public static func == (a: Daily.MediaSubscriptionSettingsUpdate, b: Daily.MediaSubscriptionSettingsUpdate) -> Swift.Bool
+}
+extension Daily.MediaSubscriptionSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.MediaSubscriptionSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+public enum VideoReceiveSettingsCodingKeys : Swift.String, Swift.CodingKey {
+  case maxQuality
+  public init?(rawValue: Swift.String)
+  public init?(stringValue: Swift.String)
+  public init?(intValue: Swift.Int)
+  public typealias RawValue = Swift.String
+  public var intValue: Swift.Int? {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+  public var stringValue: Swift.String {
+    get
+  }
+}
+public struct VideoReceiveSettings : Swift.Equatable {
+  public let maxQuality: Daily.VideoReceiveSettingsMaxQuality
+  public static func == (a: Daily.VideoReceiveSettings, b: Daily.VideoReceiveSettings) -> Swift.Bool
+}
+extension Daily.VideoReceiveSettings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct VideoReceiveSettingsUpdate : Swift.Equatable {
+  public var maxQuality: Daily.Update<Daily.VideoReceiveSettingsMaxQuality>?
+  public init()
+  public init(maxQuality: Daily.Update<Daily.VideoReceiveSettingsMaxQuality>? = nil)
+  public static func == (a: Daily.VideoReceiveSettingsUpdate, b: Daily.VideoReceiveSettingsUpdate) -> Swift.Bool
+}
+extension Daily.VideoReceiveSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.VideoReceiveSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+public protocol ComplexSettingsUpdate {
+  init()
+}
+extension Daily.ComplexSettingsUpdate {
+  public mutating func callAsFunction<Value>(_ keyPath: Swift.WritableKeyPath<Self, Daily.Update<Value>?>, _ value: Daily.Update<Value>)
+  public mutating func callAsFunction<Value>(_ keyPath: Swift.WritableKeyPath<Self, Daily.Update<Value>?>, _ value: Value)
+  public mutating func callAsFunction<Value>(_ keyPath: Swift.WritableKeyPath<Self, Daily.Update<Value>?>, _ closure: (inout Value) -> ()) where Value : Daily.ComplexSettingsUpdate
+}
+public enum CallClientError : Swift.Error {
+  case unknown(message: Swift.String?)
+}
+@_hasMissingDesignatedInitializers @_Concurrency.MainActor final public class CallClient {
+  public typealias Error = Daily.CallClientError
+  @Combine.Published @_projectedValueProperty($inputs) @_Concurrency.MainActor final public var inputs: Daily.InputSettings {
+    get
+  }
+  @_Concurrency.MainActor final public var $inputs: Combine.Published<Daily.InputSettings>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($publishing) @_Concurrency.MainActor final public var publishing: Daily.PublishingSettings {
+    get
+  }
+  @_Concurrency.MainActor final public var $publishing: Combine.Published<Daily.PublishingSettings>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($subscriptions) @_Concurrency.MainActor final public var subscriptions: Daily.SubscriptionSettingsById {
+    get
+  }
+  @_Concurrency.MainActor final public var $subscriptions: Combine.Published<Daily.SubscriptionSettingsById>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($subscriptionProfiles) @_Concurrency.MainActor final public var subscriptionProfiles: Daily.SubscriptionProfileSettingsByProfile {
+    get
+  }
+  @_Concurrency.MainActor final public var $subscriptionProfiles: Combine.Published<Daily.SubscriptionProfileSettingsByProfile>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($availableDevices) @_Concurrency.MainActor final public var availableDevices: Daily.Devices {
+    get
+  }
+  @_Concurrency.MainActor final public var $availableDevices: Combine.Published<Daily.Devices>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($participants) @_Concurrency.MainActor final public var participants: Daily.Participants {
+    get
+  }
+  @_Concurrency.MainActor final public var $participants: Combine.Published<Daily.Participants>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($activeSpeaker) @_Concurrency.MainActor final public var activeSpeaker: Daily.Participant? {
+    get
+  }
+  @_Concurrency.MainActor final public var $activeSpeaker: Combine.Published<Daily.Participant?>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($callState) @_Concurrency.MainActor final public var callState: Daily.CallState {
+    get
+  }
+  @_Concurrency.MainActor final public var $callState: Combine.Published<Daily.CallState>.Publisher {
+    get
+  }
+  @Combine.Published @_projectedValueProperty($username) @_Concurrency.MainActor final public var username: Swift.String? {
+    get
+    set
+  }
+  @_Concurrency.MainActor final public var $username: Combine.Published<Swift.String?>.Publisher {
+    get
+    @available(iOS 14.0, tvOS 14.0, watchOS 7.0, macOS 11.0, *)
+    set
+  }
+  @Combine.Published @_projectedValueProperty($url) @_Concurrency.MainActor final public var url: Foundation.URL? {
+    get
+  }
+  @_Concurrency.MainActor final public var $url: Combine.Published<Foundation.URL?>.Publisher {
+    get
+  }
+  @_Concurrency.MainActor final public var preferredAudioDevice: Daily.AudioDeviceType? {
+    get
+    set
+  }
+  @_Concurrency.MainActor final public var audioDevice: Daily.AudioDeviceType {
+    get
+  }
+  @_Concurrency.MainActor weak final public var delegate: Daily.CallClientDelegate?
+  @_Concurrency.MainActor convenience public init()
+  @_Concurrency.MainActor final public func join(url: Foundation.URL, token: Daily.MeetingToken? = nil, settings: Daily.ClientSettingsUpdate = .init()) throws
+  @_Concurrency.MainActor final public func leave()
+  @objc deinit
+}
+public struct ParticipantVideoInfo : Swift.Equatable {
+  public let state: Daily.MediaState
+  public let subscribed: Daily.TrackSubscriptionState
+  public static func == (a: Daily.ParticipantVideoInfo, b: Daily.ParticipantVideoInfo) -> Swift.Bool
+}
+extension Daily.ParticipantVideoInfo : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct AudioMediaTrackSettings : Swift.Equatable {
+  public var deviceId: Daily.MediaTrackDeviceId?
+  public static func == (a: Daily.AudioMediaTrackSettings, b: Daily.AudioMediaTrackSettings) -> Swift.Bool
+}
+extension Daily.AudioMediaTrackSettings : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct AudioMediaTrackSettingsUpdate : Swift.Equatable {
+  public var deviceId: Daily.Update<Daily.MediaTrackDeviceId>?
+  public init()
+  public init(deviceId: Daily.Update<Daily.MediaTrackDeviceId>? = nil)
+  public static func == (a: Daily.AudioMediaTrackSettingsUpdate, b: Daily.AudioMediaTrackSettingsUpdate) -> Swift.Bool
+}
+extension Daily.AudioMediaTrackSettingsUpdate : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+extension Daily.AudioMediaTrackSettingsUpdate : Daily.ComplexSettingsUpdate {
+}
+extension Daily.Update where Value == Daily.AudioMediaTrackSettingsUpdate {
+  public static func set(deviceId: Daily.Update<Daily.MediaTrackDeviceId>? = nil) -> Daily.Update<Value>
+}
+public enum AudioSendSettingsChannelConfig : Swift.String, Swift.RawRepresentable, Swift.CaseIterable, Swift.Equatable, Swift.Hashable {
+  case mono
+  case stereo
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [Daily.AudioSendSettingsChannelConfig]
+  public typealias RawValue = Swift.String
+  public static var allCases: [Daily.AudioSendSettingsChannelConfig] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension Daily.AudioSendSettingsChannelConfig : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct KeyedSettingsUpdate<Key, Settings> where Key : Swift.Hashable {
+  public typealias Value = Daily.Update<Settings>
+  public typealias ValuesByKey = [Key : Daily.KeyedSettingsUpdate<Key, Settings>.Value]
+  public var keys: Daily.KeyedSettingsUpdate<Key, Settings>.ValuesByKey.Keys {
+    get
+  }
+  public var values: Daily.KeyedSettingsUpdate<Key, Settings>.ValuesByKey.Values {
+    get
+  }
+  public var isEmpty: Swift.Bool {
+    get
+  }
+  public var count: Swift.Int {
+    get
+  }
+  public init()
+  public init(_ valuesByKey: Daily.KeyedSettingsUpdate<Key, Settings>.ValuesByKey = [:])
+  public subscript(key: Key) -> Daily.KeyedSettingsUpdate<Key, Settings>.Value? {
+    get
+    set
+  }
+  public subscript(key: Key, default defaultValue: @autoclosure () -> Daily.KeyedSettingsUpdate<Key, Settings>.Value) -> Daily.KeyedSettingsUpdate<Key, Settings>.Value {
+    get
+    set
+  }
+  public mutating func callAsFunction(_ key: Key, _ value: Daily.Update<Settings>)
+  public mutating func callAsFunction(_ key: Key, _ value: Settings)
+  public mutating func callAsFunction(_ key: Key, _ closure: (inout Settings) -> ()) where Settings : Daily.ComplexSettingsUpdate
+}
+extension Daily.KeyedSettingsUpdate : Swift.ExpressibleByDictionaryLiteral {
+  public init(dictionaryLiteral elements: (Key, Daily.KeyedSettingsUpdate<Key, Settings>.Value)...)
+}
+extension Daily.KeyedSettingsUpdate : Swift.Equatable where Settings : Swift.Equatable {
+  public static func == (a: Daily.KeyedSettingsUpdate<Key, Settings>, b: Daily.KeyedSettingsUpdate<Key, Settings>) -> Swift.Bool
+}
+extension Daily.KeyedSettingsUpdate : Swift.Hashable where Settings : Swift.Hashable {
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Daily.KeyedSettingsUpdate : Swift.Sendable where Key : Swift.Sendable, Settings : Swift.Sendable {
+}
+extension Daily.KeyedSettingsUpdate : Swift.Sequence {
+  public typealias Element = Daily.KeyedSettingsUpdate<Key, Settings>.ValuesByKey.Element
+  public typealias Iterator = Daily.KeyedSettingsUpdate<Key, Settings>.ValuesByKey.Iterator
+  public func makeIterator() -> Daily.KeyedSettingsUpdate<Key, Settings>.Iterator
+}
+extension Daily.KeyedSettingsUpdate : Swift.Collection {
+  public typealias Index = Daily.KeyedSettingsUpdate<Key, Settings>.ValuesByKey.Index
+  public var startIndex: Daily.KeyedSettingsUpdate<Key, Settings>.Index {
+    get
+  }
+  public var endIndex: Daily.KeyedSettingsUpdate<Key, Settings>.Index {
+    get
+  }
+  public subscript(index: Daily.KeyedSettingsUpdate<Key, Settings>.Index) -> Daily.KeyedSettingsUpdate<Key, Settings>.Iterator.Element {
+    get
+  }
+  public func index(after i: Daily.KeyedSettingsUpdate<Key, Settings>.Index) -> Daily.KeyedSettingsUpdate<Key, Settings>.Index
+  public typealias Indices = Swift.DefaultIndices<Daily.KeyedSettingsUpdate<Key, Settings>>
+  public typealias SubSequence = Swift.Slice<Daily.KeyedSettingsUpdate<Key, Settings>>
+}
+extension Daily.KeyedSettingsUpdate : Swift.Encodable where Key : Daily.DailyCodingKeyRepresentable, Key : Swift.Encodable, Settings : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public typealias MediaTrackDeviceId = Swift.String
+public typealias MediaTrackChannelCount = Swift.UInt32
+public enum MediaTrackFacingMode : Swift.String, Swift.RawRepresentable, Swift.CaseIterable, Swift.Equatable, Swift.Hashable {
+  case user
+  case environment
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [Daily.MediaTrackFacingMode]
+  public typealias RawValue = Swift.String
+  public static var allCases: [Daily.MediaTrackFacingMode] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension Daily.MediaTrackFacingMode : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public enum MediaTrackResizeMode : Swift.String, Swift.RawRepresentable, Swift.CaseIterable, Swift.Equatable, Swift.Hashable {
+  case none
+  case cropAndScale
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [Daily.MediaTrackResizeMode]
+  public typealias RawValue = Swift.String
+  public static var allCases: [Daily.MediaTrackResizeMode] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension Daily.MediaTrackResizeMode : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public typealias MediaTrackFrameRate = Swift.Float64
+public typealias MediaTrackHeight = Swift.UInt32
+public typealias MediaTrackWidth = Swift.UInt32
+public protocol CallClientDelegate : AnyObject {
+  func callClient(_ callClient: Daily.CallClient, callStateUpdated state: Daily.CallState)
+  func callClient(_ callClient: Daily.CallClient, inputsUpdated inputs: Daily.InputSettings)
+  func callClient(_ callClient: Daily.CallClient, publishingUpdated publishing: Daily.PublishingSettings)
+  func callClient(_ callClient: Daily.CallClient, participantJoined participant: Daily.Participant)
+  func callClient(_ callClient: Daily.CallClient, participantUpdated participant: Daily.Participant)
+  func callClient(_ callClient: Daily.CallClient, participantLeft participant: Daily.Participant, withReason reason: Daily.ParticipantLeftReason)
+  func callClient(_ callClient: Daily.CallClient, activeSpeakerChanged activeSpeaker: Daily.Participant?)
+  func callClient(_ callClient: Daily.CallClient, subscriptionsUpdated subscriptions: Daily.SubscriptionSettingsById)
+  func callClient(_ callClient: Daily.CallClient, subscriptionProfilesUpdated subscriptionProfiles: Daily.SubscriptionProfileSettingsByProfile)
+  func callClient(_ callClient: Daily.CallClient, availableDevicesUpdated availableDevices: Daily.Devices)
+  func callClient(_ callClient: Daily.CallClient, error: Daily.CallClientError)
+}
+extension Daily.ParticipantAudioInfo {
+  public var track: Daily.AudioTrack? {
+    get
+  }
+}
+public struct ParticipantId : Swift.Equatable, Swift.Hashable {
+  public let uuid: Foundation.UUID
+  public init(uuid: Foundation.UUID)
+  public static func == (a: Daily.ParticipantId, b: Daily.ParticipantId) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Daily.ParticipantId : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+extension Daily.ParticipantId : Swift.CodingKeyRepresentable {
+  public var codingKey: Swift.CodingKey {
+    get
+  }
+  public init?<T>(codingKey: T) where T : Swift.CodingKey
+}
+extension Daily.ParticipantId : Daily.DailyCodingKeyRepresentable {
+}
+extension Daily.ParticipantId : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension Daily.CallClient : Swift.Sendable {}
+extension Daily.VideoSendSettingsCodingKeys : Swift.Equatable {}
+extension Daily.VideoSendSettingsCodingKeys : Swift.Hashable {}
+extension Daily.VideoSendSettingsCodingKeys : Swift.RawRepresentable {}
+extension Daily.LogLevel : Swift.Equatable {}
+extension Daily.LogLevel : Swift.Hashable {}
+extension Daily.LogLevel : Swift.RawRepresentable {}
+extension Daily.AudioDeviceType : Swift.Equatable {}
+extension Daily.AudioDeviceType : Swift.Hashable {}
+extension Daily.VideoReceiveSettingsCodingKeys : Swift.Equatable {}
+extension Daily.VideoReceiveSettingsCodingKeys : Swift.Hashable {}
+extension Daily.VideoReceiveSettingsCodingKeys : Swift.RawRepresentable {}

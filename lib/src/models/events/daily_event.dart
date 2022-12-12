@@ -31,5 +31,5 @@ class ParticipantLeftEvent extends DailyEvent {
 class ActiveSpeakerChangedEvent extends DailyEvent {
   const ActiveSpeakerChangedEvent(this.remoteParticipant);
 
-  final RemoteParticipant remoteParticipant;
+  final RemoteParticipant? remoteParticipant;
 }

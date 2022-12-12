@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:daily_client/daily_client.dart' as daily;
 
-import 'package:daily_client_example/audio_video/av_cubit.dart';
-import 'package:daily_client_example/dependencies.dart';
-import 'package:daily_client_example/room/room_screen.dart';
+import '../audio_video/av_cubit.dart';
+import '../dependencies.dart';
+import '../room/room_screen.dart';
+import '../core/subscription_profiles.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,9 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() => _isLoading = true);
     try {
-      // final profiles =
-      //     SubscriptionProfiles.values.map((e) => e.settings).toList();
-      // await _dailyClient.updateSubscriptionProfiles(profiles);
+      final profiles =
+          SubscriptionProfiles.values.map((e) => e.settings).toList();
+      await _dailyClient.updateSubscriptionProfiles(profiles);
 
       final result = await _dailyClient.join(
         daily.JoinOptions(

@@ -160,10 +160,13 @@ class DailyClient extends DailyCallback {
   }
 
   @override
-  void activeSpeakerChanged(RemoteParticipantMessage remoteParticipantMessage) {
-    _eventsController.add(ActiveSpeakerChangedEvent(
-      RemoteParticipant.fromMessage(remoteParticipantMessage),
-    ));
+  void activeSpeakerChanged(
+      RemoteParticipantMessage? remoteParticipantMessage) {
+    final participant = remoteParticipantMessage != null
+        ? RemoteParticipant.fromMessage(remoteParticipantMessage)
+        : null;
+
+    _eventsController.add(ActiveSpeakerChangedEvent(participant));
   }
 
   @override

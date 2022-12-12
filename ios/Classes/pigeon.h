@@ -208,7 +208,7 @@ NSObject<FlutterMessageCodec> *DailyCallbackGetCodec(void);
 - (void)onLocalParticipantUpdatedLocalParticipantMessage:(LocalParticipantMessage *)localParticipantMessage completion:(void(^)(NSError *_Nullable))completion;
 - (void)onParticipantJoinedRemoteParticipantMessage:(RemoteParticipantMessage *)remoteParticipantMessage completion:(void(^)(NSError *_Nullable))completion;
 - (void)onParticipantLeftRemoteParticipantMessage:(RemoteParticipantMessage *)remoteParticipantMessage completion:(void(^)(NSError *_Nullable))completion;
-- (void)activeSpeakerChangedRemoteParticipantMessage:(RemoteParticipantMessage *)remoteParticipantMessage completion:(void(^)(NSError *_Nullable))completion;
+- (void)activeSpeakerChangedRemoteParticipantMessage:(nullable RemoteParticipantMessage *)remoteParticipantMessage completion:(void(^)(NSError *_Nullable))completion;
 - (void)onCallStateUpdatedStateCode:(NSNumber *)stateCode completion:(void(^)(NSError *_Nullable))completion;
 @end
 NS_ASSUME_NONNULL_END
