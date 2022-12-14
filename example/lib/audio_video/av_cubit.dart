@@ -9,14 +9,7 @@ import '../core/subscription_profiles.dart';
 import 'av_state.dart';
 
 class AvCubit extends Cubit<AvState> {
-  /// For simplicity fo this example, the Daily join() method must already have been called.
-  AvCubit({
-    required daily.LocalParticipant localParticipant,
-    required List<daily.RemoteParticipant> remoteParticipants,
-  }) : super(AvConnectedState(
-          localParticipant: localParticipant,
-          remoteParticipants: remoteParticipants,
-        )) {
+  AvCubit() : super(AvInitialState()) {
     _startListeners();
   }
 
@@ -28,6 +21,40 @@ class AvCubit extends Cubit<AvState> {
   Future<void> close() async {
     _participantsSubscription?.cancel();
     super.close();
+  }
+
+  void join({
+    required String url,
+    required String token,
+    required bool enableCamera,
+    required bool enableMicrophone,
+  }) async {
+    _startListeners();
+    emit(AvLoadingState());
+
+    try {
+      final profiles =
+          SubscriptionProfiles.values.map((e) => e.settings).toList();
+      await _dailyClient.updateSubscriptionProfiles(profiles);
+
+      final result = await _dailyClient.join(
+        daily.JoinOptions(
+          url: url,
+          token: token,
+          enableCamera: enableCamera,
+          enableMicrophone: enableMicrophone,
+        ),
+      );
+
+      emit(AvConnectedState(
+        localParticipant: result.localParticipant,
+        remoteParticipants: result.remoteParticipants,
+      ));
+    } catch (e) {
+      final errorMessage =
+          e is daily.DailyClientException ? e.message : 'Something is wrong';
+      emit(AvErrorState(errorMessage));
+    }
   }
 
   void _startListeners() {

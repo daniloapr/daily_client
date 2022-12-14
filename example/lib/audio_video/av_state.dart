@@ -23,6 +23,15 @@ class AvConnectedState extends AvState {
   }
 }
 
+class AvInitialState extends AvState {}
+
+class AvLoadingState extends AvState {}
+
+class AvErrorState extends AvState {
+  AvErrorState(this.message);
+  String message;
+}
+
 class AvLeftState extends AvState {
   const AvLeftState();
 }

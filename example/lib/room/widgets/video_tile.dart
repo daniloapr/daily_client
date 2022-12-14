@@ -31,9 +31,10 @@ class VideoTile extends StatelessWidget {
                 builder: (context) {
                   final isCameraEnabled = participant.isCameraEnabled;
                   if (isCameraEnabled || isScreenShare) {
+                    final keyStr =
+                        'VideoRenderer_${participant.id}/$isCameraEnabled/$isScreenShare';
                     return daily.VideoRenderer(
-                      key:
-                          Key('VideoRenderer_${participant.id}_$isScreenShare'),
+                      key: Key(keyStr),
                       participant: participant,
                       videoScaleMode: isScreenShare
                           ? daily.VideoScaleMode.fit

@@ -188,20 +188,24 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
     
     func onParticipantUpdated(participant: Daily.Participant) {
         print("DailyClient: onParticipantUpdated")
-        let participantMessage = mapRemoteParticipantToMessage(fromParticipant: participant)
-        printParticipant(participantMessage: participantMessage)
-        
-        self.callback.onParticipantUpdated(
-            remoteParticipantMessage: participantMessage,
-            completion: {}
-        )
+        if (participant.info.isLocal) {
+            let participantMessage = mapLocalParticipantToMessage(fromParticipant: participant)
+            self.callback.onLocalParticipantUpdated(
+                localParticipantMessage: participantMessage,
+                completion: {}
+            )
+        } else {
+            let participantMessage = mapRemoteParticipantToMessage(fromParticipant: participant)
+            self.callback.onParticipantUpdated(
+                remoteParticipantMessage: participantMessage,
+                completion: {}
+            )
+        }
     }
     
     func onParticipantJoined(participant: Daily.Participant) {
         print("DailyClient: participantJoined")
         let participantMessage = mapRemoteParticipantToMessage(fromParticipant: participant)
-        printParticipant(participantMessage: participantMessage)
-        
         self.callback.onParticipantJoined(
             remoteParticipantMessage: participantMessage,
             completion: {}

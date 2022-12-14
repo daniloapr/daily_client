@@ -23,8 +23,9 @@ extension SwiftDailyClientPlugin: CallClientDelegate {
     }
     
     /// A participant has joined the call.
-    public func callClient(_ callClient: Daily.CallClient, participantJoined participant: Daily.Participant) {
+    @MainActor public func callClient(_ callClient: Daily.CallClient, participantJoined participant: Daily.Participant) {
         self.onParticipantJoined(participant: participant)
+        self.onParticipantsUpdated()
     }
     
     /// A participant was updated, normally as a consequence of
@@ -35,17 +36,19 @@ extension SwiftDailyClientPlugin: CallClientDelegate {
     }
     
     /// A participant has left the call.
-    public func callClient(
+    @MainActor public func callClient(
         _ callClient: Daily.CallClient,
         participantLeft participant: Daily.Participant,
         withReason reason: Daily.ParticipantLeftReason
     ) {
         self.onParticipantLeft(participant: participant)
+        self.onParticipantsUpdated()
     }
     
     /// The active speaker has changed.
-    public func callClient(_ callClient: Daily.CallClient, activeSpeakerChanged activeSpeaker: Daily.Participant?) {
+    @MainActor public func callClient(_ callClient: Daily.CallClient, activeSpeakerChanged activeSpeaker: Daily.Participant?) {
         self.onActiveSpeakerChanged(participant: activeSpeaker)
+        self.onParticipantsUpdated()
     }
     
     /// The subscription settings are updated, as a consequence of invocations to

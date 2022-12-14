@@ -30,6 +30,7 @@ class LocalVideo extends StatelessWidget {
               height: 128,
               width: 96,
               child: VideoTile(
+                key: Key('LocalVideo_${localParticipant.isCameraEnabled}'),
                 participant: localParticipant,
                 isScreenShare: false,
               ),
