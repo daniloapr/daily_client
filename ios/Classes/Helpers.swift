@@ -5,7 +5,7 @@ func getParticipantsMessage(
 ) -> (local: LocalParticipantMessage, remote: [RemoteParticipantMessage]) {
     let localParticipantMessage = mapLocalParticipantToMessage(fromParticipant: participants.local)
     
-    print("DailyClient [getParticipantsMessage]: participants count = \(participants.remote.count) ")
+    // print("DailyClient [getParticipantsMessage]: participants count = \(participants.remote.count) ")
     
     let remoteParticipantsMessage = participants.remote.map{ (participantMap) -> RemoteParticipantMessage in
         let participant = mapRemoteParticipantToMessage(fromParticipant: participantMap.value)

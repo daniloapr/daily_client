@@ -36,7 +36,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.teamflowhq.daily_client
+        package: com.daniloapr.daily_client
         pluginClass: DailyClientPlugin
       ios:
         pluginClass: DailyClientPlugin

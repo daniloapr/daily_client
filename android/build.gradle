@@ -1,4 +1,4 @@
-group 'com.teamflowhq.daily_client'
+group 'com.daniloapr.daily_client'
 version '1.0-SNAPSHOT'
 
 buildscript {

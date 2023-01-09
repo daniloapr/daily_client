@@ -59,6 +59,9 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
                 )
             )
             
+            let count = callClient.participants.remote.count
+            print("DailyClient: participants count = \(count)")
+            
             
             let message = getParticipantsMessage(fromParticipants: callClient.participants)
             
@@ -187,7 +190,7 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
     }
     
     func onParticipantUpdated(participant: Daily.Participant) {
-        print("DailyClient: onParticipantUpdated")
+        print("DailyClient: onParticipantUpdated. isLocal = \(participant.info.isLocal)")
         if (participant.info.isLocal) {
             let participantMessage = mapLocalParticipantToMessage(fromParticipant: participant)
             self.callback.onLocalParticipantUpdated(

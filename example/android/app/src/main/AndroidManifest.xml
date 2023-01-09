@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.teamflowhq.daily_client_example">
+    package="com.daniloapr.daily_client_example">
    <application
         android:label="daily_client_example"
         android:name="${applicationName}"

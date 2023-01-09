@@ -1,4 +1,4 @@
-package com.teamflowhq.daily_client
+package com.daniloapr.daily_client
 
 import androidx.annotation.NonNull
 
