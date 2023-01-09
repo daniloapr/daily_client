@@ -38,12 +38,10 @@ class AvCubit extends Cubit<AvState> {
       await _dailyClient.updateSubscriptionProfiles(profiles);
 
       final result = await _dailyClient.join(
-        daily.JoinOptions(
-          url: url,
-          token: token,
-          enableCamera: enableCamera,
-          enableMicrophone: enableMicrophone,
-        ),
+        url: url,
+        token: token,
+        enableCamera: enableCamera,
+        enableMicrophone: enableMicrophone,
       );
 
       emit(AvConnectedState(

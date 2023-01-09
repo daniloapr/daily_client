@@ -2,7 +2,6 @@ export './src/daily_client_impl.dart';
 export './src/models/events/daily_event.dart';
 export './src/models/exception/daily_client_exception.dart';
 export './src/models/exception/daily_client_exception.dart';
-export './src/models/join/join_options.dart';
 export './src/models/join/join_result.dart';
 export './src/models/participant/local_participant.dart';
 export './src/models/participant/media.dart';

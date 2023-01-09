@@ -3,7 +3,6 @@ import 'dart:async';
 import '../pigeon.g.dart';
 import 'models/events/daily_event.dart';
 import 'models/exception/daily_client_exception.dart';
-import 'models/join/join_options.dart';
 import 'models/join/join_result.dart';
 import 'models/participant/local_participant.dart';
 import 'models/participant/participants.dart';
@@ -27,13 +26,18 @@ class DailyClient extends DailyCallback {
   Stream<DailyEvent> get events => _eventsController.stream;
   Stream<CallState> get callState => _callStateController.stream;
 
-  Future<JoinResult> join(JoinOptions options) async {
+  Future<JoinResult> join({
+    required String url,
+    String token = '',
+    bool enableCamera = false,
+    bool enableMicrophone = false,
+  }) async {
     final result = await _messenger.join(
       JoinArgs(
-        url: options.url,
-        token: options.token,
-        enableMicrophone: options.enableMicrophone,
-        enableCamera: options.enableCamera,
+        url: url,
+        token: token,
+        enableMicrophone: enableMicrophone,
+        enableCamera: enableCamera,
       ),
     );
     _handleError(result.error);
