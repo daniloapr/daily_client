@@ -8,7 +8,7 @@ Note that the Daily mobile SDKs are still in Beta for both Android and iOS. Thus
 
 Prefer running in a real device instead of emulators.
 
-:warning: KNOWN ISSUE: The iOS is currently crashing while in a call. I haven't debugged yet to check if it's an issue in the plugin or in the Daily iOS SDK itself.
+:warning: This plugin is depending on an unstable and not fully tested version of Daily iOS SDK, so, you should expect some crashes. It will be updated as soon as Daily releases the next SDK version 0.6.0.
 
 ## Minimum OS version
 
