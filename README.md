@@ -24,7 +24,7 @@ Android: Not supported yet.
 
 ## Getting started
 
-### Joining a callc
+### Joining a call
 
 To get an URL for testing your app, create your account at [daily.co](daily.co), then create a room in the [dashboard](https://dashboard.daily.co/). Public room's don't require token, so you should avoid them in production.
 
