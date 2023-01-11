@@ -17,8 +17,8 @@ class ParticipantsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final remoteParticipants = context.select((AvCubit cubit) {
       final state = cubit.state;
-      if (state is! AvConnectedState) return <RemoteParticipant>[];
-      return state.remoteParticipants;
+      if (state is! AvConnectedState) return <String, RemoteParticipant>{};
+      return state.remoteParticipantById;
     });
 
     if (remoteParticipants.isEmpty) {
@@ -26,7 +26,7 @@ class ParticipantsGrid extends StatelessWidget {
     }
 
     final participantsSharingScreen =
-        remoteParticipants.where((e) => e.isSharingScreen);
+        remoteParticipants.values.where((e) => e.isSharingScreen);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: spacing),
@@ -65,7 +65,7 @@ class ParticipantsGrid extends StatelessWidget {
                       ),
                     )
                     .toList(),
-                ...remoteParticipants
+                ...remoteParticipants.values
                     .map(
                       (participant) => VideoTile(
                         participant: participant,

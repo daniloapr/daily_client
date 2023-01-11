@@ -810,15 +810,6 @@ NSObject<FlutterMessageCodec> *DailyCallbackGetCodec() {
   }
   return self;
 }
-- (void)onParticipantsUpdatedLocalParticipantMessage:(LocalParticipantMessage *)arg_localParticipantMessage remoteParticipantsMessage:(NSArray<RemoteParticipantMessage *> *)arg_remoteParticipantsMessage completion:(void(^)(NSError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel =
-    [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.DailyCallback.onParticipantsUpdated"
-      binaryMessenger:self.binaryMessenger
-      codec:DailyCallbackGetCodec()      ];  [channel sendMessage:@[arg_localParticipantMessage ?: [NSNull null], arg_remoteParticipantsMessage ?: [NSNull null]] reply:^(id reply) {
-    completion(nil);
-  }];
-}
 - (void)onParticipantUpdatedRemoteParticipantMessage:(RemoteParticipantMessage *)arg_remoteParticipantMessage completion:(void(^)(NSError *_Nullable))completion {
   FlutterBasicMessageChannel *channel =
     [FlutterBasicMessageChannel

@@ -178,16 +178,6 @@ public class SwiftDailyClientPlugin: NSObject, FlutterPlugin, DailyMessenger {
         )
     }
     
-    @MainActor func onParticipantsUpdated() {
-        print("DailyClient: participantsUpdated")
-        let message = getParticipantsMessage(fromParticipants: self.callClient.participants)
-        
-        self.callback.onParticipantsUpdated(
-            localParticipantMessage:message.local,
-            remoteParticipantsMessage: message.remote,
-            completion: {}
-        )
-    }
     
     func onParticipantUpdated(participant: Daily.Participant) {
         print("DailyClient: onParticipantUpdated. isLocal = \(participant.info.isLocal)")

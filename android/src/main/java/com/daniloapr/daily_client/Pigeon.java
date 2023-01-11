@@ -1280,13 +1280,6 @@ public class Pigeon {
     static MessageCodec<Object> getCodec() {
       return       DailyCallbackCodec.INSTANCE;
     }
-    public void onParticipantsUpdated(@NonNull LocalParticipantMessage localParticipantMessageArg, @NonNull List<RemoteParticipantMessage> remoteParticipantsMessageArg, Reply<Void> callback) {
-      BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.DailyCallback.onParticipantsUpdated", getCodec());
-      channel.send(new ArrayList<Object>(Arrays.asList(localParticipantMessageArg, remoteParticipantsMessageArg)), channelReply -> {
-        callback.reply(null);
-      });
-    }
     public void onParticipantUpdated(@NonNull RemoteParticipantMessage remoteParticipantMessageArg, Reply<Void> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, "dev.flutter.pigeon.DailyCallback.onParticipantUpdated", getCodec());

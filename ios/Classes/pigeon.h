@@ -203,7 +203,6 @@ NSObject<FlutterMessageCodec> *DailyCallbackGetCodec(void);
 
 @interface DailyCallback : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
-- (void)onParticipantsUpdatedLocalParticipantMessage:(LocalParticipantMessage *)localParticipantMessage remoteParticipantsMessage:(NSArray<RemoteParticipantMessage *> *)remoteParticipantsMessage completion:(void(^)(NSError *_Nullable))completion;
 - (void)onParticipantUpdatedRemoteParticipantMessage:(RemoteParticipantMessage *)remoteParticipantMessage completion:(void(^)(NSError *_Nullable))completion;
 - (void)onLocalParticipantUpdatedLocalParticipantMessage:(LocalParticipantMessage *)localParticipantMessage completion:(void(^)(NSError *_Nullable))completion;
 - (void)onParticipantJoinedRemoteParticipantMessage:(RemoteParticipantMessage *)remoteParticipantMessage completion:(void(^)(NSError *_Nullable))completion;

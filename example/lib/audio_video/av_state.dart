@@ -7,18 +7,19 @@ abstract class AvState {
 class AvConnectedState extends AvState {
   const AvConnectedState({
     required this.localParticipant,
-    required this.remoteParticipants,
+    required this.remoteParticipantById,
   });
   final daily.LocalParticipant localParticipant;
-  final List<daily.RemoteParticipant> remoteParticipants;
+  final Map<String, daily.RemoteParticipant> remoteParticipantById;
 
-  AvConnectedState copyWith(
+  AvConnectedState copyWith({
     daily.LocalParticipant? localParticipant,
-    List<daily.RemoteParticipant>? remoteParticipants,
-  ) {
+    Map<String, daily.RemoteParticipant>? remoteParticipantById,
+  }) {
     return AvConnectedState(
       localParticipant: localParticipant ?? this.localParticipant,
-      remoteParticipants: remoteParticipants ?? this.remoteParticipants,
+      remoteParticipantById:
+          remoteParticipantById ?? this.remoteParticipantById,
     );
   }
 }

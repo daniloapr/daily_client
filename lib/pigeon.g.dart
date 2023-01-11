@@ -768,7 +768,6 @@ class _DailyCallbackCodec extends StandardMessageCodec{
 abstract class DailyCallback {
   static const MessageCodec<Object?> codec = _DailyCallbackCodec();
 
-  void onParticipantsUpdated(LocalParticipantMessage localParticipantMessage, List<RemoteParticipantMessage?> remoteParticipantsMessage);
   void onParticipantUpdated(RemoteParticipantMessage remoteParticipantMessage);
   void onLocalParticipantUpdated(LocalParticipantMessage localParticipantMessage);
   void onParticipantJoined(RemoteParticipantMessage remoteParticipantMessage);
@@ -776,24 +775,6 @@ abstract class DailyCallback {
   void activeSpeakerChanged(RemoteParticipantMessage? remoteParticipantMessage);
   void onCallStateUpdated(int stateCode);
   static void setup(DailyCallback? api, {BinaryMessenger? binaryMessenger}) {
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.DailyCallback.onParticipantsUpdated', codec, binaryMessenger: binaryMessenger);
-      if (api == null) {
-        channel.setMessageHandler(null);
-      } else {
-        channel.setMessageHandler((Object? message) async {
-          assert(message != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantsUpdated was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final LocalParticipantMessage? arg_localParticipantMessage = (args[0] as LocalParticipantMessage?);
-          assert(arg_localParticipantMessage != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantsUpdated was null, expected non-null LocalParticipantMessage.');
-          final List<RemoteParticipantMessage?>? arg_remoteParticipantsMessage = (args[1] as List<Object?>?)?.cast<RemoteParticipantMessage?>();
-          assert(arg_remoteParticipantsMessage != null, 'Argument for dev.flutter.pigeon.DailyCallback.onParticipantsUpdated was null, expected non-null List<RemoteParticipantMessage?>.');
-          api.onParticipantsUpdated(arg_localParticipantMessage!, arg_remoteParticipantsMessage!);
-          return;
-        });
-      }
-    }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.DailyCallback.onParticipantUpdated', codec, binaryMessenger: binaryMessenger);

@@ -21,10 +21,6 @@ abstract class DailyMessenger {
 
 @FlutterApi()
 abstract class DailyCallback {
-  void onParticipantsUpdated(
-    LocalParticipantMessage localParticipantMessage,
-    List<RemoteParticipantMessage?> remoteParticipantsMessage,
-  );
   void onParticipantUpdated(RemoteParticipantMessage remoteParticipantMessage);
   void onLocalParticipantUpdated(
     LocalParticipantMessage localParticipantMessage,

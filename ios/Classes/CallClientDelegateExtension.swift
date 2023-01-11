@@ -25,14 +25,12 @@ extension SwiftDailyClientPlugin: CallClientDelegate {
     /// A participant has joined the call.
     @MainActor public func callClient(_ callClient: Daily.CallClient, participantJoined participant: Daily.Participant) {
         self.onParticipantJoined(participant: participant)
-//        self.onParticipantsUpdated()
     }
     
     /// A participant was updated, normally as a consequence of
     /// a participant's metadata getting updated, or its tracks changing.
     @MainActor public func callClient(_ callClient: Daily.CallClient, participantUpdated participant: Daily.Participant) {
         self.onParticipantUpdated(participant: participant)
-//        self.onParticipantsUpdated()
     }
     
     /// A participant has left the call.
@@ -42,13 +40,11 @@ extension SwiftDailyClientPlugin: CallClientDelegate {
         withReason reason: Daily.ParticipantLeftReason
     ) {
         self.onParticipantLeft(participant: participant)
-//        self.onParticipantsUpdated()
     }
     
     /// The active speaker has changed.
     @MainActor public func callClient(_ callClient: Daily.CallClient, activeSpeakerChanged activeSpeaker: Daily.Participant?) {
         self.onActiveSpeakerChanged(participant: activeSpeaker)
-//        self.onParticipantsUpdated()
     }
     
     /// The subscription settings are updated, as a consequence of invocations to

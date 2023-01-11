@@ -15,11 +15,11 @@ class AvCubit extends Cubit<AvState> {
 
   final _dailyClient = getIt<daily.DailyClient>();
 
-  StreamSubscription? _participantsSubscription;
+  StreamSubscription? _eventsSubscription;
 
   @override
   Future<void> close() async {
-    _participantsSubscription?.cancel();
+    _eventsSubscription?.cancel();
     super.close();
   }
 
@@ -44,29 +44,47 @@ class AvCubit extends Cubit<AvState> {
         enableMicrophone: enableMicrophone,
       );
 
+      final remoteParticipantsById = <String, daily.RemoteParticipant>{};
+
+      for (var participant in result.remoteParticipants) {
+        remoteParticipantsById[participant.id] = participant;
+      }
+
       emit(AvConnectedState(
         localParticipant: result.localParticipant,
-        remoteParticipants: result.remoteParticipants,
+        remoteParticipantById: remoteParticipantsById,
       ));
-    } catch (e) {
-      final errorMessage =
-          e is daily.DailyClientException ? e.message : 'Something is wrong';
+    } on daily.DailyClientException catch (e) {
+      final errorMessage = e.message;
       emit(AvErrorState(errorMessage));
     }
   }
 
   void _startListeners() {
-    _participantsSubscription =
-        _dailyClient.participants.listen((participants) {
-      _onParticipantsUpdated(participants);
+    _eventsSubscription = _dailyClient.events.listen((event) {
+      if (event is daily.ParticipantJoinedEvent) {
+        _onParticipantJoined(event.remoteParticipant);
+      }
+      if (event is daily.ParticipantLeftEvent) {
+        _onParticipantLeft(event.remoteParticipant);
+      }
+      if (event is daily.ParticipantUpdatedEvent) {
+        _onParticipantUpdated(event.remoteParticipant);
+      }
+      if (event is daily.LocalParticipantUpdatedEvent) {
+        _onLocalParticipantUpdated(event.localParticipant);
+      }
+      if (event is daily.ActiveSpeakerChangedEvent) {
+        _onActiveSpeakerChanged(event.remoteParticipant);
+      }
     });
   }
 
-  void toggleMic() {
+  void toggleMic() async {
     final currentState = state;
     if (currentState is! AvConnectedState) return;
     try {
-      _dailyClient.setMicrophoneEnabled(
+      await _dailyClient.setMicrophoneEnabled(
         !currentState.localParticipant.isMicrophoneEnabled,
       );
     } catch (e) {
@@ -91,24 +109,64 @@ class AvCubit extends Cubit<AvState> {
     emit(const AvLeftState());
   }
 
-  void _onParticipantsUpdated(daily.Participants participants) {
-    final subscriptionsOptions = participants.remote
-        .map(
-          (e) => daily.UpdateSubscriptionOptions(
-            participantId: e.id,
-            profileName: SubscriptionProfiles.visible.name,
-          ),
-        )
-        .toList();
-
-    _dailyClient.updateSubscriptions(subscriptionsOptions);
+  void _onParticipantJoined(daily.RemoteParticipant participant) {
+    final subscriptionsOptions = daily.UpdateSubscriptionOptions(
+      participantId: participant.id,
+      profileName: SubscriptionProfiles.visible.name,
+    );
+    _dailyClient.updateSubscriptions([subscriptionsOptions]);
 
     final currentState = state;
     if (currentState is! AvConnectedState) return;
 
+    final participants = Map<String, daily.RemoteParticipant>.from(
+      currentState.remoteParticipantById,
+    );
+    participants[participant.id] = participant;
+
     emit(currentState.copyWith(
-      participants.local,
-      participants.remote,
+      remoteParticipantById: participants,
     ));
+  }
+
+  void _onParticipantLeft(daily.RemoteParticipant participant) {
+    final currentState = state;
+    if (currentState is! AvConnectedState) return;
+
+    final participants = Map<String, daily.RemoteParticipant>.from(
+      currentState.remoteParticipantById,
+    );
+    participants.remove(participant.id);
+
+    emit(currentState.copyWith(
+      remoteParticipantById: participants,
+    ));
+  }
+
+  void _onParticipantUpdated(daily.RemoteParticipant participant) {
+    final currentState = state;
+    if (currentState is! AvConnectedState) return;
+
+    final participants = Map<String, daily.RemoteParticipant>.from(
+      currentState.remoteParticipantById,
+    );
+    participants[participant.id] = participant;
+
+    emit(currentState.copyWith(
+      remoteParticipantById: participants,
+    ));
+  }
+
+  void _onLocalParticipantUpdated(daily.LocalParticipant localParticipant) {
+    final currentState = state;
+    if (currentState is! AvConnectedState) return;
+
+    emit(currentState.copyWith(
+      localParticipant: localParticipant,
+    ));
+  }
+
+  void _onActiveSpeakerChanged(daily.RemoteParticipant? participant) {
+    //TODO: implement active speaker sorting feature.
   }
 }

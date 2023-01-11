@@ -5,7 +5,6 @@ import 'models/events/daily_event.dart';
 import 'models/exception/daily_client_exception.dart';
 import 'models/join/join_result.dart';
 import 'models/participant/local_participant.dart';
-import 'models/participant/participants.dart';
 import 'models/participant/remote_participant.dart';
 import 'models/profiles/subscription_profile_settings_update.dart';
 import 'models/profiles/update_subscriptions.dart';
@@ -18,11 +17,9 @@ class DailyClient extends DailyCallback {
 
   final _messenger = DailyMessenger();
 
-  final _participantsController = StreamController<Participants>.broadcast();
   final _eventsController = StreamController<DailyEvent>.broadcast();
   final _callStateController = StreamController<CallState>.broadcast();
 
-  Stream<Participants> get participants => _participantsController.stream;
   Stream<DailyEvent> get events => _eventsController.stream;
   Stream<CallState> get callState => _callStateController.stream;
 
@@ -119,18 +116,7 @@ class DailyClient extends DailyCallback {
     await _messenger.setCameraEnabled(enableCamera);
   }
 
-  /// This function is called from the native side.
-  @override
-  void onParticipantsUpdated(
-    LocalParticipantMessage localParticipantMessage,
-    List<RemoteParticipantMessage?> remoteParticipantsMessage,
-  ) {
-    _participantsController.add(Participants(
-      local: LocalParticipant.fromMessage(localParticipantMessage),
-      remote: RemoteParticipant.listFromMessage(remoteParticipantsMessage),
-    ));
-  }
-
+  /// This function is called from the native side. Do not call it directly.
   @override
   void onParticipantUpdated(
     RemoteParticipantMessage remoteParticipantMessage,
@@ -140,6 +126,7 @@ class DailyClient extends DailyCallback {
     ));
   }
 
+  /// This function is called from the native side. Do not call it directly.
   @override
   void onLocalParticipantUpdated(
     LocalParticipantMessage localParticipantMessage,
@@ -149,6 +136,7 @@ class DailyClient extends DailyCallback {
     ));
   }
 
+  /// This function is called from the native side. Do not call it directly.
   @override
   void onParticipantJoined(RemoteParticipantMessage remoteParticipantMessage) {
     _eventsController.add(ParticipantJoinedEvent(
@@ -156,6 +144,7 @@ class DailyClient extends DailyCallback {
     ));
   }
 
+  /// This function is called from the native side. Do not call it directly.
   @override
   void onParticipantLeft(RemoteParticipantMessage remoteParticipantMessage) {
     _eventsController.add(ParticipantLeftEvent(
@@ -163,6 +152,7 @@ class DailyClient extends DailyCallback {
     ));
   }
 
+  /// This function is called from the native side. Do not call it directly.
   @override
   void activeSpeakerChanged(
       RemoteParticipantMessage? remoteParticipantMessage) {
@@ -173,6 +163,7 @@ class DailyClient extends DailyCallback {
     _eventsController.add(ActiveSpeakerChangedEvent(participant));
   }
 
+  /// This function is called from the native side. Do not call it directly.
   @override
   void onCallStateUpdated(int stateCode) {
     final callState = _mapCodeToCallState(stateCode);

@@ -629,12 +629,6 @@ class DailyCallback {
   var codec: FlutterStandardMessageCodec {
     return DailyCallbackCodec.shared
   }
-  func onParticipantsUpdated(localParticipantMessage localParticipantMessageArg: LocalParticipantMessage, remoteParticipantsMessage remoteParticipantsMessageArg: [RemoteParticipantMessage?], completion: @escaping () -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyCallback.onParticipantsUpdated", binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([localParticipantMessageArg, remoteParticipantsMessageArg]) { _ in
-      completion()
-    }
-  }
   func onParticipantUpdated(remoteParticipantMessage remoteParticipantMessageArg: RemoteParticipantMessage, completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.DailyCallback.onParticipantUpdated", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([remoteParticipantMessageArg]) { _ in
