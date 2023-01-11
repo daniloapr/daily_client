@@ -24,6 +24,19 @@ Android: Not supported yet.
 
 ## Getting started
 
+### Running the example app
+
+To run the example app:
+
+1. Install Flutter
+2. Run `flutter pub get` to update the dependencies
+3. Run `make` to generate the Pigeon file
+4. `cd example` and then `flutter run` to
+
+If you are running the iOS app from a Mac with Apple Silicon:
+- Enter the example/ios folder: `cd example/ios`
+- Run `make` to run the pod install and update the native dependencies.
+
 ### Joining a call
 
 To get an URL for testing your app, create your account at [daily.co](daily.co), then create a room in the [dashboard](https://dashboard.daily.co/). Public room's don't require token, so you should avoid them in production.
@@ -181,14 +194,3 @@ Add these values to the `info.plist`:
 ## Android
 
 In progress
-
-## Example app
-
-To run the example app:
-
-1. Install Flutter
-2. Run `flutter pub get` to update the dependencies
-3. Run `make` to generate the Pigeon file
-4. `cd example` and then `flutter run` to
-
-If you are running on iOS from a Mac with Apple Silicon, enter the `example/ios` and run `make` to run the `pod_install` and update the native dependencies.
