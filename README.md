@@ -11,6 +11,7 @@ Prefer running in a real device instead of emulators.
 ## Minimum OS version
 
 iOS >= 13.0
+
 Android: Not supported yet.
 
 ## Getting started
