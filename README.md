@@ -10,6 +10,12 @@ Prefer running in a real device instead of emulators.
 
 :warning: This plugin is depending on an unstable and not fully tested version of Daily iOS SDK, so, you should expect some crashes. It will be updated as soon as Daily releases the next SDK version 0.6.0.
 
+## Sponsor
+
+![LOGO TEAMFLOW](https://user-images.githubusercontent.com/31525418/211846574-28fec356-2234-4c5d-ae24-b6524075e763.png)
+
+This plugin was developed within [Teamflow](https://www.teamflowhq.com/), which kindly granted permission to make it open-source.
+
 ## Minimum OS version
 
 iOS >= 13.0
@@ -18,7 +24,7 @@ Android: Not supported yet.
 
 ## Getting started
 
-### Joining a call
+### Joining a callc
 
 To get an URL for testing your app, create your account at [daily.co](daily.co), then create a room in the [dashboard](https://dashboard.daily.co/). Public room's don't require token, so you should avoid them in production.
 
