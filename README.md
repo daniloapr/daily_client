@@ -8,6 +8,8 @@ Note that the Daily mobile SDKs are still in Beta for both Android and iOS. Thus
 
 Prefer running in a real device instead of emulators.
 
+:warning: KNOWN ISSUE: The iOS is currently crashing while in a call. I haven't debugged yet to check if it's an issue in the plugin or in the Daily iOS SDK itself.
+
 ## Minimum OS version
 
 iOS >= 13.0
@@ -88,7 +90,7 @@ void dispose(){
 }
 ```
 
-### Update local participant
+### Toggle camera and microphone
 
 ```dart
     await _dailyClient.setMicrophoneEnabled(true);
@@ -110,6 +112,51 @@ Widget build(BuildContext context) {
         videoScaleMode: daily.VideoScaleMode.fill,
     );
 }
+```
+
+### Participants subscription
+
+The participants subscriptions are handled by Daily using profiles. They allow us to define manually whether we should subscribe to video and/or audio. For example: you can subscribe to audio and video for all the visible participants, and keep the other participants who are not in the screen with audio only, to save some resources.
+
+By the default, the `base` profile subscribe to both audio and video, so you shouldn't worry with that in your first implementation.
+
+#### Creating or updating the subscription profiles
+
+```dart
+await _dailyClient.updateSubscriptionProfiles(const [
+    daily.SubscriptionProfileSettingsUpdate(
+        name: 'visible',
+        subscribeCamera: true,
+        subscribeMicrophone: true,
+    ),
+    daily.SubscriptionProfileSettingsUpdate(
+        name: 'invisible',
+        subscribeCamera: false,
+        subscribeMicrophone: true,
+    ),
+    // Here we are overriding the base profile to NOT subscribe by default
+    daily.SubscriptionProfileSettingsUpdate(
+        name: 'base',
+        subscribeCamera: false,
+        subscribeMicrophone: false,
+    ),
+]);
+```
+
+#### Assigning participants to a profile
+
+```dart
+void _onParticipantJoined(daily.RemoteParticipant participant) {
+    // This is setting the `visible` profile as default. It's not necessary
+    // unless you need to handle custom subscriptions.
+    _dailyClient.updateSubscriptions([
+        daily.UpdateSubscriptionOptions(
+        participantId: participant.id,
+        profileName: SubscriptionProfiles.visible.name,
+        )
+    ]);
+}
+
 ```
 
 ## iOS
