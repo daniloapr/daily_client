@@ -33,6 +33,8 @@ class AvCubit extends Cubit<AvState> {
     emit(AvLoadingState());
 
     try {
+      // The updateSubscriptionProfiles is not necessary unless you need
+      // to handle custom subscriptions.
       final profiles =
           SubscriptionProfiles.values.map((e) => e.settings).toList();
       await _dailyClient.updateSubscriptionProfiles(profiles);
@@ -110,11 +112,14 @@ class AvCubit extends Cubit<AvState> {
   }
 
   void _onParticipantJoined(daily.RemoteParticipant participant) {
-    final subscriptionsOptions = daily.UpdateSubscriptionOptions(
-      participantId: participant.id,
-      profileName: SubscriptionProfiles.visible.name,
-    );
-    _dailyClient.updateSubscriptions([subscriptionsOptions]);
+    // This is setting the `visible` profile as default. It's not necessary
+    // unless you need to handle custom subscriptions.
+    _dailyClient.updateSubscriptions([
+      daily.UpdateSubscriptionOptions(
+        participantId: participant.id,
+        profileName: SubscriptionProfiles.visible.name,
+      )
+    ]);
 
     final currentState = state;
     if (currentState is! AvConnectedState) return;
