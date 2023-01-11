@@ -1,7 +1,7 @@
 name: daily_client
 description: A new Flutter plugin project.
-version: 0.0.6
-homepage:
+version: 0.0.1
+homepage: https://github.com/daniloapr/daily_client
 
 environment:
   sdk: ">=2.18.4 <3.0.0"
