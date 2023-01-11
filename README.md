@@ -110,9 +110,11 @@ void dispose(){
 To show the participants video, use the `VideoRenderer` widget with the `Participant` as argument.
 
 ```dart
+import 'package:daily_client/daily_client.dart' as daily;
+
 @override
 Widget build(BuildContext context) {
-    return VideoRenderer(
+    return daily.VideoRenderer(
         participant: participant, //local or remote
         isScreenShare: false, // false for camera, true for screen share video
         videoScaleMode: daily.VideoScaleMode.fill,
