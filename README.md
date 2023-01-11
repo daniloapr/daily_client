@@ -30,7 +30,7 @@ To run the example app:
 
 1. Install Flutter
 2. Run `flutter pub get` to update the dependencies
-3. Run `make` to generate the Pigeon file
+3. Run `make` in the root of the repository to generate the Pigeon files
 4. `cd example` and then `flutter run` to
 
 If you are running the iOS app from a Mac with Apple Silicon:
