@@ -39,7 +39,7 @@ If you are running the iOS app from a Mac with Apple Silicon:
 
 ### Joining a call
 
-To get an URL for testing your app, create your account at [daily.co](daily.co), then create a room in the [dashboard](https://dashboard.daily.co/). Public room's don't require token, so you should avoid them in production.
+To get an URL for testing your app, create your account at [daily.co](daily.co), then create a room in the [dashboard](https://dashboard.daily.co/). For testing purpose, you can create a public room which don't require a token, however, you should avoid it in production.
 
 ```dart
 // Import the package
