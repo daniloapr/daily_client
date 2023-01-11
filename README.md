@@ -41,6 +41,12 @@ try {
 }
 ```
 
+### Leave the call
+
+```dart
+await _dailyClient.leave();
+```
+
 ### Events
 
 This plugin uses streams to inform about changes in the call. You can listen to them _before_ the `join()` method.
