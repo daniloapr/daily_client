@@ -39,7 +39,7 @@ final _dailyClient = daily.DailyClient();
 try {
     final result = await _dailyClient.join(
         url: url,
-        token: token, // Can be empty
+        token: token, // It can be empty
         enableCamera: true,
         enableMicrophone: true,
     );
